@@ -1,0 +1,237 @@
+
+.clearfix {}
+.clearfix:before,
+.clearfix:after {
+	content: " ";
+	display: table;
+}
+
+.clearfix:after {
+	clear: both;
+}
+fieldset{
+	margin:10px;
+}
+#wpbody-content{
+	background-color: white;
+}
+.ahsc-options-wrapper,.ahsc-tab{
+	background-color: #f6f6f6;
+}
+
+.wrap.ahsc-wrapper{
+	margin:0px!important;
+}
+
+.ahsc-settings-header{
+	background-color: white;
+}
+.ahsc-settings-header .notice{
+	margin: 0 auto;
+	width: 52%;
+}
+.ahsc-settings-title{
+	margin-left: 24%!important;
+}
+.ahsc-settings-nav{
+	text-align: center;
+	margin: 0 auto !important;
+	background-color: white;
+}
+
+.nav-tab{
+	cursor: pointer;
+}
+
+.ahsc-settings-nav .nav-tab:first-child{
+	margin-left: 24%;
+}
+#ahsc-settings-form{
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.form-table th,
+.form-wrap label {
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+.form-table th {
+	width: 25% !important;
+	user-select: none; /* standard syntax */
+	-webkit-user-select: none; /* webkit (safari, chrome) browsers */
+	-moz-user-select: none; /* mozilla browsers */
+	-khtml-user-select: none; /* webkit (konqueror) browsers */
+	-ms-user-select: none; /* IE10+ */
+}
+
+.ahsc-options-wrapper tr td label {
+	width: 100%;
+	cursor: pointer;
+	user-select: none; /* standard syntax */
+	-webkit-user-select: none; /* webkit (safari, chrome) browsers */
+	-moz-user-select: none; /* mozilla browsers */
+	-khtml-user-select: none; /* webkit (konqueror) browsers */
+	-ms-user-select: none; /* IE10+ */
+}
+
+.ahsc-options-wrapper h2,
+.ahsc-options-wrapper h3 {
+	color: #1d2327 !important;
+	font-size: 1.3em !important;
+	margin: 1em 0 !important;
+	padding: 8px 12px 8px 0px !important;
+	text-align: center;
+}
+
+small::before {
+	content: "\a";
+	white-space: pre;
+}
+
+*{box-sizing:inherit}
+
+.settings_page_aruba-hispeed-cache{background:#f6f6f6;box-sizing:border-box;font-size:14px;position:relative}
+#wpcontent,.auto-fold #wpcontent{padding-left:0}
+
+.form-table{
+	border-collapse: collapse;
+	width: 51%;
+	clear: both;
+	margin-top: .5em;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 20px;
+}
+.button-table{
+	border-collapse: collapse;
+	margin-top: .5em;
+	width: 51%;
+	clear: both;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+/* The switch - the box around the slider */
+.switch {
+	position: relative;
+	display: inline-block !important;
+	width: 60px !important;
+	height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+/* The slider */
+.slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	-webkit-transition: .4s;
+	transition: .4s;
+}
+
+.slider:before {
+	position: absolute;
+	content: "";
+	height: 26px;
+	width: 26px;
+	left: 4px;
+	bottom: 4px;
+	background-color: white;
+	-webkit-transition: .4s;
+	transition: .4s;
+}
+
+input:checked + .slider {
+	background-color: #2196F3;
+}
+
+input:focus + .slider {
+	box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+	-webkit-transform: translateX(26px);
+	-ms-transform: translateX(26px);
+	transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+	border-radius: 34px;
+}
+
+.slider.round:before {
+	border-radius: 50%;
+}
+.form-table {
+	background-color: white;
+}
+
+table.form-table {
+	border: 1px solid #ddd;
+	border-collapse: separate;
+	border-left: 0;
+	border-radius: 4px;
+	border-spacing: 0px;
+}
+.form-table thead {
+	display: table-header-group;
+	vertical-align: middle;
+	border-color: inherit;
+	border-collapse: separate;
+}
+.form-table tr {
+	display: table-row;
+	vertical-align: inherit;
+	border-color: inherit;
+}
+.form-table th, .form-table td {
+	padding: 10px;
+	text-align: left;
+	vertical-align: middle;
+	border-left: 1px solid #ddd;
+	height: 45px !important;
+
+}
+.form-table td {
+	border-top: 1px solid #ddd;
+}
+.form-table thead:first-child tr:first-child th:first-child, .form-table tbody:first-child tr:first-child td:first-child {
+	border-radius: 4px 0 0 0;
+}
+.form-table thead:last-child tr:last-child th:first-child, .form-table tbody:last-child tr:last-child td:first-child {
+	border-radius: 0 0 0 4px;
+}
+
+
+
+.chevron {
+	display: inline-block;
+	border-right:4px solid gray;
+	border-bottom: 4px solid gray;
+	width: 10px;
+	height: 10px;
+	float: right;
+	margin-right: 10px;
+}
+
+.chevron-arrow-up {
+	transform: rotate(45deg);
+}
+
+.chevron-arrow-down {
+	transform: rotate(-135deg);
+}
