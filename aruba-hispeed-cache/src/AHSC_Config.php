@@ -33,14 +33,15 @@ const AHSC_OPTIONS_LIST = array(
 	'ahsc_purge_page_on_deleted_comment' =>  true,
 	'ahsc_cache_warmer' =>true,
 	'ahsc_static_cache'=>true,
+	'ahsc_lazy_load'=>true,
 	'ahsc_dns_preconnect'=>false,
 	'ahsc_dns_preconnect_domains'=>'',
-	'ahsc_xmlrpc_status'=>true
+	'ahsc_xmlrpc_status'=>false
 
 );
 
 define( "AHSC_CONSTANT", array(
-	'ARUBA_HISPEED_CACHE_VERSION'      => '2.0.17',
+	'ARUBA_HISPEED_CACHE_VERSION'      => '2.0.18',
 	'ARUBA_HISPEED_CACHE_PLUGIN'       => true,
 	'ARUBA_HISPEED_CACHE_FILE'         => $file,
 	'ARUBA_HISPEED_CACHE_BASEPATH'     => \plugin_dir_path( $file ),
@@ -64,9 +65,10 @@ const AHSC_OPTIONS_LIST_DEFAULT = array(
 	'ahsc_purge_page_on_deleted_comment' =>   array('default'=>true),
 	'ahsc_cache_warmer' => array('default'=>true),
 	'ahsc_static_cache' => array('default'=>true),
+	'ahsc_lazy_load'=>array('default'=>true),
 	'ahsc_dns_preconnect' => array('default'=>false),
 	'ahsc_dns_preconnect_domains'=>array('default'=>''),
-	'ahsc_xmlrpc_status'=>array('default'=>true)
+	'ahsc_xmlrpc_status'=>array('default'=>false)
 );
 
 

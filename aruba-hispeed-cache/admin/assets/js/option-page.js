@@ -122,12 +122,18 @@
 		});
 	});
 
+	//console.log('init:'+jQuery("#ahsc_dns_preconnect").is(':checked'))
+	if(jQuery("#ahsc_dns_preconnect").is(':checked')==true) {
+		jQuery("#ahsc_dns_preconnect_domains").prop("disabled", false);
+	}else{
+		jQuery("#ahsc_dns_preconnect_domains").prop("disabled", true);
+	}
 	jQuery("#ahsc_dns_preconnect").on('click',function(){
-		console.log(jQuery(this).is(':checked'))
+		//console.log(jQuery(this).is(':checked'))
 		if(jQuery(this).is(':checked')==true) {
-			jQuery("#ahsc_dns_preconnect_domains_contenitor").show();
+			jQuery("#ahsc_dns_preconnect_domains").prop("disabled", false);
 		}else{
-			jQuery("#ahsc_dns_preconnect_domains_contenitor").hide();
+			jQuery("#ahsc_dns_preconnect_domains").prop("disabled", true);
 		}
 	})
 })();

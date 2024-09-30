@@ -3,7 +3,7 @@
 Contributors: arubait, arubadev, arubasupport
 Tags: Aruba, cache, performance, pagespeed, optimize
 Tested up to: 6.6
-Stable tag: 2.0.17
+Stable tag: 2.0.18
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -67,6 +67,9 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 2. General Settings Enabled
 
 == Changelog ==
+
+= 2.0.18 =
+* Add optimize image loading option
 
 = 2.0.17 =
 * Add Cache management optimization for Elementor
@@ -189,7 +192,5 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 
 == Upgrade Notice ==
 
-= 2.0.17 =
-* Add Cache management optimization for Elementor
-* Add XML-RPC selector
-* Various minor bug fixes.
+= 2.0.18 =
+* Add optimize image loading option

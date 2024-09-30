@@ -69,7 +69,7 @@ foreach ( $this->fields['sections']['general'] as $sections_key => $sections ) :
                          <?php }elseif($this->fields[ $filedkey ]['type']==="textarea"){
 
                                ?>
-                                <div id="<?php echo esc_html($this->fields[ $filedkey ]['id']."_contenitor") ?>"  class="<?php echo esc_html( $this->fields[ $filedkey ]['class'] ); ?>" style="padding-top:10px;padding-bottom:10px">
+                                <div id="<?php echo esc_html($this->fields[ $filedkey ]['id']."_contenitor") ?>"  disabled="true" style="padding-top:10px;padding-bottom:10px">
 	                                <?php echo $this->fields[ $filedkey ]['name'] ; ?>
                         <label for="<?php echo esc_html( $this->fields[ $filedkey ]['id'] ); ?>">
                             <textarea id="<?php echo esc_html( $this->fields[ $filedkey ]['id'] ); ?>"

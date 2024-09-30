@@ -189,6 +189,28 @@ class AHSC_Settings extends \AHSC\Pages\AHSC_Page {
 			'class' => ( $is_hidden ) ? 'hidden' : '',
 		);
 
+
+		$this->fields['sections']['general']['lazy_load']['settings_tittle'] = array(
+			'title' => wp_kses( __( 'Optimize image loading', 'aruba-hispeed-cache' ), array( 'strong' => array() ) ) ,
+			'type'  => 'title',
+			'class' => ( $is_hidden ) ? 'hidden' : '',
+		);
+		$this->fields['sections']['general']['lazy_load'] = array(
+			'ids'   => array( 'ahsc_lazy_load' ),
+			'name'  => wp_kses( __( 'Optimize image loading', 'aruba-hispeed-cache' ), array( 'strong' => array() ) ) ,
+			'class' => ( $is_hidden ) ? 'hidden' : '',
+		);
+		$this->fields['ahsc_lazy_load'] = array(
+			'name'    => "<strong>".wp_kses( __( 'Enable optimization of image loading', 'aruba-hispeed-cache' ), array( 'strong' => array() ) )."</strong>",
+			'legend' => wp_kses( __( 'Improve page loading times using Lazy Load (asynchronous loading) of images.', 'aruba-hispeed-cache' ), array( 'strong' => array(), 'br' => array() ) ),
+			'type'    => 'checkbox',
+			'id'      => 'ahsc_lazy_load',
+			'checked' => \checked( $option[ 'ahsc_lazy_load' ] ?? 0 , 1, false ),
+			'class' => ( $is_hidden ) ? 'hidden' : '',
+		);
+
+
+
 		$this->fields['sections']['general']['dns_preconnect']['settings_tittle'] = array(
 			'title' => wp_kses( __( 'DNS Prefetch and Preconnect:', 'aruba-hispeed-cache' ), array( 'strong' => array() ) ) ,
 			'type'  => 'title',
