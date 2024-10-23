@@ -34,6 +34,7 @@ const AHSC_OPTIONS_LIST = array(
 	'ahsc_cache_warmer' =>true,
 	'ahsc_static_cache'=>true,
 	'ahsc_lazy_load'=>true,
+	'ahsc_html_optimizer'=>false,
 	'ahsc_dns_preconnect'=>false,
 	'ahsc_dns_preconnect_domains'=>'',
 	'ahsc_xmlrpc_status'=>false
@@ -41,7 +42,7 @@ const AHSC_OPTIONS_LIST = array(
 );
 
 define( "AHSC_CONSTANT", array(
-	'ARUBA_HISPEED_CACHE_VERSION'      => '2.0.18',
+	'ARUBA_HISPEED_CACHE_VERSION'      => AHSC_get_version(),
 	'ARUBA_HISPEED_CACHE_PLUGIN'       => true,
 	'ARUBA_HISPEED_CACHE_FILE'         => $file,
 	'ARUBA_HISPEED_CACHE_BASEPATH'     => \plugin_dir_path( $file ),
@@ -66,19 +67,18 @@ const AHSC_OPTIONS_LIST_DEFAULT = array(
 	'ahsc_cache_warmer' => array('default'=>true),
 	'ahsc_static_cache' => array('default'=>true),
 	'ahsc_lazy_load'=>array('default'=>true),
+	'ahsc_html_optimizer'=>array('default'=>false),
 	'ahsc_dns_preconnect' => array('default'=>false),
 	'ahsc_dns_preconnect_domains'=>array('default'=>''),
 	'ahsc_xmlrpc_status'=>array('default'=>false)
 );
-
-
 
 const AHSC_PURGER = array(
 	'server_host' => '127.0.0.1',
 	'server_port' => '8889',
 	'time_out' => 5,
 );
-
+/*
 define( "AHSC_AJAX", array(
 	'security_error' => array(
 		'code'    => 404,
@@ -96,6 +96,25 @@ define( "AHSC_AJAX", array(
 		'type'    => 'warning',
 	),
 ) );
+
+define( "AHSC_TRANSIENT_AJAX", array(
+	'security_error' => array(
+		'code'    => 404,
+		'message' => __( 'An error occurred. Please try again later or contact support.', 'aruba-hispeed-cache' ),
+		'type'    => 'error',
+	),
+	'success'        => array(
+		'code'    => 200,
+		'message' => __( 'Expired transient purged.', 'aruba-hispeed-cache' ),
+		'type'    => 'success',
+	),
+	'warning'        => array(
+		'code'    => 202,
+		'message' => __( 'An error occurred. Please try again later or contact support.', 'aruba-hispeed-cache' ),
+		'type'    => 'warning',
+	),
+) );
+*/
 
 const AHSC_LOCALIZE_LINK = array(
 	'link_base' => array(

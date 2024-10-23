@@ -67,4 +67,48 @@ defines an asynchronous function called `ahscBtnPurger`. */
 	`ahscBtnPurger` property of the `window` object. This makes the function accessible globally in the
 	browser environment. */
 	window.ahscBtnPurger = ahscBtnPurger;
+
+	const ahscBtnTransientPurger = async () => {
+		loader.style.display = "block";
+
+
+
+		const data = new FormData();
+		data.append("action", "ahsc_clear_expired_transient");
+		data.append("ahsc_nonce", AHSC_TOOLBAR.ahsc_nonce);
+
+		const request = await fetch(AHSC_TOOLBAR.ahsc_ajax_url, {
+			method: "POST",
+			credentials: "same-origin",
+			body: data,
+		})
+			.then((r) => r.json())
+			.then((result) => {
+				if (result.code >= 200) {
+					let style = "";
+					loader.style.removeProperty("display");
+					switch (result.type) {
+						case "success":
+							style = "color:green";
+							break;
+						case "error":
+							style = "color:red";
+							break;
+						default:
+							style = "color:blue";
+							break;
+					}
+					console.log(`%c${result.message}`, style);
+				}
+			})
+			.catch((error) => {
+				console.log("[Aruba HiSpeed Cache Plugin]");
+				console.error(error);
+			});
+
+
+	}
+
+	window.ahscBtnTransientPurger = ahscBtnTransientPurger;
+
 })();

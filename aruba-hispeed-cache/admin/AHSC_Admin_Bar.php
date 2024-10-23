@@ -3,15 +3,15 @@
 
 //die(var_export(__( 'Purge Cache','aruba-hispeed-cache' ),true));
 const AHSC_MENUBAR_PARENT_ITEM = 'aruba_spa';
-$topurge = 'current-url';
-$AHSC_AB_title   =esc_html(__( 'Purge page cache', 'aruba-hispeed-cache' ));
+//$topurge = 'current-url';
+//$AHSC_AB_title   =esc_html(__( 'Purge page cache', 'aruba-hispeed-cache' ));
 	//var_dump(esc_html(__( 'Purge page cache', 'aruba-hispeed-cache' )));
-
+/*
 if ( \is_admin() ) {
 	$topurge = 'all';
 	$AHSC_AB_title   = esc_html(__( 'Purge Cache', 'aruba-hispeed-cache' )) ;
 		//esc_html(__( 'Purge Cache', 'aruba-hispeed-cache' ));
-}
+}*/
 
 
 
@@ -25,7 +25,17 @@ if ( \is_admin() ) {
  * @return void
  */
 function AHSC_add_admin_bar_menu_links( $wp_admin_bar ) {
-	global $AHSC_AB_title,$topurge;
+	//global $AHSC_AB_title,$topurge;
+	$AHSC_AB_title   =esc_html(__( 'Purge page cache', 'aruba-hispeed-cache' ));
+	//var_dump(esc_html(__( 'Purge page cache', 'aruba-hispeed-cache' )));
+
+	if ( \is_admin() ) {
+		$topurge = 'all';
+		$AHSC_AB_title   = esc_html(__( 'Purge Cache', 'aruba-hispeed-cache' )) ;
+		//esc_html(__( 'Purge Cache', 'aruba-hispeed-cache' ));
+	}else{
+		$topurge = 'current-url';
+	}
     if ( is_user_logged_in() && current_user_can( 'manage_options' )){
     $wp_admin_bar->add_menu(
 		array(
@@ -39,6 +49,19 @@ function AHSC_add_admin_bar_menu_links( $wp_admin_bar ) {
 			),
 		)
 	);
+
+	    $wp_admin_bar->add_menu(
+		    array(
+			    'id'     => 'ahsc-transient-purge',
+			    'parent' => ( ! \is_null( $wp_admin_bar->get_node( AHSC_MENUBAR_PARENT_ITEM ) ) ) ? AHSC_MENUBAR_PARENT_ITEM : false,
+			    'title'  =>'<span class="ab-icon ahsc-ab-icon" aria-hidden="true"></span><span class="ab-label">'.esc_html(__( 'Purge Expired Transient', 'aruba-hispeed-cache' )).'</span>',
+			    'meta'   => array(
+				    'title'        => esc_html(__( 'Purge Expired Transient', 'aruba-hispeed-cache' )),
+				    'onclick'      => 'ahscBtnTransientPurger(); return;'
+			    ),
+		    )
+	    );
+
     }
 }
 
@@ -49,8 +72,14 @@ function AHSC_add_admin_bar_menu_links( $wp_admin_bar ) {
  * @return void
  */
 function AHSC_localize_toolbar_js() {
+
+	if ( \is_admin() ) {
+		$topurge = 'all';
+	}else{
+		$topurge = 'current-url';
+	}
     if ( is_user_logged_in() && current_user_can( 'manage_options' )) {
-        global $topurge;
+        //global $topurge;
         $js_param = array(
             'ahsc_ajax_url' => \admin_url('admin-ajax.php'),
             'ahsc_topurge' => $topurge,
@@ -66,7 +95,12 @@ function AHSC_localize_toolbar_js() {
  * @return string
  */
 function AHSC_Menu_get_title() {
-	global $AHSC_AB_title;
+	//global $AHSC_AB_title;
+	$AHSC_AB_title   =esc_html(__( 'Purge page cache', 'aruba-hispeed-cache' ));
+
+	if ( \is_admin() ) {
+		$AHSC_AB_title   = esc_html(__( 'Purge Cache', 'aruba-hispeed-cache' )) ;
+	}
 	$title = '<span class="ab-icon ahsc-ab-icon" aria-hidden="true"></span><span class="ab-label">' . $AHSC_AB_title . '</span>';
 	return $title;
 }

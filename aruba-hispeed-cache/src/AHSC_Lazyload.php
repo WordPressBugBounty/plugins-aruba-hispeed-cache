@@ -7,7 +7,7 @@ if ( isset( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_lazy_load'] ) &&
 function ahsc_wp_lazy_loading_initialize_filters() {
 	foreach ( array( 'the_content', 'the_excerpt', 'widget_text_content','do_shortcode_tag','render_block','post_thumbnail_html') as $filter ) {
 		add_filter( $filter, 'ahsc_wp_filter_content_tags' );
-	//	add_filter( $filter, 'ahsc_add_image_dimensions' );
+		//add_filter( $filter, 'ahsc_add_image_dimensions' );
 	}
 	add_filter( 'wp_get_attachment_image_attributes', 'ahsc_wp_lazy_loading_add_attribute_to_attachment_image' );
 	add_filter( 'get_avatar', 'ahsc_wp_lazy_loading_add_attribute_to_avatar' );

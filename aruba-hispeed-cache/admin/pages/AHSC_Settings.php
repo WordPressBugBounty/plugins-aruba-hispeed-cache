@@ -189,6 +189,24 @@ class AHSC_Settings extends \AHSC\Pages\AHSC_Page {
 			'class' => ( $is_hidden ) ? 'hidden' : '',
 		);
 
+		$this->fields['sections']['general']['html_optimizer']['settings_tittle'] = array(
+			'title' => wp_kses( __( 'Optimize HTML code', 'aruba-hispeed-cache' ), array( 'strong' => array() ) ) ,
+			'type'  => 'title',
+			'class' => ( $is_hidden ) ? 'hidden' : '',
+		);
+		$this->fields['sections']['general']['html_optimizer'] = array(
+			'ids'   => array( 'ahsc_html_optimizer' ),
+			'name'  => wp_kses( __( 'Optimize HTML code', 'aruba-hispeed-cache' ), array( 'strong' => array() ) ) ,
+			'class' => ( $is_hidden ) ? 'hidden' : '',
+		);
+		$this->fields['ahsc_html_optimizer'] = array(
+			'name'    => "<strong>".wp_kses( __( 'Enable HTML code optimization', 'aruba-hispeed-cache' ), array( 'strong' => array() ) )."</strong>",
+			'legend' => wp_kses( __( 'Reduce the dimensions of the HTML page for faster loading times.', 'aruba-hispeed-cache' ), array( 'strong' => array(), 'br' => array() ) ),
+			'type'    => 'checkbox',
+			'id'      => 'ahsc_html_optimizer',
+			'checked' => \checked( $option[ 'ahsc_html_optimizer' ] ?? 0 , 1, false ),
+			'class' => ( $is_hidden ) ? 'hidden' : '',
+		);
 
 		$this->fields['sections']['general']['lazy_load']['settings_tittle'] = array(
 			'title' => wp_kses( __( 'Optimize image loading', 'aruba-hispeed-cache' ), array( 'strong' => array() ) ) ,

@@ -8,7 +8,7 @@ abstract class AHSC_Page {
 			'aruba-hispeed-cache-style', // handle name
 			plugins_url( 'assets/css/option-page.css', dirname( __FILE__ ) ),
 			[],
-			"1.0.0"
+			AHSC_get_version()
 		);
 
 		wp_enqueue_style( 'aruba-hispeed-cache-style' );
@@ -20,7 +20,7 @@ abstract class AHSC_Page {
 			'aruba-hispeed-cache-script', // handle name
 			plugins_url( 'assets/js/option-page.js', dirname( __FILE__ ) ),
 			[],
-			"1.0.0",
+			AHSC_get_version(),
 			array(
 				'strategy'  => 'defer',
 				'in_footer'=> true

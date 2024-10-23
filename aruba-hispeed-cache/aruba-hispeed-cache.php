@@ -13,7 +13,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Aruba HiSpeed Cache
- * Version:           2.0.18
+ * Version:           2.0.19
  * Plugin URI:        https://hosting.aruba.it/wordpress.aspx
  *
  * @phpcs:ignore Generic.Files.LineLength.TooLong
@@ -21,9 +21,9 @@
  * Author:            Aruba.it
  * Author URI:        https://www.aruba.it/
  * Text Domain:       aruba-hispeed-cache
- * Domain Path:       languages
+ * Domain Path:       /languages
  * License:           GPL v3
- * Tested up to:      6.6
+ * Tested up to:      6.7
  * Requires PHP:      5.6
  * Requires at least: 5.4
  * This program is free software: you can redistribute it and/or modify
@@ -41,6 +41,13 @@
  *
  * @package ArubaHispeedCache
  */
+
+function AHSC_get_version() {
+    require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    // Prevent early translation call by setting $translate to false.
+    $plugin_data = get_plugin_data( __FILE__, false, /* $translate */ false );
+    return $plugin_data['Version'];
+}
 
 /** constant configuration*/
 include_once "src/AHSC_Config.php";
@@ -60,6 +67,8 @@ include_once "src/AHSC_Lazyload.php";
 include_once "src/AHSC_Preconnect.php";
 /** disable XMLRpc service*/
 include_once "src/AHSC_XmlRPC.php";
+/** HTML Optimizer*/
+include_once "src/AHSC_HtmlOptimizer.php";
 /** plugin general functions*/
 include_once "src/AHSC_Functions.php";
 /** plugin controllo per check services*/
@@ -124,17 +133,54 @@ if ( AHSC_REQUIREMENTS['is_legacy_post_61'] ) {
 
 
 /** Load Multi languages*/
-add_action( 'init','AHSC_load_plugin_textdomain'  );
+add_action( 'init','AHSC_load_plugin_textdomain',200 );
 //add_action( 'admin_bar_init','AHSC_load_plugin_textdomain'  );
 //add_action( 'wp_before_admin_bar_render','AHSC_load_plugin_textdomain'  );
 
 function AHSC_load_plugin_textdomain() {
-	\load_plugin_textdomain(
+/*	\load_plugin_textdomain(
 		'aruba-hispeed-cache',
 		false,
 		dirname( plugin_basename( __FILE__ ) ) . '/languages'
 	);
+*/
+	define( "AHSC_AJAX", array(
+		'security_error' => array(
+			'code'    => 404,
+			'message' => __( 'An error occurred. Please try again later or contact support.', 'aruba-hispeed-cache' ),
+			'type'    => 'error',
+		),
+		'success'        => array(
+			'code'    => 200,
+			'message' => __( 'Cache purged.', 'aruba-hispeed-cache' ),
+			'type'    => 'success',
+		),
+		'warning'        => array(
+			'code'    => 202,
+			'message' => __( 'An error occurred. Please try again later or contact support.', 'aruba-hispeed-cache' ),
+			'type'    => 'warning',
+		),
+	) );
+
+	define( "AHSC_TRANSIENT_AJAX", array(
+		'security_error' => array(
+			'code'    => 404,
+			'message' => __( 'An error occurred. Please try again later or contact support.', 'aruba-hispeed-cache' ),
+			'type'    => 'error',
+		),
+		'success'        => array(
+			'code'    => 200,
+			'message' => __( 'Expired transient purged.', 'aruba-hispeed-cache' ),
+			'type'    => 'success',
+		),
+		'warning'        => array(
+			'code'    => 202,
+			'message' => __( 'An error occurred. Please try again later or contact support.', 'aruba-hispeed-cache' ),
+			'type'    => 'warning',
+		),
+	) );
 }
+
 
 add_action('init','AHSC_script_nit');
 function AHSC_script_nit() {
@@ -180,7 +226,7 @@ add_action( 'enqueue_block_assets', 'AHSC_gutemberg_scripts' );
 * @return void
  */
 function ahsc_adminbar_inline_style() {
-	$icon = "#wp-admin-bar-ahsc-purge-link .ahsc-ab-icon:before {
+	$icon = "#wp-admin-bar-ahsc-purge-link .ahsc-ab-icon:before, #wp-admin-bar-ahsc-transient-purge .ahsc-ab-icon:before{
 				content: '\\f17e';
 				top: 4px;
 			}";
@@ -261,6 +307,21 @@ if(is_user_logged_in() && current_user_can( 'manage_options' ) && isset( $_POST[
 }else{
     wp_die( wp_json_encode( AHSC_AJAX['security_error'] ) );
 }
+}
+
+
+add_action( 'wp_ajax_ahsc_clear_expired_transient',  'ahsc_clear_expired_transient' , 100 );
+function ahsc_clear_expired_transient(){
+	if(is_user_logged_in() && current_user_can( 'manage_options' ) && isset( $_POST['ahsc_nonce'] )) {
+		if ( ! \wp_verify_nonce( \sanitize_text_field( \wp_unslash( $_POST['ahsc_nonce'] ) ), 'ahsc-purge-cache' ) ) {
+			wp_die( wp_json_encode( AHSC_TRANSIENT_AJAX['security_error'] ) );
+		} else {
+			delete_expired_transients( true );
+			wp_die( wp_json_encode( AHSC_TRANSIENT_AJAX['success']) );
+		}
+	}else{
+		wp_die( wp_json_encode( AHSC_TRANSIENT_AJAX['security_error'] ) );
+	}
 }
 
 if(is_multisite()){

@@ -2,8 +2,8 @@
 
 Contributors: arubait, arubadev, arubasupport
 Tags: Aruba, cache, performance, pagespeed, optimize
-Tested up to: 6.6
-Stable tag: 2.0.18
+Tested up to: 6.7
+Stable tag: 2.0.19
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -67,6 +67,11 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 2. General Settings Enabled
 
 == Changelog ==
+
+= 2.0.19 =
+* Add Optimize HTML code option
+* Tested up 6.7
+* Purge expired transients option
 
 = 2.0.18 =
 * Add optimize image loading option
@@ -192,5 +197,7 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 
 == Upgrade Notice ==
 
-= 2.0.18 =
-* Add optimize image loading option
+= 2.0.19 =
+* Add Optimize HTML code option
+* Tested up 6.7
+* Purge expired transients option
