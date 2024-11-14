@@ -13,7 +13,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Aruba HiSpeed Cache
- * Version:           2.0.19
+ * Version:           2.0.20
  * Plugin URI:        https://hosting.aruba.it/wordpress.aspx
  *
  * @phpcs:ignore Generic.Files.LineLength.TooLong
@@ -41,12 +41,11 @@
  *
  * @package ArubaHispeedCache
  */
-
 function AHSC_get_version() {
-    require_once ABSPATH . 'wp-admin/includes/plugin.php';
-    // Prevent early translation call by setting $translate to false.
-    $plugin_data = get_plugin_data( __FILE__, false, /* $translate */ false );
-    return $plugin_data['Version'];
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
+	// Prevent early translation call by setting $translate to false.
+	$plugin_data = get_plugin_data( __FILE__, false, /* $translate */ false );
+	return $plugin_data['Version'];
 }
 
 /** constant configuration*/
@@ -88,6 +87,9 @@ include_once "src/Events/AHSC_Plugins.php";
 include_once "src/Events/AHSC_PostType.php";
 include_once "src/Events/AHSC_Terms.php";
 include_once "src/Events/AHSC_Themes.php";
+
+
+
 
 
 /** check WordPress and php version */

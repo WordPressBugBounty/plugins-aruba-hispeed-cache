@@ -30,10 +30,10 @@ if('nav-menus.php' !== $pagenow){
 	   AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_archive_on_del']
 	){
 
-		if ( ahsc_has_transient( 'ahsc_is_purged' ) ) {
+		//if ( ahsc_has_transient( 'ahsc_is_purged' ) ) {
 			\add_action( 'transition_post_status', 'ahsc_transition_post_status' , 20, 3 );
 			\add_action( 'pre_post_update',  'get_terms_target' , 20, 1 );
-		}
+		//}
 
 	}
 }
