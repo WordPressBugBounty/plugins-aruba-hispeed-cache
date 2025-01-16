@@ -25,4 +25,10 @@ if ( ! is_multisite() ) {
 	require_once( ABSPATH . 'wp-admin/includes/file.php' );
 	$htaccess = get_home_path() . '.htaccess';
 	insert_with_markers( $htaccess, 'AHSC_RULES', array(' ') );
+
+	$file = WP_CONTENT_DIR . '/object-cache.php';
+	if ( file_exists( $file ) ) {
+		// phpcs:ignore
+		@unlink( $file );
+	}
 }

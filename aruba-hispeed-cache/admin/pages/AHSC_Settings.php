@@ -12,7 +12,11 @@ class AHSC_Settings extends \AHSC\Pages\AHSC_Page {
 				esc_html__( 'Sorry, you need to be an administrator to use HiSpeed Cache.', 'aruba-hispeed-cache' )
 			);
 		}
-		ahsc_save_options();
+		if(isset( $_POST['ahsc_reset_save'] )){
+		  ahsc_reset_options();
+		}else{
+		  ahsc_save_options();
+		}
 		$this->add_fields();
 
 		include_once AHSC_CONSTANT['ARUBA_HISPEED_CACHE_BASEPATH'] . 'admin' . DIRECTORY_SEPARATOR .'pages'.DIRECTORY_SEPARATOR .'views'.DIRECTORY_SEPARATOR .  'admin-settings.php';
@@ -186,6 +190,25 @@ class AHSC_Settings extends \AHSC\Pages\AHSC_Page {
 			'type'    => 'checkbox',
 			'id'      => 'ahsc_static_cache',
 			'checked' => \checked( $option[ 'ahsc_static_cache' ] ?? 0 , 1, false ),
+			'class' => ( $is_hidden ) ? 'hidden' : '',
+		);
+
+		$this->fields['sections']['general']['apc']['settings_tittle'] = array(
+			'title' => wp_kses( __( 'Apc', 'aruba-hispeed-cache' ), array( 'strong' => array() ) ) ,
+			'type'  => 'title',
+			'class' => ( $is_hidden ) ? 'hidden' : '',
+		);
+		$this->fields['sections']['general']['apc'] = array(
+			'ids'   => array( 'ahsc_apc' ),
+			'name'  => wp_kses( __( 'Object cache', 'aruba-hispeed-cache' ), array( 'strong' => array() ) ) ,
+			'class' => ( $is_hidden ) ? 'hidden' : '',
+		);
+		$this->fields['ahsc_apc'] = array(
+			'name'    => "<strong>".wp_kses( __( 'Enable object cache', 'aruba-hispeed-cache' ), array( 'strong' => array() ) )."</strong>",
+			'legend' => wp_kses( __( 'Reduces the number of queries made to the database and the related execution times for processing the queries necessary to display the pages, improving site loading performance via APCu.', 'aruba-hispeed-cache' ), array( 'strong' => array(), 'br' => array() ) ),
+			'type'    => 'checkbox',
+			'id'      => 'ahsc_apc',
+			'checked' => \checked( $option[ 'ahsc_apc' ] ?? 0 , 1, false ),
 			'class' => ( $is_hidden ) ? 'hidden' : '',
 		);
 

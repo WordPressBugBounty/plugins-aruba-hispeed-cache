@@ -11,9 +11,12 @@
  */
 
 // phpcs:disable
-foreach ( $this->fields['sections']['general'] as $sections_key => $sections ) : ?>
+if(isset($this->fields['sections']['general']['apc'])){
+  unset($this->fields['sections']['general']['apc']);
+}
+foreach ( $this->fields['sections']['general'] as $sections_key => $sections ) :?>
 
-	<?php if ( ! isset( $sections['ids'] ) ) : ?>
+	<?php if ( ! isset( $sections['ids'] )) : ?>
 		<h2 class="ahsc-title <?php echo esc_html( $sections['class'] ); ?>"><?php echo esc_html( $sections['title'] ); ?></h2>
 		<?php continue; ?>
 	<?php endif; //phpcs:ignore Squiz.PHP.NonExecutableCode.Unreachable ?>

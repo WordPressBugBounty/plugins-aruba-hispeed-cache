@@ -6,7 +6,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/aruba-hispeed-"
 "cache\n"
 "POT-Creation-Date: 2022-03-02T16:31:41+01:00\n"
-"PO-Revision-Date: 2024-06-06 14:42+0000\n"
+"PO-Revision-Date: 2024-12-04 09:26+0000\n"
 "Last-Translator: \n"
 "Language-Team: Italiano\n"
 "Language: it_IT\n"
@@ -22,7 +22,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Loco-Version: 2.6.9; wp-6.5.3"
 
-#: admin/pages/AHSC_Settings.php:113
+#: admin/pages/AHSC_Settings.php:107
 msgid "(date, category, tag, author, custom taxonomies)"
 msgstr "(data, categoria, tag, autore, tassonomie personalizzate)"
 
@@ -71,7 +71,7 @@ msgstr ""
 "HiSpeed ​​Cache e il plug-in, contatta <a href=\"%s\" rel=\"nofollow\" "
 "target=\"_blank\">supporto</a>."
 
-#: admin/pages/AHSC_Settings.php:119
+#: admin/pages/AHSC_Settings.php:113
 msgid ""
 "a <strong>post</strong> (or page/custom post) is <strong>modified</strong> "
 "or <strong>added</strong>."
@@ -79,7 +79,7 @@ msgstr ""
 "un <strong>articolo</strong> (o pagina/contenuto personalizzato) è <strong>"
 "modificato</strong> o <strong>aggiunto</strong>."
 
-#: admin/pages/AHSC_Settings.php:74
+#: admin/pages/AHSC_Settings.php:70
 msgid ""
 "a <strong>published post</strong> (or page/custom post) is <strong>"
 "cancelled</strong>."
@@ -87,32 +87,41 @@ msgstr ""
 "un <strong>articolo pubblicato</strong> (o pagina/contenuto personalizzato) "
 "è <strong>cancellato</strong>."
 
-#: admin/pages/AHSC_Settings.php:103 admin/pages/AHSC_Settings.php:148
+#: admin/pages/AHSC_Settings.php:97 admin/pages/AHSC_Settings.php:142
 msgid "A comment is not approved or is deleted"
 msgstr "Un commento non viene approvato o viene eliminato"
 
-#: admin/pages/AHSC_Settings.php:96 admin/pages/AHSC_Settings.php:141
+#: admin/pages/AHSC_Settings.php:90 admin/pages/AHSC_Settings.php:135
 msgid "A comment is published"
 msgstr "Viene pubblicato un commento"
 
-#: admin/pages/AHSC_Settings.php:67
+#: admin/pages/AHSC_Settings.php:63
 msgid "A post (or page/custom post) is modified or added."
 msgstr ""
 "Un post (o una pagina/post personalizzato) viene modificato o aggiunto."
 
-#: admin/pages/AHSC_Settings.php:89
+#: admin/pages/AHSC_Settings.php:83
 msgid "A post is published"
 msgstr "Viene pubblicato un post"
 
-#: admin/pages/AHSC_Settings.php:126
+#: admin/pages/AHSC_Settings.php:120
 msgid "A published post (or page/custom post) is deleted"
 msgstr "Un post pubblicato (o una pagina/post personalizzato) viene eliminato"
 
-#: src/AHSC_Config.php:75 src/AHSC_Config.php:85
+#: aruba-hispeed-cache.php:154 aruba-hispeed-cache.php:164
+#: aruba-hispeed-cache.php:172 aruba-hispeed-cache.php:182
 msgid "An error occurred. Please try again later or contact support."
 msgstr "Si è verificato un errore. Riprova più tardi o contatta l'assistenza."
 
-#: admin/pages/AHSC_Settings.php:111
+#: admin/pages/AHSC_Settings.php:193
+msgid "Apc"
+msgstr "Apc"
+
+#: admin/pages/views/partials/admin-tab-debug.php:39
+msgid "APC STATS"
+msgstr "Apc statistiche"
+
+#: admin/pages/AHSC_Settings.php:105
 msgid "Archives:"
 msgstr "Archivi:"
 
@@ -133,11 +142,11 @@ msgstr ""
 msgid "Aruba.it"
 msgstr "Aruba.it"
 
-#: admin/pages/AHSC_Settings.php:52
+#: admin/pages/AHSC_Settings.php:51
 msgid "Automatically purge the entire cache when:"
 msgstr "Svuota automaticamente l'intera cache quando:"
 
-#: src/AHSC_Config.php:80
+#: aruba-hispeed-cache.php:159
 msgid "Cache purged."
 msgstr "Cache eliminata."
 
@@ -145,7 +154,7 @@ msgstr "Cache eliminata."
 msgid "Cache purging options"
 msgstr "Opzioni di eliminazione della cache"
 
-#: admin/pages/AHSC_Settings.php:171
+#: admin/pages/AHSC_Settings.php:165
 msgid ""
 "Cache Warming is the process through which webpages are preloaded in the "
 "cache so they can be displayed quicker.<br> When the cache is emptied, the "
@@ -158,39 +167,85 @@ msgstr ""
 "gli ultimi dieci post del sito vengono rinnovati automaticamente per "
 "garantire un caricamento più rapido della pagina"
 
-#: admin/pages/AHSC_Settings.php:164
+#: admin/pages/AHSC_Settings.php:158
 msgid "Cache Warming options"
 msgstr "Opzioni Cache Warming"
 
-#: admin/pages/AHSC_Settings.php:156
+#: admin/pages/AHSC_Settings.php:150
 msgid "Cache Warming:"
 msgstr "Cache Warming:"
 
-#: admin/pages/AHSC_Settings.php:134
+#: admin/pages/AHSC_Settings.php:128
 msgid "Comments"
 msgstr "Commenti"
 
-#: src/AHSC_Functions.php:96
+#: src/AHSC_Functions.php:105
 msgid "Customer support"
 msgstr "Servizio Clienti"
 
-#: admin/pages/AHSC_Settings.php:42
+#: admin/pages/AHSC_Settings.php:263
+msgid ""
+"DNS Prefetch and Preconnect are used to reduce the time to establish a "
+"connection to external resources, like CSS, fonts, js from some third-party "
+"domain."
+msgstr ""
+"DNS Prefetch e Preconnect vengono utilizzati per ridurre il tempo necessario "
+"per stabilire una connessione a risorse esterne, come CSS, font, js da "
+"alcuni domini di terze parti."
+
+#: admin/pages/AHSC_Settings.php:272
+msgid "DNS Prefetch and Preconnect domain list."
+msgstr "Elenco domini per DNS prefetch e DNS Preconnect."
+
+#: admin/pages/AHSC_Settings.php:258 admin/pages/AHSC_Settings.php:262
+msgid "DNS Prefetch and Preconnect for external domain resources"
+msgstr " DNS Prefetch and Preconnect  per risorse di dominio esterne"
+
+#: admin/pages/AHSC_Settings.php:252
+msgid "DNS Prefetch and Preconnect:"
+msgstr "DNS Prefetch and Preconnect:"
+
+#: admin/pages/AHSC_Settings.php:41
 msgid "Enable automatic purge of the cache"
 msgstr "Abilita lo svuotamento automatico della cache"
 
-#: admin/pages/AHSC_Settings.php:193
-msgid "Enable cache for static file such image file, css file js file etc.etc."
+#: admin/pages/AHSC_Settings.php:185
+#| msgid ""
+#| "Enable cache for static file such image file, css file js file etc.etc."
+msgid ""
+"Enable cache for static file on browser such image file, css file js file "
+"etc.etc."
 msgstr ""
 "Abilita la cache per file statici come file immagine, file css file js ecc."
-"ecc."
+"ecc. "
 
-#: admin/pages/AHSC_Settings.php:170
+#: admin/pages/AHSC_Settings.php:222
+msgid "Enable HTML code optimization"
+msgstr "Arriva Ottimizzazione HTML"
+
+#: admin/pages/AHSC_Settings.php:203
+msgid "Enable object cache"
+msgstr "Arriva Object cache"
+
+#: admin/pages/AHSC_Settings.php:241
+msgid "Enable optimization of image loading"
+msgstr "Arriva Ottimizzazione caricamento immagini"
+
+#: admin/pages/AHSC_Settings.php:164
 msgid "Enables Cache Warming."
 msgstr "Abilita Cache Warming"
 
-#: admin/pages/AHSC_Settings.php:192
-msgid "Enables Static File Cache."
-msgstr "Abilita la cache dei file statici."
+#: admin/pages/AHSC_Settings.php:294
+msgid ""
+"Enhance the protection of your website from cyber attacks by disabling the "
+"XML-RPC function that allows data transfer."
+msgstr ""
+"Migliora la protezione del tuo sito web dagli attacchi informatici "
+"disabilitando la funzione XML-RPC che consente il trasferimento dei dati"
+
+#: aruba-hispeed-cache.php:177
+msgid "Expired transient purged."
+msgstr "Eliminazione temporanea scaduta."
 
 #: admin/pages/views/partials/admin-tab-debug.php:24
 msgid ""
@@ -200,7 +255,7 @@ msgstr ""
 "File non trovato. Il file di registro non viene creato o viene rimosso "
 "automaticamente se la funzionalità di debug di WordPress non è abilitata."
 
-#: admin/pages/AHSC_Settings.php:60
+#: admin/pages/AHSC_Settings.php:58
 msgid "Home page:"
 msgstr "Pagina iniziale:"
 
@@ -212,11 +267,42 @@ msgstr "https://hosting.aruba.it/wordpress.aspx"
 msgid "https://www.aruba.it/"
 msgstr "https://www.aruba.it/"
 
-#: admin/pages/AHSC_Settings.php:82
+#: admin/pages/AHSC_Settings.php:242
+msgid ""
+"Improve page loading times using Lazy Load (asynchronous loading) of images."
+msgstr ""
+"Migliora i tempi di caricamento delle pagine utilizzando Lazy Load "
+"(caricamento asincrono) delle immagini."
+
+#: admin/pages/AHSC_Settings.php:273
+msgid ""
+"Insert one external domain per line, for example \"https://dominioesterno."
+"it\""
+msgstr ""
+"Inserisci un dominio esterno per riga, ad esempio \"https://dominioesterno."
+"it\""
+
+#: admin/pages/AHSC_Settings.php:199
+msgid "Object cache"
+msgstr "Object cache"
+
+#: admin/pages/AHSC_Settings.php:212 admin/pages/AHSC_Settings.php:218
+msgid "Optimize HTML code"
+msgstr "Ottimizza codice HTML"
+
+#: admin/pages/AHSC_Settings.php:231 admin/pages/AHSC_Settings.php:237
+msgid "Optimize image loading"
+msgstr "Ottimizza caricamento immagini"
+
+#: admin/pages/AHSC_Settings.php:184
+msgid "Optimize static file cache on browser."
+msgstr "Ottimizza la cache dei file statici sul browser."
+
+#: admin/pages/AHSC_Settings.php:78
 msgid "Post/page/custom post:"
 msgstr "Post/pagina/post personalizzato:"
 
-#: admin/AHSC_Admin_Bar.php:12
+#: admin/AHSC_Admin_Bar.php:34 admin/AHSC_Admin_Bar.php:102
 msgid "Purge Cache"
 msgstr "Cancella cache"
 
@@ -224,7 +310,11 @@ msgstr "Cancella cache"
 msgid "Purge entire cache"
 msgstr "Elimina l'intera cache"
 
-#: admin/AHSC_Admin_Bar.php:7
+#: admin/AHSC_Admin_Bar.php:57 admin/AHSC_Admin_Bar.php:59
+msgid "Purge Expired Transient"
+msgstr "Elimina transient scaduto"
+
+#: admin/AHSC_Admin_Bar.php:29 admin/AHSC_Admin_Bar.php:99
 #| msgid "Purge the page cache"
 msgid "Purge page cache"
 msgstr "Cancella la cache della pagina"
@@ -232,6 +322,22 @@ msgstr "Cancella la cache della pagina"
 #: admin/pages/views/partials/admin-tab-debug.php:15
 msgid "Purging Log Actions"
 msgstr "Registro azioni di pulizia"
+
+#: admin/pages/AHSC_Settings.php:223
+msgid "Reduce the dimensions of the HTML page for faster loading times."
+msgstr ""
+"Riduci le dimensioni della pagina HTML per tempi di caricamento più rapidi."
+
+#: admin/pages/AHSC_Settings.php:204
+msgid ""
+"Reduces the number of queries made to the database and the related execution "
+"times for processing the queries necessary to display the pages, improving "
+"site loading performance via APCu."
+msgstr ""
+"Riduce il numero di query effettuate al database ed i relativi tempi di "
+"esecuzione per l'elaborazione delle query necessarie alla visualizzazione "
+"delle pagine, migliorando le prestazioni di caricamento del sito tramite "
+"APCu."
 
 #: admin/pages/views/admin-settings.php:31
 msgid "Save changes"
@@ -241,11 +347,11 @@ msgstr "Salva modifiche"
 msgid "Service check request headers."
 msgstr "Intestazioni delle richieste di controllo del servizio."
 
-#: src/AHSC_Functions.php:90
+#: src/AHSC_Functions.php:99
 msgid "Settings"
 msgstr "Impostazioni"
 
-#: src/AHSC_Functions.php:139
+#: src/AHSC_Functions.php:163
 msgid "Settings saved."
 msgstr "Impostazioni salvate."
 
@@ -255,10 +361,18 @@ msgid "Sorry, you need to be an administrator to use HiSpeed Cache."
 msgstr ""
 "Ci dispiace, ma devi essere un amministratore per usare Aruba HiSpeed Cache."
 
-#: admin/pages/AHSC_Settings.php:187
+#: admin/pages/AHSC_Settings.php:180
 msgid "Static File Cache options"
 msgstr "Opzioni della cache dei file statici"
 
-#: admin/pages/AHSC_Settings.php:180
+#: admin/pages/AHSC_Settings.php:174
 msgid "Static File Cache:"
 msgstr "Cache file statici:"
+
+#: admin/pages/AHSC_Settings.php:289 admin/pages/AHSC_Settings.php:293
+msgid "XML-RPC"
+msgstr "XML-RPC"
+
+#: admin/pages/AHSC_Settings.php:283
+msgid "XML-RPC Status:"
+msgstr "Stato XML-RPC:"

@@ -169,6 +169,31 @@ if ( ! \function_exists( 'ahsc_save_options' ) ) {
 }
 
 
+if ( ! \function_exists( 'ahsc_reset_options' ) ) {
+	/**
+	 * Reset plugin options
+	 *
+	 * @return void
+	 */
+	function ahsc_reset_options(  ) {
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] ) {
+			if ( isset( $_POST['ahsc_reset_save'] ) && isset( $_POST['ahs-settings-nonce'] ) && \wp_verify_nonce( \sanitize_key( \wp_unslash( $_POST['ahs-settings-nonce'] ) ), 'ahs-save-settings-nonce' ) ) {
+				$new_options = array();
+
+				foreach ( array_keys( AHSC_OPTIONS_LIST_DEFAULT ) as $opt_key ) {
+					$new_options[ $opt_key ] = AHSC_OPTIONS_LIST_DEFAULT[$opt_key]['default'];
+				}
+
+				if ( \update_site_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $new_options ) ) {
+					$content = \esc_html( __('Reset to default.', 'aruba-hispeed-cache') );
+					AHSC_Notice_Render('ahs_settings_saved', 'success',$content);
+				}
+			}
+		}
+	}
+}
+
+
 if ( ! \function_exists( 'ahsc_has_transient' ) ) {
 
 	/**
@@ -178,8 +203,12 @@ if ( ! \function_exists( 'ahsc_has_transient' ) ) {
 	 * @return mixed
 	 */
 	function ahsc_has_transient( $transient ) {
+		$temp=$GLOBALS['_wp_using_ext_object_cache'];
+		$GLOBALS['_wp_using_ext_object_cache'] = false;
 		$transient_value = ( \is_multisite() ) ? \get_site_transient( (string) $transient ) : \get_transient( (string) $transient );
-		return ( false !== $transient_value ) ? $transient_value : false;
+		$_value=( false !== $transient_value ) ? $transient_value : false;;
+		$GLOBALS['_wp_using_ext_object_cache'] = $temp;
+		return $_value;
 	}
 }
 
@@ -194,9 +223,13 @@ if ( ! \function_exists( 'ahsc_set_transient' ) ) {
 	 * @return bool
 	 */
 	function ahsc_set_transient( $transient, $value, $expiration = 0 ) {
-		return ( \is_multisite() ) ?
+		$temp=$GLOBALS['_wp_using_ext_object_cache'];
+		$GLOBALS['_wp_using_ext_object_cache'] = false;
+		$_value=( \is_multisite() ) ?
 			\set_site_transient( $transient, $value, $expiration ) :
 			\set_transient( $transient, $value, $expiration );
+		$GLOBALS['_wp_using_ext_object_cache'] = $temp;
+		return $_value;
 	}
 }
 
@@ -209,13 +242,17 @@ if ( ! \function_exists( 'ahsc_delete_transient' ) ) {
 	 * @return bool
 	 */
 	function ahsc_delete_transient( $transient ) {
+		$temp=$GLOBALS['_wp_using_ext_object_cache'];
+		$GLOBALS['_wp_using_ext_object_cache'] = false;
 		if(class_exists('ArubaSPA\HiSpeedCache\Debug\Logger')) {
 			AHSC_log( 'hook::transient::delete', __NAMESPACE__ . '::' . __FUNCTION__, 'debug' );
 			// Logger.
 		}
-		return ( \is_multisite() ) ?
+		$_value=( \is_multisite() ) ?
 			\delete_site_transient( $transient ) :
 			\delete_transient( $transient );
+		$GLOBALS['_wp_using_ext_object_cache'] = $temp;
+		return $_value;
 	}
 }
 

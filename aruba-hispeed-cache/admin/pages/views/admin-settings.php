@@ -30,6 +30,9 @@
 							<?php
 							\submit_button( __( 'Save changes', 'aruba-hispeed-cache' ), 'primary', 'ahsc_settings_save', false, array( 'form' => 'ahsc-settings-form' ) );
 							?>
+	                        <?php
+	                        \submit_button( __( 'Reset default value', 'aruba-hispeed-cache' ), 'primary', 'ahsc_reset_save', false, array( 'form' => 'ahsc-settings-form' ) );
+	                        ?>
                             <a id="purgeall" href="#" class="button button-secondary"> <?php  echo \esc_html( __('Purge entire cache', 'aruba-hispeed-cache') ); ?></a>
                         </td>
                     </tr>

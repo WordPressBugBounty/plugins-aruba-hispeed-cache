@@ -31,3 +31,16 @@ if ( false !== $log_content ) {
 <textarea cols="30" rows="15" style="width: 100%;" readonly>
 <?php echo esc_html( debugger() ); ?>
 </textarea>
+
+<?php
+if( isset( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_apc'] ) &&
+    AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_apc'] ){
+?>
+<h2 class="ahsc-title "><?php esc_html_e( 'APC STATS', 'aruba-hispeed-cache' ); ?></h2>
+<?php
+global $wp_object_cache;
+$wp_object_cache->stats();
+?>
+<?php
+}
+?>

@@ -172,12 +172,15 @@ if ( ! \class_exists( __NAMESPACE__ . 'WpPurger' ) ) {
 
 
 			if ( $cache_warmer ) {
-				$do_warmer             = ahsc_has_transient( 'ahsc_do_cache_warmer' );
+				$do_warmer=get_option('ahsc_do_cache_warmer',false);
+				//$do_warmer             = ahsc_has_transient( 'ahsc_do_cache_warmer' );
 				$do_warmer_log_message = 'Transint warmer present';
 
 				if ( ! $do_warmer ) {
-					$do_warmer_log_message = 'Transint warmer non presente presente lo imposto';
-					ahsc_set_transient( 'ahsc_do_cache_warmer', \time(), MINUTE_IN_SECONDS );
+					$do_warmer_log_message = 'Transint warmer non presente presente lo imposto : ';
+					update_option('ahsc_do_cache_warmer',true);
+					//$_r=ahsc_set_transient( 'ahsc_do_cache_warmer', \time(), MINUTE_IN_SECONDS );
+					//$do_warmer_log_message.=(string)$_r;
 				}
 				global $logger;
 				if(class_exists('\ArubaSPA\HiSpeedCache\Debug\Logger') ) {
