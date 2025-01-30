@@ -136,4 +136,22 @@
 			jQuery("#ahsc_dns_preconnect_domains").prop("disabled", true);
 		}
 	})
+
+	if(jQuery("#ahsc_cron_status").is(':checked')==true) {
+		jQuery("#ahsc_cron_time").prop("disabled", false);
+	}else{
+		jQuery("#ahsc_cron_time").prop("disabled", true);
+	}
+
+	jQuery("#ahsc_cron_status").on('click',function(){
+
+		if(jQuery(this).is(':checked')==true) {
+			//jQuery("label[for='ahsc_cron_time']").hide();
+			jQuery("#ahsc_cron_time").prop("disabled", false);
+		}else{
+			//jQuery("label[for='ahsc_cron_time']").show();
+			jQuery("#ahsc_cron_time").prop("disabled", true);
+		}
+	})
+
 })();

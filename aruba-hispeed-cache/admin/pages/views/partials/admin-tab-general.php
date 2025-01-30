@@ -69,7 +69,43 @@ foreach ( $this->fields['sections']['general'] as $sections_key => $sections ) :
                                 //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
 								echo ( isset( $this->fields[ $filedkey ]['legend'] ) ) ? esc_html( __( $this->fields[ $filedkey ]['legend'] ,'aruba-hispeed-cache')) : '';
 								?></small>
-                         <?php }elseif($this->fields[ $filedkey ]['type']==="textarea"){
+                         <?php }elseif($this->fields[ $filedkey ]['type']==="select"){?>
+
+                            <label
+                                    for="<?php echo esc_html( $this->fields[ $filedkey ]['id'] ); ?>" >
+                              <div >
+								<?php
+								// phpcs:disable
+								_e( $this->fields[ $filedkey ]['name'] );
+								// phpcs:enable
+                               // var_dump(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_cron_time']);
+                                $c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
+                                if(isset($c_opt[$this->fields[ $filedkey ]['id']])) {
+	                                $c_val = $c_opt[ $this->fields[ $filedkey ]['id'] ];
+                                }else{
+                                    $c_val=0;
+                                }
+								?>
+                                </div>
+                                    <select
+                                            name="<?php echo esc_html( $this->fields[ $filedkey ]['id'] ); ?>"
+                                            id="<?php echo esc_html( $this->fields[ $filedkey ]['id'] ); ?>">
+                                        <?php
+                                         foreach($this->fields[ $filedkey ]['options'] as $id=>$value){
+	                                         ?>
+                                             <option <?php echo (isset(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS'][$this->fields[ $filedkey ]['id']]) && ($c_val===$value)?'selected="true"':'' )?> id="<?php echo $id?>" value="<?php echo $value?>"><?php echo $id?> <?php echo esc_html( __( 'Minuts' ,'aruba-hispeed-cache')) ?> </option>
+                                                 <?PHP
+                                         }
+                                        ?>
+                                    </select>
+                                <small><?php
+		                            //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
+		                            echo ( isset( $this->fields[ $filedkey ]['legend'] ) ) ? esc_html( __( $this->fields[ $filedkey ]['legend'] ,'aruba-hispeed-cache')) : '';
+		                            ?></small>
+                            </label>
+
+
+                                <?PHP }elseif($this->fields[ $filedkey ]['type']==="textarea"){
 
                                ?>
                                 <div id="<?php echo esc_html($this->fields[ $filedkey ]['id']."_contenitor") ?>"  disabled="true" style="padding-top:10px;padding-bottom:10px">

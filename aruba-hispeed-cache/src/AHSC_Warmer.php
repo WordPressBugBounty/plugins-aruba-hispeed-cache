@@ -143,7 +143,7 @@ function ahsc_cache_warmer_ajax_action() {
 			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
 
 			//curl_setopt( $ch, CURLOPT_HTTPHEADER, array( "User-Agent: arubacache" ) );
-			curl_setopt( $ch, CURLOPT_USERAGENT, "arubacache" );
+			curl_setopt( $ch, CURLOPT_USERAGENT,  "arubacache" );
 			curl_setopt( $ch, CURLOPT_HTTPHEADER, array( "accept-encoding: gzip, deflate, br, zstd" ) );
 			try {
 				curl_exec( $ch );

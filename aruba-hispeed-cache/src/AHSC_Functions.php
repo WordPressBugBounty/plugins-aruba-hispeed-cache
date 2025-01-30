@@ -139,12 +139,34 @@ if ( ! \function_exists( 'ahsc_save_options' ) ) {
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 			if ( isset( $_POST['ahsc_settings_save'] ) && isset( $_POST['ahs-settings-nonce'] ) && \wp_verify_nonce( \sanitize_key( \wp_unslash( $_POST['ahs-settings-nonce'] ) ), 'ahs-save-settings-nonce' ) ) {
 				$new_options = array();
-
+				//var_dump(ABSPATH . 'wp-config.php');
+				$wpc_transformer = new HASC_WPCT(  ABSPATH . 'wp-config.php' );
 				foreach ( array_keys( AHSC_OPTIONS_LIST ) as $opt_key ) {
-					if($opt_key!=="ahsc_dns_preconnect_domains"){
-					  $new_options[ $opt_key ] = ( isset( $_POST[ $opt_key ] ) ) ? true : false;
-					}else{
+					if($opt_key==="ahsc_cron_status"  ){
 
+							if(isset($_POST[ $opt_key ])){
+								//var_dump("non disabilito cron ");
+								$wpc_transformer->update( 'constant', 'DISABLE_WP_CRON', 'false', array( 'raw' => true, 'normalize' => true ));
+								$new_options[ $opt_key ]= 'false';
+							}else{
+								//var_dump("disabilito cron ");
+								$wpc_transformer->update( 'constant', 'DISABLE_WP_CRON', 'true', array( 'raw' => true, 'normalize' => true ));
+								$new_options[ $opt_key ]= 'true';
+							}
+
+					}elseif($opt_key==="ahsc_cron_time"){
+
+						if(isset($_POST[ $opt_key ])){
+							//var_dump("setto time ");
+							$wpc_transformer->update( 'constant', 'WP_CRON_LOCK_TIMEOUT', "'".absint($_POST[ $opt_key ])."'", array( 'raw' => true, 'normalize' => true ));
+							$new_options[ $opt_key ]= $_POST[ $opt_key ];
+						}else{
+							//var_dump("non setto time ");
+							$wpc_transformer->remove('constant', 'WP_CRON_LOCK_TIMEOUT');
+						}
+					}elseif($opt_key!=="ahsc_dns_preconnect_domains"){
+						$new_options[ $opt_key ] = ( isset( $_POST[ $opt_key ] ) ) ? true : false; 
+					}else{
 						if(isset( $_POST[ $opt_key ] ) ){
 							$trans_domain_list = explode( "\n", trim( $_POST[ $opt_key ] ) );
 							foreach ( $trans_domain_list as $index => $string ) {
@@ -183,6 +205,13 @@ if ( ! \function_exists( 'ahsc_reset_options' ) ) {
 				foreach ( array_keys( AHSC_OPTIONS_LIST_DEFAULT ) as $opt_key ) {
 					$new_options[ $opt_key ] = AHSC_OPTIONS_LIST_DEFAULT[$opt_key]['default'];
 				}
+				    $wpc_transformer = new HASC_WPCT(  ABSPATH . 'wp-config.php' );
+
+					//	var_dump("setto a ".!is_null($_POST[ $opt_key ])?"true":"false");
+					$val=!isset($new_options[ 'ahsc_cron_status' ])?"true":"false";
+					$wpc_transformer->update( 'constant', 'DISABLE_WP_CRON', $val, array( 'raw' => true, 'normalize' => true ));
+					$wpc_transformer->update( 'constant', 'WP_CRON_LOCK_TIMEOUT', "'".absint($new_options[ 'ahsc_cron_time' ])."'", array( 'raw' => true, 'normalize' => true ));
+
 
 				if ( \update_site_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $new_options ) ) {
 					$content = \esc_html( __('Reset to default.', 'aruba-hispeed-cache') );

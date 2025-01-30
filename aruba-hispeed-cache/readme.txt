@@ -3,7 +3,7 @@
 Contributors: arubait, arubadev, arubasupport
 Tags: Aruba, cache, performance, pagespeed, optimize
 Tested up to: 6.7
-Stable tag: 2.0.23
+Stable tag: 2.0.24
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -67,6 +67,10 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 2. General Settings Enabled
 
 == Changelog ==
+
+= 2.0.24 =
+* Manage WP_CRON Timeout.
+* Various minor bug fixes.
 
 = 2.0.23 =
 * Fix UserAgent for cache warming.
@@ -209,5 +213,6 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 
 == Upgrade Notice ==
 
-= 2.0.23 =
-* Fix UserAgent for cache warming.
+= 2.0.24 =
+* Manage WP_CRON Timeout.
+* Various minor bug fixes.

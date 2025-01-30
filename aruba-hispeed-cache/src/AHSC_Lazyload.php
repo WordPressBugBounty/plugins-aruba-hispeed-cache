@@ -58,14 +58,14 @@ function ahsc_wp_filter_content_tags( $content, $context = null ) {
 				$images[ $image ] = $attachment_id;
 				continue;
 			}
-		}elseif ( preg_match( '/< *img[^>]*src *= *["\']?([^"\']*)/i', $image, $class_id ) ){
+		}/*elseif ( preg_match( '/< *img[^>]*src *= *["\']?([^"\']*)/i', $image, $class_id ) ){
 				$images[ $image ] = attachment_url_to_postid($class_id[1]);
 
-		}else {
+		}*/else {
 			$images[ $image ] = 0;
 		}
 	}
-
+//var_dump($images);
 	$attachment_ids = array_unique( array_filter( array_values( $images ) ) );
 	if ( count( $attachment_ids ) > 1 ) {
 		_prime_post_caches( $attachment_ids, false, true );
