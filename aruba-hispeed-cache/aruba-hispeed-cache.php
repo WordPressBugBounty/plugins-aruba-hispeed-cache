@@ -13,7 +13,7 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Aruba HiSpeed Cache
- * Version:           2.0.24
+ * Version:           3.0.0
  * Plugin URI:        https://hosting.aruba.it/wordpress.aspx
  *
  * @phpcs:ignore Generic.Files.LineLength.TooLong
@@ -23,7 +23,7 @@
  * Text Domain:       aruba-hispeed-cache
  * Domain Path:       /languages
  * License:           GPL v3
- * Tested up to:      6.7
+ * Tested up to:      6.8
  * Requires PHP:      5.6
  * Requires at least: 5.4
  * This program is free software: you can redistribute it and/or modify
@@ -41,6 +41,11 @@
  *
  * @package ArubaHispeedCache
  */
+
+//declare compliance with consent level API
+$plugin = plugin_basename( __FILE__ );
+add_filter( "wp_consent_api_registered_{$plugin}", '__return_true' );
+
 function AHSC_get_version() {
 	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	// Prevent early translation call by setting $translate to false.
@@ -73,7 +78,10 @@ include_once "src/assets/AHSC_WPCT.php";
 /** plugin general functions*/
 include_once "src/AHSC_Functions.php";
 /** apc*/
-//include_once "src/AHSC_Apc.php";
+include_once "src/AHSC_Apc.php";
+/** DB OPTIMIZATION*/
+include_once "src/AHSC_Dboptimization.php";
+
 /** plugin controllo per check services*/
 include_once "src/AHSC_Check.php";
 /** class for function purger*/
@@ -92,35 +100,44 @@ include_once "src/Events/AHSC_PostType.php";
 include_once "src/Events/AHSC_Terms.php";
 include_once "src/Events/AHSC_Themes.php";
 
+/*
+$options = AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS'];
+	$options = array_map(
+		function( $opt ) {
+			return $opt['default'];
+		},
+		AHSC_OPTIONS_LIST_DEFAULT
+	);
 
-
+\update_site_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] , $options );
+*/
 
 
 /** check WordPress and php version */
-AHSC_check_requirement();
+//AHSC_check_requirement();
 
 /**
  * Adding methods to "activate" hooks
  */
-\register_activation_hook(__FILE__,	'AHSC_activation' );
+//register_activation_hook(__FILE__,	'AHSC_activation' );
 
 /**
  * Adding methods to "deactivate" hooks
  */
-\register_deactivation_hook(__FILE__,'AHSC_deactivation');
+register_deactivation_hook(__FILE__,'AHSC_deactivation');
 
-\add_action( 'activated_plugin',  'check_hispeed_cache_services' , 20, 1 );
+//\add_action( 'activated_plugin',  'check_hispeed_cache_services' , 20, 1 );
 /**
  * Adding methods for link in plugins page
  */
 if ( \is_multisite() ) {
-	\add_filter( 'network_admin_plugin_action_links_'.AHSC_CONSTANT['ARUBA_HISPEED_CACHE_BASENAME'], 'AHSC_plugin_action_links'  );
+	add_filter( 'network_admin_plugin_action_links_'.AHSC_CONSTANT['ARUBA_HISPEED_CACHE_BASENAME'], 'AHSC_plugin_action_links'  );
 } else {
-	\add_filter( 'plugin_action_links_' .AHSC_CONSTANT['ARUBA_HISPEED_CACHE_BASENAME'],'AHSC_plugin_action_links'  );
+	add_filter( 'plugin_action_links_' .AHSC_CONSTANT['ARUBA_HISPEED_CACHE_BASENAME'],'AHSC_plugin_action_links'  );
 }
 
 if ( AHSC_REQUIREMENTS['is_legacy_post_61'] ) {
-	\add_filter( 'site_status_page_cache_supported_cache_headers','add_supported_cache_headers', 100, 1 );
+	add_filter( 'site_status_page_cache_supported_cache_headers','add_supported_cache_headers', 100, 1 );
 }
 
 
@@ -192,12 +209,12 @@ add_action('init','AHSC_script_nit');
 function AHSC_script_nit() {
 	if ( current_user_can( 'manage_options' ) ) {
         if ( is_admin_bar_showing() ) {
-            \add_action( 'wp_after_admin_bar_render',  'ahsc_adminbar_inline_style' , 100 );
-            \add_action( 'wp_enqueue_scripts',  'ahsc_enqueue_toolbar_js'  );
-            \add_action( 'wp_enqueue_scripts',  'AHSC_localize_toolbar_js'  );
+            add_action( 'wp_after_admin_bar_render',  'ahsc_adminbar_inline_style' , 100 );
+            add_action( 'wp_enqueue_scripts',  'ahsc_enqueue_toolbar_js'  );
+            add_action( 'wp_enqueue_scripts',  'AHSC_localize_toolbar_js'  );
             if(is_admin()){
-                \add_action( 'admin_enqueue_scripts',  'ahsc_enqueue_toolbar_js'  );
-                \add_action( 'admin_enqueue_scripts', 'AHSC_localize_toolbar_js'  );
+                add_action( 'admin_enqueue_scripts',  'ahsc_enqueue_toolbar_js'  );
+                add_action( 'admin_enqueue_scripts', 'AHSC_localize_toolbar_js'  );
             }
         }
 	}
@@ -211,7 +228,7 @@ function AHSC_gutemberg_scripts() {
             'ahsc_topurge'  => 'all',
             'ahsc_nonce'    => \wp_create_nonce( 'ahsc-purge-cache' ),
         );
-        \wp_add_inline_script( 'AHSC-gutenberg-editor-js-purge', 'const AHSC_TOOLBAR = ' . \wp_json_encode( $js_param ), 'before' );
+        wp_add_inline_script( 'AHSC-gutenberg-editor-js-purge', 'const AHSC_TOOLBAR = ' . \wp_json_encode( $js_param ), 'before' );
 
         wp_enqueue_script(
             'AHSC-gutenberg-editor-js-purge',
@@ -248,7 +265,7 @@ function ahsc_adminbar_inline_style() {
 				z-index: 9998;
 			}";
 
-	\printf(
+	printf(
 		'<style type="text/css">
 				%1$s
 				%2$s
@@ -265,7 +282,7 @@ function ahsc_adminbar_inline_style() {
  */
  function ahsc_enqueue_toolbar_js() {
 
-	\wp_enqueue_script(
+	wp_enqueue_script(
 		'ahcs-toolbar',
 		AHSC_CONSTANT['ARUBA_HISPEED_CACHE_BASEURL'] . '/assets/js/toolbar.js',
 		array(),
@@ -279,6 +296,7 @@ function ahsc_adminbar_inline_style() {
 
 add_action( 'wp_ajax_ahcs_clear_cache',  'ahsc_tool_bar_purge' , 100 );
 
+
 /**
  * Medoto connected to WP's ajax handler to handle calls to cleaning APIs.
  *
@@ -289,7 +307,7 @@ add_action( 'wp_ajax_ahcs_clear_cache',  'ahsc_tool_bar_purge' , 100 );
 function ahsc_tool_bar_purge() {
 if(is_user_logged_in() && current_user_can( 'manage_options' ) && isset( $_POST['ahsc_nonce'] )){
 
-	if ( ! \wp_verify_nonce( \sanitize_text_field( \wp_unslash( $_POST['ahsc_nonce'] ) ), 'ahsc-purge-cache' ) ) {
+	if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ahsc_nonce'] ) ), 'ahsc-purge-cache' ) ) {
 		wp_die( wp_json_encode( AHSC_AJAX['security_error'] ) );
 	}else{
 
@@ -297,7 +315,7 @@ if(is_user_logged_in() && current_user_can( 'manage_options' ) && isset( $_POST[
 	$cleaner->setPurger( AHSC_PURGER );
 
 	if ( isset( $_POST['ahsc_to_purge'] ) ) {
-		$to_purge = \urldecode( \wp_unslash( $_POST['ahsc_to_purge'] ) ); // @phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$to_purge = urldecode( wp_unslash( $_POST['ahsc_to_purge'] ) ); // @phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		if ( 'all' === $to_purge ) {
 			$cleaner->purgeAll();
@@ -315,7 +333,6 @@ if(is_user_logged_in() && current_user_can( 'manage_options' ) && isset( $_POST[
 }
 }
 
-
 add_action( 'wp_ajax_ahsc_clear_expired_transient',  'ahsc_clear_expired_transient' , 100 );
 function ahsc_clear_expired_transient(){
 	if(is_user_logged_in() && current_user_can( 'manage_options' ) && isset( $_POST['ahsc_nonce'] )) {
@@ -323,6 +340,11 @@ function ahsc_clear_expired_transient(){
 			wp_die( wp_json_encode( AHSC_TRANSIENT_AJAX['security_error'] ) );
 		} else {
 			delete_expired_transients( true );
+			if(class_exists('\ArubaSPA\HiSpeedCache\Debug\Logger')) {
+				// Logger.
+				AHSC_log( 'ALL', 'Clear Expired Transient' );
+				// Logger.
+			}
 			wp_die( wp_json_encode( AHSC_TRANSIENT_AJAX['success']) );
 		}
 	}else{
@@ -345,4 +367,277 @@ if(is_multisite()){
 	if ( ! \is_null( $check ) ) {
 		echo $check; //@phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
+}
+
+
+add_action("wp_ajax_ahsc_enable_purge", "ahsc_ajax_enable_purge");
+add_action("wp_ajax_nopriv_ahsc_enable_purge", "ahsc_ajax_enable_purge");
+function ahsc_ajax_enable_purge(){
+	$result=array();
+
+	$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
+	$c_opt['ahsc_enable_purge']=($_REQUEST['status']==="true")?true:false;
+	$_res=update_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt);
+	$result['result']= $_res;
+	$result = json_encode($result);
+	echo $result;
+	die();
+}
+
+add_action("wp_ajax_ahsc_purge_homepage_on_edit", "ahsc_ajax_purge_homepage_on_edit");
+add_action("wp_ajax_nopriv_ahsc_purge_homepage_on_edit", "ahsc_ajax_purge_homepage_on_edit");
+function ahsc_ajax_purge_homepage_on_edit(){
+	$result=array();
+
+	$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
+	$c_opt['ahsc_purge_homepage_on_edit']=($_REQUEST['status']==="true")?true:false;
+	$_res=update_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt);
+	$result['result']= $_res;
+	$result = json_encode($result);
+	echo $result;
+	die();
+}
+
+
+add_action("wp_ajax_ahsc_purge_page_on_new_comment", "ahsc_ajax_purge_page_on_new_comment");
+add_action("wp_ajax_nopriv_ahsc_purge_page_on_new_comment", "ahsc_ajax_purge_page_on_new_comment");
+function ahsc_ajax_purge_page_on_new_comment(){
+	$result=array();
+
+	$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
+	$c_opt['ahsc_purge_page_on_new_comment']=($_REQUEST['status']==="true")?true:false;
+	$_res=update_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt);
+	$result['result']= $_res;
+	$result = json_encode($result);
+	echo $result;
+	die();
+}
+//ahsc_purge_archive_on_edit
+add_action("wp_ajax_ahsc_purge_archive_on_edit", "ahsc_ajax_purge_archive_on_edit");
+add_action("wp_ajax_nopriv_ahsc_purge_archive_on_edit", "ahsc_ajax_purge_archive_on_edit");
+function ahsc_ajax_purge_archive_on_edit(){
+	$result=array();
+
+	$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
+	$c_opt['ahsc_purge_archive_on_edit']=($_REQUEST['status']==="true")?true:false;
+	$_res=update_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt);
+	$result['result']= $_res;
+	$result = json_encode($result);
+	echo $result;
+	die();
+}
+
+//ahsc_cache_warmer
+add_action("wp_ajax_ahsc_cache_warmer", "ahsc_ajax_cache_warmer");
+add_action("wp_ajax_nopriv_ahsc_cache_warmer", "ahsc_ajax_cache_warmer");
+function ahsc_ajax_cache_warmer(){
+	$result=array();
+
+	$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
+	$c_opt['ahsc_cache_warmer']=($_REQUEST['status']==="true")?true:false;
+	$_res=update_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt);
+	$result['result']= $_res;
+	$result = json_encode($result);
+	echo $result;
+	die();
+}
+
+//ahsc_static_cache
+add_action("wp_ajax_ahsc_static_cache", "ahsc_ajax_static_cache");
+add_action("wp_ajax_nopriv_ahsc_static_cache", "ahsc_ajax_static_cache");
+function ahsc_ajax_static_cache(){
+	$result=array();
+
+	$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
+	$c_opt['ahsc_static_cache']=($_REQUEST['status']==="true")?true:false;
+	$_res=update_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt);
+	$result['result']= $_res;
+	$result = json_encode($result);
+	echo $result;
+	die();
+}
+//ahsc_lazy_load
+add_action("wp_ajax_ahsc_lazy_load", "ahsc_ajax_lazy_load");
+add_action("wp_ajax_nopriv_ahsc_lazy_load", "ahsc_ajax_lazy_load");
+function ahsc_ajax_lazy_load(){
+	$result=array();
+	$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
+	$c_opt['ahsc_lazy_load']=($_REQUEST['status']==="true")?true:false;
+	$_res=update_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt);
+	$result['result']= $_res;
+	$result = json_encode($result);
+	echo $result;
+	die();
+}
+//ahsc_html_optimizer
+add_action("wp_ajax_ahsc_html_optimizer", "ahsc_ajax_html_optimizer");
+add_action("wp_ajax_nopriv_ahsc_html_optimizer", "ahsc_ajax_html_optimizer");
+function ahsc_ajax_html_optimizer(){
+	$result=array();
+	$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
+	$c_opt['ahsc_html_optimizer']=($_REQUEST['status']==="true")?true:false;
+	$_res=update_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt);
+	$result['result']= $_res;
+	$result = json_encode($result);
+	echo $result;
+	die();
+}
+//ahsc_dns_preconnect
+add_action("wp_ajax_ahsc_dns_preconnect", "ahsc_ajax_dns_preconnect");
+add_action("wp_ajax_nopriv_ahsc_dns_preconnect", "ahsc_ajax_dns_preconnect");
+function ahsc_ajax_dns_preconnect(){
+	$result=array();
+	$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
+	$c_opt['ahsc_dns_preconnect']=($_REQUEST['status']==="true")?true:false;
+	$_res=update_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt);
+	$result['result']= $_res;
+	$result = json_encode($result);
+	echo $result;
+	die();
+}
+//ahsc_dns_preconnect_domain_list
+add_action("wp_ajax_ahsc_dns_preconnect_domain_list", "ahsc_ajax_dns_preconnect_domain_list");
+add_action("wp_ajax_nopriv_ahsc_dns_preconnect_domain_list", "ahsc_ajax_dns_preconnect_domain_list");
+function ahsc_ajax_dns_preconnect_domain_list(){
+	$result=array();
+	$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
+	$trans_domain_list_string=preg_replace("/<div>(.*?)<\/div>/", "$1;", trim($_REQUEST['list']));
+	$trans_domain_list_string=strip_tags($trans_domain_list_string);
+	$trans_domain_list = array_filter(explode( ";", trim($trans_domain_list_string) ), fn($value) => !is_null($value) && $value !== '');
+	foreach ( $trans_domain_list as $index => $string ) {
+		$_check=parse_url($string);
+
+		if($string!==""){
+			if ( strpos( $string, $_SERVER['SERVER_NAME'] ) !== false ) {
+				unset( $trans_domain_list[ $index ] );
+			}
+			if(!isset($check['path'])) {
+				$string .= '/';
+				$_check=parse_url($string);
+			}
+			if(is_null($_check['scheme'])){
+				$string="https://".$string;
+			}elseif($_check['scheme']==="http"){
+				$string= preg_replace("/^http:/i", "https:", $string);
+					//str_ireplace(array('http://'),'https://',$string);
+			}
+			$trans_domain_list[ $index ]=rtrim(trim(esc_url($string,array( 'https' ))),"/");
+		}
+	}
+	$c_opt['ahsc_dns_preconnect_domains']=$trans_domain_list;
+	$_res=update_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt);
+	$result['result']= $_res;
+	$result = json_encode($result);
+
+	echo $result;
+	die();
+}
+//ahsc_enable_cron
+add_action("wp_ajax_ahsc_enable_cron", "ahsc_ajax_enable_cron");
+add_action("wp_ajax_nopriv_ahsc_enable_cron", "ahsc_ajax_enable_cron");
+function ahsc_ajax_enable_cron(){
+	$result=array();
+	$wpc_transformer = new HASC_WPCT(  ABSPATH . 'wp-config.php' );
+	$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
+	$c_opt['ahsc_enable_cron']=($_REQUEST['status']==="true")?true:false;
+	$_res=update_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt);
+	$result['result']= $_res;
+
+	if($c_opt['ahsc_enable_cron']){
+		//var_dump("non disabilito cron ");
+		$wpc_transformer->remove('constant', 'DISABLE_WP_CRON');
+	}else{
+		//var_dump("disabilito cron ");
+		$wpc_transformer->update( 'constant', 'DISABLE_WP_CRON', 'true', array( 'raw' => true, 'normalize' => true ));
+		$wpc_transformer->remove('constant', 'WP_CRON_LOCK_TIMEOUT');
+	}
+	$result = json_encode($result);
+	echo $result;
+	die();
+}
+//ahsc_cron_status
+add_action("wp_ajax_ahsc_cron_status", "ahsc_ajax_cron_status");
+add_action("wp_ajax_nopriv_ahsc_cron_status", "ahsc_ajax_cron_status");
+function ahsc_ajax_cron_status(){
+	$result=array();
+	$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
+	$c_opt['ahsc_cron_status']=($_REQUEST['status']==="true")?true:false;
+	$c_opt['ahsc_cron_time']= (isset($c_opt['ahsc_cron_time'])?$c_opt['ahsc_cron_time']:AHSC_OPTIONS_LIST_DEFAULT['ahsc_cron_time']['default']);
+	$_res=update_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt);
+	$result['result']= $_res;
+	$result = json_encode($result);
+	echo $result;
+	die();
+}
+//ahsc_cron_time
+add_action("wp_ajax_ahsc_cron_time", "ahsc_ajax_cron_time");
+add_action("wp_ajax_nopriv_ahsc_cron_time", "ahsc_ajax_cron_time");
+function ahsc_ajax_cron_time(){
+	$result=array();
+	$wpc_transformer = new HASC_WPCT(  ABSPATH . 'wp-config.php' );
+	$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
+	$c_opt['ahsc_cron_time']=$_REQUEST['time'];
+	$_res=update_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt);
+	$result['result']= $_res;
+	//var_dump("setto time ");
+	$wpc_transformer->update( 'constant', 'WP_CRON_LOCK_TIMEOUT', "'".absint($c_opt['ahsc_cron_time'])."'", array( 'raw' => true, 'normalize' => true ));
+	$result = json_encode($result);
+	echo $result;
+	die();
+}
+//ahsc_xmlrpc_status
+add_action("wp_ajax_ahsc_xmlrpc_status", "ahsc_ajax_xmlrpc_status");
+add_action("wp_ajax_nopriv_ahsc_xmlrpc_status", "ahsc_ajax_xmlrpc_status");
+function ahsc_ajax_xmlrpc_status(){
+	$result=array();
+	$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
+	$c_opt['ahsc_xmlrpc_status']=$_REQUEST['status'];
+	$_res=update_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt);
+	$result['result']= $_res;
+	$result = json_encode($result);
+	echo $result;
+	die();
+}
+
+//ahsc_reset_options();
+add_action("wp_ajax_ahsc_reset_options", "ahsc_ajax_reset_options");
+add_action("wp_ajax_nopriv_ahsc_reset_options", "ahsc_ajax_reset_options");
+function ahsc_ajax_reset_options(){
+	$result=array();
+	$msg=ahsc_reset_options();
+	$result['message']=$msg;
+	$result['type']='success';
+	$result['action']= wp_kses( __( 'Reload', 'aruba-hispeed-cache' ), array( 'strong' => array() ) );
+	$result = json_encode($result);
+	echo $result;
+	die();
+}
+
+//ahsc_debug_status
+add_action("wp_ajax_ahsc_debug_status", "ahsc_ajax_debug_status");
+add_action("wp_ajax_nopriv_ahsc_debug_status", "ahsc_ajax_debug_status");
+function ahsc_ajax_debug_status(){
+	$result=array();
+	$wpc_transformer = new HASC_WPCT(  ABSPATH . 'wp-config.php' );
+	if ( $wpc_transformer->exists( 'constant', 'WP_DEBUG' ) ) {
+		$result['result']= $wpc_transformer->remove('constant', 'WP_DEBUG');
+	}else{
+		$result['result']= $wpc_transformer->update( 'constant', 'WP_DEBUG', 'true', array( 'raw' => true, 'normalize' => true ));
+	}
+	$result = json_encode($result);
+	echo $result;
+	die();
+}
+
+//ahsc_debug_status
+add_action("wp_ajax_ahsc_dboptimization", "ahsc_ajax_dboptimization_active");
+add_action("wp_ajax_nopriv_ahsc_dboptimization", "ahsc_ajax_dboptimization_active");
+function ahsc_ajax_dboptimization_active(){
+	$result=array();
+	$result['message']='';
+	$result['type']='success';
+	$result['result']= AHSC_DBOPT_manage($_REQUEST['dbstatus']);
+	$result = json_encode($result);
+	echo $result;
+	die();
 }

@@ -29,13 +29,15 @@ function AHSC_set_parameters_to_check(
 	$is_aruba_server,
 	$service_is_active,
 	$service_is_activabile,
-	$service_status = ''
+	$service_status = '',
+	$cdn_status=''
 ) {
 	global $check_parameters;
 	$check_parameters['is_aruba_server']       = $is_aruba_server;
 	$check_parameters['service_is_active' ]    = $service_is_active;
 	$check_parameters['service_is_activabile'] = $service_is_activabile;
 	$check_parameters['service_status']        = $service_status;
+	$check_parameters['cdn_status']            = $cdn_status;
 }
 
 /**
@@ -72,6 +74,12 @@ function AHSC_headers_analizer() {
 
 	}
 
+	if ( is_array($headers) && array_key_exists( 'x-aruba-cdn', $headers ) ) {
+		AHSC_set_parameters_to_check( true, $is_active, $is_activabile, $headers['x-aruba-cache'],$headers['x-aruba-cdn'] );
+	}else{
+		AHSC_set_parameters_to_check( false, false, false, false,false );
+	}
+
 	/**
 	 * If the headers do not contain 'x-aruba-cache'
 	 * we are not on the aruba server.
@@ -91,8 +99,18 @@ function AHSC_headers_analizer() {
 					}else{
 						$_status=UNAVAILABLE;
 					}
+					AHSC_set_parameters_to_check( true, true, true , $_status,false);
 			    }
 				AHSC_set_parameters_to_check( true, true, true , $_status);
+				if ( is_array($headers) && array_key_exists( 'x-aruba-cdn', $headers ) ){
+					if( 'NA' !== $headers['x-aruba-cdn'] ){
+						$cdn_status=$headers['x-aruba-cdn'];
+					}else{
+						$cdn_status=UNAVAILABLE;
+					}
+
+					AHSC_set_parameters_to_check( true, true, true , $_status,$cdn_status);
+				}
 				break;
 			default:
 				AHSC_set_parameters_to_check( false, false, false );
@@ -186,6 +204,7 @@ function AHSC_get_headers() {
 
 	if ( \is_array( $response ) && ! \is_wp_error( $response ) ) {
 		$headers     = $response['headers']->getAll();
+		//var_dump($headers); 
 		$check_status_code = $response['response']['code'];
 
 		return $headers;

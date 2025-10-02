@@ -2,7 +2,8 @@
 global $pagenow,$term_target;
 $nav_purged=false;
 if( 'nav-menus.php' !== $pagenow){
-	if(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_archive_on_del']){
+	//if(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_archive_on_del']){
+	if(is_array(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']) && AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_archive_on_edit']){
 		/**
 		 * Fires when deleting a term, before any modifications are made to posts or terms.
 		 */
@@ -16,7 +17,7 @@ if( 'nav-menus.php' !== $pagenow){
 }
 
 if ( ! ahsc_current_theme_is_fse_theme() && 'nav-menus.php' === $pagenow ) {
-	if(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_archive_on_edit']||
+	if(is_array(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']) && AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_archive_on_edit']||
 	   AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_archive_on_del' ]){
 
 		\add_action( 'wp_update_nav_menu', 'ahsc_update_nav_menu' , 200, 0 );
@@ -24,7 +25,7 @@ if ( ! ahsc_current_theme_is_fse_theme() && 'nav-menus.php' === $pagenow ) {
 }
 
 if( 'nav-menus.php' !== $pagenow) {
-	if ( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_archive_on_edit'] ) {
+	if ( is_array(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']) && AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_archive_on_edit'] ) {
 		\add_action( 'edited_term', 'ahsc_purge_archive_on_edit' , 200, 3 );
 	}
 }

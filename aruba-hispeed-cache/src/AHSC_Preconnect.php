@@ -1,10 +1,10 @@
 <?php
 
-if(isset(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_dns_preconnect']) && AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_dns_preconnect']) {
+if(isset(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_dns_preconnect'])
+   && AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_dns_preconnect']!=="false") {
 
 	function dns_prefetch_to_preconnect( $urls, $relation_type ) {
 		global $wp_scripts, $wp_styles;
-
 		$unique_urls = array();
 
 		foreach ( array( $wp_scripts, $wp_styles ) as $dependencies ) {
@@ -30,6 +30,7 @@ if(isset(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_dns_preconnect']) &&
 							);
 						}
 					}
+
 				}
 			}
 
@@ -56,7 +57,6 @@ if(isset(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_dns_preconnect']) &&
 		if ( 'preconnect' === $relation_type || 'dns-prefetch' === $relation_type) {
 			$urls = $unique_urls;
 		}
-
 		return $urls;
 	}
 	if(!is_admin()){

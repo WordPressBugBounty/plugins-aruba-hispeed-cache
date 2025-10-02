@@ -1,19 +1,23 @@
 <?php
 /** check for controll options delete comment*/
-if(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_page_on_deleted_comment']){
+/*if(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_page_on_deleted_comment']){
 	\add_action( 'deleted_comment', 'ahsc_purge_page_on_deleted_comment' , 200, 2 );
 	\add_action( 'rest_delete_comment',  'ahsc_purge_page_on_deleted_comment_rest' , 200, 3 );
-}
+}*/
 /** check for controll options new comment*/
-if(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_page_on_new_comment']){
+if(is_array(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']) && AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_page_on_new_comment']){
+	\add_action( 'deleted_comment', 'ahsc_purge_page_on_deleted_comment' , 200, 2 );
+	\add_action( 'rest_delete_comment',  'ahsc_purge_page_on_deleted_comment_rest' , 200, 3 );
+
 	\add_action( 'wp_insert_comment', 'ahsc_purge_page_on_new_comment' , 200, 2 );
 	\add_action( 'rest_insert_comment', 'ahsc_purge_page_on_new_comment_rest' , 200, 3 );
+	\add_action( 'transition_comment_status','ahsc_purge_page_on_transition_comment_status' , 200, 3 );
 }
-
+/*
 if(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_page_on_deleted_comment'] ||
    AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_page_on_new_comment']){
 	\add_action( 'transition_comment_status','ahsc_purge_page_on_transition_comment_status' , 200, 3 );
-}
+}*/
 
 /**
  * Issues a call, via the 'WpPurger' class, to the proxy cache cleaner.

@@ -2,7 +2,7 @@
 include "AHSC_Page.php";
 class AHSC_Settings extends \AHSC\Pages\AHSC_Page {
 
-    public $fields;
+    public $fields,$option;
 
 	protected function draw(){
 		global $pagenow;
@@ -12,15 +12,15 @@ class AHSC_Settings extends \AHSC\Pages\AHSC_Page {
 				esc_html__( 'Sorry, you need to be an administrator to use HiSpeed Cache.', 'aruba-hispeed-cache' )
 			);
 		}
-		if(isset( $_POST['ahsc_reset_save'] )){
+		/*if(isset( $_POST['ahsc_reset_save'] )){
 		  ahsc_reset_options();
 		}else{
 		  ahsc_save_options();
-		}
+		}*/
 
 		$this->add_fields();
 
-		include_once AHSC_CONSTANT['ARUBA_HISPEED_CACHE_BASEPATH'] . 'admin' . DIRECTORY_SEPARATOR .'pages'.DIRECTORY_SEPARATOR .'views'.DIRECTORY_SEPARATOR .  'admin-settings.php';
+		include_once AHSC_CONSTANT['ARUBA_HISPEED_CACHE_BASEPATH'] . 'admin' . DIRECTORY_SEPARATOR .'pages'.DIRECTORY_SEPARATOR .'views'.DIRECTORY_SEPARATOR .  'admin-settings-new.php';
 
 	}
 
@@ -34,8 +34,8 @@ class AHSC_Settings extends \AHSC\Pages\AHSC_Page {
 
 		$site_option=get_site_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] );
 
-		$option       = ($site_option)?$site_option: AHSC_OPTIONS_LIST;
-
+		$this->option       = ($site_option)?$site_option: AHSC_OPTIONS_LIST;
+/*
 		$this->fields['sections']['general']['general'] = array(
 			'ids'   => array( 'ahsc_enable_purge' ),
 			'name'  =>wp_kses( __( 'Cache purging options', 'aruba-hispeed-cache' ), array( 'strong' => array() ) ) ,
@@ -47,7 +47,7 @@ class AHSC_Settings extends \AHSC\Pages\AHSC_Page {
 				//\esc_html__( 'Enable automatic purge of the cache', 'aruba-hispeed-cache' ),
 			'type'    => 'checkbox',
 			'id'      => 'ahsc_enable_purge',
-			'checked' => \checked( $option['ahsc_enable_purge'] ?? 0 , true, false ),
+			'checked' => \checked( $this->option['ahsc_enable_purge'] ?? 0 , true, false ),
 		);
 
 		$is_hidden = ! $option['ahsc_enable_purge' ];
@@ -336,7 +336,7 @@ class AHSC_Settings extends \AHSC\Pages\AHSC_Page {
 
 		);
 
-
+*/
 
 
 	}

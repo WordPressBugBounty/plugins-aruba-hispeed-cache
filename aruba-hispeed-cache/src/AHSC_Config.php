@@ -33,14 +33,15 @@ const AHSC_OPTIONS_LIST = array(
 	'ahsc_purge_page_on_deleted_comment' =>  true,
 	'ahsc_cache_warmer' =>true,
 	'ahsc_static_cache'=>true,
-	//'ahsc_apc'=>true,
+	'ahsc_apc'=>false,
 	'ahsc_lazy_load'=>true,
 	'ahsc_html_optimizer'=>false,
 	'ahsc_dns_preconnect'=>false,
 	'ahsc_dns_preconnect_domains'=>'',
 	'ahsc_xmlrpc_status'=>false,
+	'ahsc_enable_cron'=>true,
 	'ahsc_cron_status'=>false,
-	'ahsc_cron_time'=>300,
+	'ahsc_cron_time'=>"300",
 
 );
 
@@ -69,14 +70,15 @@ const AHSC_OPTIONS_LIST_DEFAULT = array(
 	'ahsc_purge_page_on_deleted_comment' =>   array('default'=>true),
 	'ahsc_cache_warmer' => array('default'=>true),
 	'ahsc_static_cache' => array('default'=>true),
-	//'ahsc_apc' => array('default'=>false),
+	'ahsc_apc' => array('default'=>false),
 	'ahsc_lazy_load'=>array('default'=>false),
 	'ahsc_html_optimizer'=>array('default'=>false),
 	'ahsc_dns_preconnect' => array('default'=>false),
 	'ahsc_dns_preconnect_domains'=>array('default'=>''),
 	'ahsc_xmlrpc_status'=>array('default'=>false),
+	'ahsc_enable_cron'=>array('default'=>true),
 	'ahsc_cron_status'=>array('default'=>false),
-	'ahsc_cron_time'=>array('default'=>300)
+	'ahsc_cron_time'=>array('default'=>"300")
 );
 
 const AHSC_PURGER = array(
@@ -84,44 +86,6 @@ const AHSC_PURGER = array(
 	'server_port' => '8889',
 	'time_out' => 5,
 );
-/*
-define( "AHSC_AJAX", array(
-	'security_error' => array(
-		'code'    => 404,
-		'message' => __( 'An error occurred. Please try again later or contact support.', 'aruba-hispeed-cache' ),
-		'type'    => 'error',
-	),
-	'success'        => array(
-		'code'    => 200,
-		'message' => __( 'Cache purged.', 'aruba-hispeed-cache' ),
-		'type'    => 'success',
-	),
-	'warning'        => array(
-		'code'    => 202,
-		'message' => __( 'An error occurred. Please try again later or contact support.', 'aruba-hispeed-cache' ),
-		'type'    => 'warning',
-	),
-) );
-
-define( "AHSC_TRANSIENT_AJAX", array(
-	'security_error' => array(
-		'code'    => 404,
-		'message' => __( 'An error occurred. Please try again later or contact support.', 'aruba-hispeed-cache' ),
-		'type'    => 'error',
-	),
-	'success'        => array(
-		'code'    => 200,
-		'message' => __( 'Expired transient purged.', 'aruba-hispeed-cache' ),
-		'type'    => 'success',
-	),
-	'warning'        => array(
-		'code'    => 202,
-		'message' => __( 'An error occurred. Please try again later or contact support.', 'aruba-hispeed-cache' ),
-		'type'    => 'warning',
-	),
-) );
-*/
-
 const AHSC_LOCALIZE_LINK = array(
 	'link_base' => array(
 		'it' => 'https://hosting.aruba.it/',

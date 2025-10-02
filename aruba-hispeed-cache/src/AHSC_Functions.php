@@ -198,27 +198,27 @@ if ( ! \function_exists( 'ahsc_reset_options' ) ) {
 	 * @return void
 	 */
 	function ahsc_reset_options(  ) {
-		if ( isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] ) {
-			if ( isset( $_POST['ahsc_reset_save'] ) && isset( $_POST['ahs-settings-nonce'] ) && \wp_verify_nonce( \sanitize_key( \wp_unslash( $_POST['ahs-settings-nonce'] ) ), 'ahs-save-settings-nonce' ) ) {
-				$new_options = array();
+        $new_options = array();
 
-				foreach ( array_keys( AHSC_OPTIONS_LIST_DEFAULT ) as $opt_key ) {
-					$new_options[ $opt_key ] = AHSC_OPTIONS_LIST_DEFAULT[$opt_key]['default'];
-				}
-				    $wpc_transformer = new HASC_WPCT(  ABSPATH . 'wp-config.php' );
-
-					//	var_dump("setto a ".!is_null($_POST[ $opt_key ])?"true":"false");
-					$val=!isset($new_options[ 'ahsc_cron_status' ])?"true":"false";
-					$wpc_transformer->update( 'constant', 'DISABLE_WP_CRON', $val, array( 'raw' => true, 'normalize' => true ));
-					$wpc_transformer->update( 'constant', 'WP_CRON_LOCK_TIMEOUT', "'".absint($new_options[ 'ahsc_cron_time' ])."'", array( 'raw' => true, 'normalize' => true ));
-
-
-				if ( \update_site_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $new_options ) ) {
-					$content = \esc_html( __('Reset to default.', 'aruba-hispeed-cache') );
-					AHSC_Notice_Render('ahs_settings_saved', 'success',$content);
-				}
-			}
+		foreach ( array_keys( AHSC_OPTIONS_LIST_DEFAULT ) as $opt_key ) {
+			$new_options[ $opt_key ] = AHSC_OPTIONS_LIST_DEFAULT[$opt_key]['default'];
 		}
+		    $wpc_transformer = new HASC_WPCT(  ABSPATH . 'wp-config.php' );
+
+		    $wpc_transformer->remove('constant', 'DISABLE_WP_CRON');
+		    $wpc_transformer->remove('constant', 'WP_CRON_LOCK_TIMEOUT');
+
+			if ( isset( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_apc'] ) &&
+			     AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_apc'] ){
+					// phpcs:ignore
+					@unlink( WP_CONTENT_DIR . '/object-cache.php' );
+			}
+
+		    \update_site_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $new_options );
+
+			$content = \esc_html( __('Original settings restored.', 'aruba-hispeed-cache') );
+			return $content;
+
 	}
 }
 
