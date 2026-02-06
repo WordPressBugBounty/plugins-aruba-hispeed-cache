@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 /** check for controll options delete comment*/
 /*if(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_page_on_deleted_comment']){
 	\add_action( 'deleted_comment', 'ahsc_purge_page_on_deleted_comment' , 200, 2 );

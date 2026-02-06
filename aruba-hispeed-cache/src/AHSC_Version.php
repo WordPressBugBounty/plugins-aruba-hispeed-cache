@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 $AHSC_check_version=true;
  function AHSC_required_wp_version() {
 	global $wp_version,$AHSC_check_version;

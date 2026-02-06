@@ -1,6 +1,9 @@
 <?php
-global $pagenow,$term_target;
-$nav_purged=false;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+global $pagenow,$ahsc_term_target;
+$ahsc_nav_purged=false;
 if( 'nav-menus.php' !== $pagenow){
 	//if(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_archive_on_del']){
 	if(is_array(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']) && AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_archive_on_edit']){
@@ -38,8 +41,8 @@ if( 'nav-menus.php' !== $pagenow) {
  * @return void
  */
  function ahsc_set_term_uri( $term, $taxonomy ) {
-	global $term_target;
-	$term_target = \get_term_link( $term, $taxonomy );
+	global $ahsc_term_target;
+	$ahsc_term_target = \get_term_link( $term, $taxonomy );
 }
 
 /**
@@ -56,7 +59,7 @@ if( 'nav-menus.php' !== $pagenow) {
  * @return void
  */
  function ahsc_purge_archive_on_delete() {
-	global $term_target;
+	global $ahsc_term_target;
 	$cleaner = new \ArubaSPA\HiSpeedCache\Purger\WpPurger();
 	 $cleaner->setPurger( AHSC_PURGER );
 	//$option  = $this->container->get_service( 'ahsc_get_option' );
@@ -71,7 +74,7 @@ if( 'nav-menus.php' !== $pagenow) {
 		return;
 	}
 
-	$target = $term_target;
+	$target = $ahsc_term_target;
 	if(class_exists('ArubaSPA\HiSpeedCache\Debug\Logger')) {
 		// Logger.
 		AHSC_log( 'hook::edited_term::' . $target, __NAMESPACE__ . '::' . __FUNCTION__, 'debug' );
@@ -91,8 +94,8 @@ if( 'nav-menus.php' !== $pagenow) {
  * @return void
  */
 function ahsc_update_nav_menu() {
-global $nav_purged;
-	if ( ! $nav_purged ) {
+global $ahsc_nav_purged;
+	if ( ! $ahsc_nav_purged ) {
 		$cleaner = new \ArubaSPA\HiSpeedCache\Purger\WpPurger();
 		$cleaner->setPurger( AHSC_PURGER );
 		if(class_exists('ArubaSPA\HiSpeedCache\Debug\Logger')) {
@@ -102,7 +105,7 @@ global $nav_purged;
 		}
 		$cleaner->purgeAll();
 	}
-	$nav_purged = true;
+	$ahsc_nav_purged = true;
 }
 
 /**

@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 if ( isset( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_html_optimizer'] ) &&
      AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_html_optimizer'] ) {
 	add_action('wp_loaded', 'ahsc_output_buffer_start');

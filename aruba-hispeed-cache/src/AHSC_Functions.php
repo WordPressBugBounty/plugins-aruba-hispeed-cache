@@ -1,5 +1,7 @@
 <?php
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 use ArubaSPA\HiSpeedCache\Debug\Logger;
 
 /**
@@ -11,7 +13,7 @@ function AHSC_activation( ) {
 	$check=AHSC_check();
 	if(!$check['is_aruba_server']){
 		AHSC_deactivate_me();
-	    wp_die( ahsc_get_check_notice($check), 'Aruba HiSpeed Cache dependency check', array( 'back_link' => true ) );
+	    wp_die( esc_attr(ahsc_get_check_notice($check)), 'Aruba HiSpeed Cache dependency check', array( 'back_link' => true ) );
 	}else{
 	  $options = AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS'];
 	  if ( ! $options ) {
@@ -127,14 +129,14 @@ if ( ! \function_exists( 'ahsc_get_site_home_url' ) ) {
 		return $home_uri;
 	}
 }
-
+/*
 
 if ( ! \function_exists( 'ahsc_save_options' ) ) {
-	/**
+	**
 	 * Save plugin options
 	 *
 	 * @return void
-	 */
+	 *
 	function ahsc_save_options(  ) {
 		if ( isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 			if ( isset( $_POST['ahsc_settings_save'] ) && isset( $_POST['ahs-settings-nonce'] ) && \wp_verify_nonce( \sanitize_key( \wp_unslash( $_POST['ahs-settings-nonce'] ) ), 'ahs-save-settings-nonce' ) ) {
@@ -159,7 +161,7 @@ if ( ! \function_exists( 'ahsc_save_options' ) ) {
 						if(isset($_POST[ $opt_key ])){
 							//var_dump("setto time ");
 							$wpc_transformer->update( 'constant', 'WP_CRON_LOCK_TIMEOUT', "'".absint($_POST[ $opt_key ])."'", array( 'raw' => true, 'normalize' => true ));
-							$new_options[ $opt_key ]= $_POST[ $opt_key ];
+							$new_options[ $opt_key ]= sanitize_text_field( wp_unslash($_POST[ $opt_key ]));
 						}else{
 							//var_dump("non setto time ");
 							$wpc_transformer->remove('constant', 'WP_CRON_LOCK_TIMEOUT');
@@ -168,7 +170,7 @@ if ( ! \function_exists( 'ahsc_save_options' ) ) {
 						$new_options[ $opt_key ] = ( isset( $_POST[ $opt_key ] ) ) ? true : false; 
 					}else{
 						if(isset( $_POST[ $opt_key ] ) ){
-							$trans_domain_list = explode( "\n", trim( $_POST[ $opt_key ] ) );
+							$trans_domain_list = explode( "\n", trim( sanitize_text_field( wp_unslash($_POST[ $opt_key ])) ) );
 							foreach ( $trans_domain_list as $index => $string ) {
 								if ( strpos( $string, $_SERVER['SERVER_NAME'] ) !== false ) {
 									unset( $trans_domain_list[ $index ] );
@@ -190,7 +192,7 @@ if ( ! \function_exists( 'ahsc_save_options' ) ) {
 	}
 }
 
-
+*/
 if ( ! \function_exists( 'ahsc_reset_options' ) ) {
 	/**
 	 * Reset plugin options

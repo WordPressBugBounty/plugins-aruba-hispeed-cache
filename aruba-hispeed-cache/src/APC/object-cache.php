@@ -1,13 +1,17 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+//@phpcs:ignoreFile
 if ( function_exists( 'apcu_fetch' ) ) :
 
 	if ( version_compare( '5.2.4', phpversion(), '>=' ) ) {
-		wp_die( 'The APC object cache backend requires PHP 5.2 or higher. You are running ' . phpversion() . '. Please remove the <code>object-cache.php</code> file from your content directory.' );
+		wp_die( 'The APC object cache backend requires PHP 5.2 or higher. You are running ' . esc_attr(phpversion()) . '. Please remove the <code>object-cache.php</code> file from your content directory.' );
 	}
 
 	if ( function_exists( 'wp_cache_add' ) ) {
 		// Regular die, not wp_die(), because it gets sandboxed and shown in a small iframe
-		die( '<strong>ERROR:</strong> This is <em>not</em> a plugin, and it should not be activated as one.<br /><br />Instead, <code>' . str_replace( $_SERVER['DOCUMENT_ROOT'], '', __FILE__ ) . '</code> must be moved to <code>' . str_replace( $_SERVER['DOCUMENT_ROOT'], '', trailingslashit( WP_CONTENT_DIR ) ) . 'object-cache.php</code>' );
+		die( '<strong>ERROR:</strong> This is <em>not</em> a plugin, and it should not be activated as one.<br /><br />Instead, <code>' . ((isset($_SERVER['DOCUMENT_ROOT']))? esc_attr(str_replace(esc_attr(wp_unslash($_SERVER['DOCUMENT_ROOT'])), '', __FILE__ )):""). '</code> must be moved to <code>' . esc_attr(str_replace( esc_attr(wp_unslash($_SERVER['DOCUMENT_ROOT'])), '', trailingslashit( WP_CONTENT_DIR ) ) ). 'object-cache.php</code>' );//@phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 	} else {
 
 // Users with setups where multiple installs share a common wp-config.php can use this

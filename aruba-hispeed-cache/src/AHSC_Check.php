@@ -1,14 +1,17 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 const ACTIVE        = 'active';
 const AVAILABLE     = 'available';
 const UNAVAILABLE   = 'unavailable';
 const NOARUBASERVER = 'no-aruba-server';
 
-$target=AHSC_CONSTANT['HOME_URL'];
+//$ahsc_target=AHSC_CONSTANT['HOME_URL'];
 //var_dump(AHSC_CONSTANT);
-$check_error=false;
-$check_status_code=false;
-$check_parameters=array(
+$ahsc_check_error=false;
+$ahsc_check_status_code=false;
+$ahsc_check_parameters=array(
 	'is_aruba_server'=>"",
 	'service_is_active'=>"",
 	'service_is_activabile'=>"",
@@ -32,12 +35,12 @@ function AHSC_set_parameters_to_check(
 	$service_status = '',
 	$cdn_status=''
 ) {
-	global $check_parameters;
-	$check_parameters['is_aruba_server']       = $is_aruba_server;
-	$check_parameters['service_is_active' ]    = $service_is_active;
-	$check_parameters['service_is_activabile'] = $service_is_activabile;
-	$check_parameters['service_status']        = $service_status;
-	$check_parameters['cdn_status']            = $cdn_status;
+	global $ahsc_check_parameters;
+	$ahsc_check_parameters['is_aruba_server']       = $is_aruba_server;
+	$ahsc_check_parameters['service_is_active' ]    = $service_is_active;
+	$ahsc_check_parameters['service_is_activabile'] = $service_is_activabile;
+	$ahsc_check_parameters['service_status']        = $service_status;
+	$ahsc_check_parameters['cdn_status']            = $cdn_status;
 }
 
 /**
@@ -130,22 +133,30 @@ function AHSC_headers_analizer() {
  * @return array
  */
  function AHSC_check() {
-	global $check_parameters;
+	global $ahsc_check_parameters;
+
+	// Bypass in locale / dev
+	// if ( $_SERVER['HTTP_HOST'] === 'cconsole-test-20230620.eu:8081' ) {
+	// 	AHSC_set_parameters_to_check(true, true, true, ACTIVE);
+	// 	$ahsc_check_parameters['esit'] = ACTIVE;
+	// 	return $ahsc_check_parameters;
+	// }
+
 	AHSC_get_headers();
 	AHSC_headers_analizer();
 
-	$check_parameters['esit'] = ACTIVE;
+	$ahsc_check_parameters['esit'] = ACTIVE;
 
-	if ( $check_parameters['is_aruba_server'] && ! $check_parameters['service_is_active'] ) {
-		$check_parameters['esit'] = ( $check_parameters['service_is_activabile'] ) ? ACTIVE : UNAVAILABLE;
+	if ( $ahsc_check_parameters['is_aruba_server'] && ! $ahsc_check_parameters['service_is_active'] ) {
+		$ahsc_check_parameters['esit'] = ( $ahsc_check_parameters['service_is_activabile'] ) ? ACTIVE : UNAVAILABLE;
 
 	}else{
-		$check_parameters['esit'] = ( $check_parameters['service_is_activabile'] ) ? ACTIVE : NOARUBASERVER;
+		$ahsc_check_parameters['esit'] = ( $ahsc_check_parameters['service_is_activabile'] ) ? ACTIVE : NOARUBASERVER;
 	}
 
 	//var_dump($check_parameters);
 
-	return $check_parameters;
+	return $ahsc_check_parameters;
 }
 
 /**
@@ -155,22 +166,22 @@ function AHSC_headers_analizer() {
  *
  * @return string
  */
- function debugger() {
-	global $check_error,$check_status_code;
+ function ahsc_debugger() {
+	global $ahsc_check_error,$ahsc_check_status_code;
 
 	$headers=AHSC_get_headers();
 
-	 $check_parameters=AHSC_check();
+	 $ahsc_check_parameters=AHSC_check();
 
 	$data = array(
 		'date'         => \wp_date( 'D, d M Y H:i:s', time() ),
 		'target'       => AHSC_CONSTANT['HOME_URL'],
 		'headers'      => $headers,
-		'status_code'  => $check_status_code,
-		'check_params' => $check_parameters,
+		'status_code'  => $ahsc_check_status_code,
+		'check_params' => $ahsc_check_parameters,
 	);
 
-	if ( $check_error ) {
+	if ( $ahsc_check_error ) {
 		$data['error'] = 'Sorry but the call was answered with an error. please try again later';
 		unset( $data['headers'] );
 		unset( $data['status_code'] );
@@ -188,7 +199,7 @@ function AHSC_headers_analizer() {
  */
 function AHSC_get_headers() {
 
-	global $check_status_code,$check_error;
+	global $ahsc_check_status_code,$ahsc_check_error;
 
 
 	$response = \wp_remote_get(
@@ -204,14 +215,14 @@ function AHSC_get_headers() {
 
 	if ( \is_array( $response ) && ! \is_wp_error( $response ) ) {
 		$headers     = $response['headers']->getAll();
-		//var_dump($headers); 
-		$check_status_code = $response['response']['code'];
+		//var_dump($headers);
+		$ahsc_check_status_code = $response['response']['code'];
 
 		return $headers;
 	}
 
 	if ( \is_wp_error( $response ) ) {
-		$check_error = true;
+		$ahsc_check_error = true;
 	}
 
 	return false;
@@ -225,7 +236,7 @@ function AHSC_get_headers() {
  *
  * @SuppressWarnings(PHPMD.StaticAccess)
  */
- function check_hispeed_cache_services( $plugin ) {
+ function ahsc_check_hispeed_cache_services( $plugin ) {
 	if ( 'aruba-hispeed-cache/aruba-hispeed-cache.php' === $plugin ) {
 		$check         = AHSC_check();
 

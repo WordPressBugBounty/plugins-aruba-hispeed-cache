@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+?>
 <table class="form-table ahsc-table-ahsc_cron_status ahsc_cron_status">
 	<tbody>
 	<tr class="ahsc_cron_status">

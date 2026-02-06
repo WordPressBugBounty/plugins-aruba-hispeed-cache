@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+?>
 <table class="form-table ahsc-table-ahsc_dns_preconnect ahsc_dns_preconnect">
 	<tbody>
 	<tr class="ahsc_dns_preconnect">
@@ -8,7 +11,7 @@
                 </div>
             </div>
 			<div  class="section-header" style="position: relative;display: block;height: 63px;">
-				<h1> <?php echo wp_kses( __( 'DNS Prefetch and Preconnect:', 'aruba-hispeed-cache' ), array( 'strong' => array() ) ) ?></h1>
+				<h1> <?php echo wp_kses( __( 'DNS Prefetch and Preconnect', 'aruba-hispeed-cache' ), array( 'strong' => array() ) ) ?></h1>
                 <!--span class="ahsc_dns_preconnect_loader loader" style="float: right;top: -30px;right: 15px;"></span-->
 			</div>
 			<legend style="display:inline-block">

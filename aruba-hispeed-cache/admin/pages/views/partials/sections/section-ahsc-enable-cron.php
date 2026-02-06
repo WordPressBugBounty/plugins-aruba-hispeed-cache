@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+?>
 <table class="form-table ahsc-table-ahsc_lazy_load ahsc_lazy_load">
 	<tbody>
 	<tr class="ahsc_enable_cron">

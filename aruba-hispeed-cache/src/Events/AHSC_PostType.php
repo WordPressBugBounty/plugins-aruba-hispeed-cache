@@ -1,8 +1,11 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 global $pagenow;
-$allowed_cases = array( 'publish', 'future', 'trash' );
-$target=array();
-$is_json=(defined('REST_REQUEST') && REST_REQUEST) || true === wp_is_json_request() ||
+$ahsc_allowed_cases = array( 'publish', 'future', 'trash' );
+$ahsc_target=array();
+$ahsc_is_json=(defined('REST_REQUEST') && REST_REQUEST) || true === wp_is_json_request() ||
          (isset( $_SERVER['REQUEST_URI'] ) && strpos( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ), trailingslashit( rest_get_url_prefix() ) ) !== false)  ;
 // phpcs:disable
 if( ( ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() ) || defined( 'DOING_AJAX' ) ) &&
@@ -32,7 +35,7 @@ if('nav-menus.php' !== $pagenow){
 
 		//if ( ahsc_has_transient( 'ahsc_is_purged' ) ) {
 			\add_action( 'transition_post_status', 'ahsc_transition_post_status' , 20, 3 );
-			\add_action( 'pre_post_update',  'get_terms_target' , 20, 1 );
+			\add_action( 'pre_post_update',  'ahsc_get_terms_target' , 20, 1 );
 		//}
 
 	}
@@ -52,32 +55,43 @@ if('nav-menus.php' !== $pagenow){
  * @return void
  */
  function ahsc_post_updated($post_ID, $data) {
-	/**
-	 * I check whether the cleaning transient "ahsc_do_purge_deferred" is present in case I inhibit this action.
-	 */
-	$do_purge = ahsc_has_transient( 'ahsc_do_purge_deferred' );
 
-	if ( $do_purge ) {
-		return;
-	}
-	/**
-	 * Disable the purge action if the transient 'ahsc_is_purged' is set.
-	 */
-	if ( ahsc_has_transient( 'ahsc_is_purged' ) ) {
-		return;
-	}
-	 $cleaner =new \ArubaSPA\HiSpeedCache\Purger\WpPurger();
-	 $cleaner->setPurger( AHSC_PURGER );
-	/**
-	 * If home page cleaning is set, there is no point in going any further, the entire site cache will be cleaned.
-	 */
+	 $ahsc_ptlist=array('post','page','product','shop_order','shop_coupon','shop_webhook','attachment','nav_menu_item','wp_template','wp_template_part');
+	 $ahsc_cpt=get_post_type($post_ID);
+	/* if(class_exists('ArubaSPA\HiSpeedCache\Debug\Logger')) {
+		 AHSC_log( "list:" . implode(",",$ahsc_ptlist) . " - current:" . $ahsc_cpt ." ==".var_export(array_search($ahsc_cpt,$ahsc_ptlist),true));
+	 }*/
+	 if(array_search($ahsc_cpt,$ahsc_ptlist)!==false){
+		 /**
+		  * I check whether the cleaning transient "ahsc_do_purge_deferred" is present in case I inhibit this action.
+		  */
+		$do_purge = ahsc_has_transient( 'ahsc_do_purge_deferred' );
 
-	if(class_exists('ArubaSPA\HiSpeedCache\Debug\Logger')){
-		// Logger.
-		AHSC_log( 'hook::post_updated::home', __NAMESPACE__ . '::' . __FUNCTION__, 'debug' );
-		// Logger.
+		if ( $do_purge ) {
+			return;
+		}
+		/**
+		 * Disable the purge action if the transient 'ahsc_is_purged' is set.
+		 */
+		if ( ahsc_has_transient( 'ahsc_is_purged' ) ) {
+			return;
+		}
+
+		 //$cleaner =new \ArubaSPA\HiSpeedCache\Purger\WpPurger();
+		 //$cleaner->setPurger( AHSC_PURGER );
+
+		/**
+		 * If home page cleaning is set, there is no point in going any further, the entire site cache will be cleaned.
+		 */
+
+		/*if(class_exists('ArubaSPA\HiSpeedCache\Debug\Logger')){
+			// Logger.
+			AHSC_log( 'hook::post_updated::home', __NAMESPACE__ . '::' . __FUNCTION__, 'debug' );
+			// Logger.
+		}*/
+		//$cleaner->purgeAll();
+		 ahsc_set_transient( 'ahsc_do_purge_deferred', \time(), MINUTE_IN_SECONDS );
 	}
-	$cleaner->purgeAll();
 }
 
 /**
@@ -92,7 +106,7 @@ if('nav-menus.php' !== $pagenow){
  * @return void
  */
  function ahsc_transition_post_status( $new_status, $old_status, $post ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundInExtendedClassBeforeLastUsed
-global $allowed_cases,$is_json,$target;
+global $ahsc_allowed_cases,$ahsc_is_json,$ahsc_target;
 	/**
 	 * Disable the purge action if the transient 'ahsc_is_purged' is set.
 	 */
@@ -112,14 +126,14 @@ global $allowed_cases,$is_json,$target;
 	/**
 	 * Disable the purge action if the new status is not present in allorave casese array.
 	 */
-	if ( ! \in_array( $new_status, $allowed_cases, true ) ) {
+	if ( ! \in_array( $new_status, $ahsc_allowed_cases, true ) ) {
 		return;
 	}
 
 	/**
 	 * For json call
 	 */
-	if ( $is_json ) {
+	if ( $ahsc_is_json ) {
 		$do_purge             = ahsc_has_transient( 'ahsc_do_purge_deferred' );
 		$do_purge_log_message = 'Transint presente';
 
@@ -181,7 +195,7 @@ global $allowed_cases,$is_json,$target;
 		$options['log_option'] = $options['log_option'] . '_page_on_mod';
 		$options['target']     = \get_permalink( $post->ID );
 
-		post_mod_cache_cleaner( $options );
+		ahsc_post_mod_cache_cleaner( $options );
 		return;
 	}
 
@@ -192,9 +206,9 @@ global $allowed_cases,$is_json,$target;
 
 	if ( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_archive_on_edit'] && true === $options['is_publish_or_future'] ) {
 		$options['log_option'] = $options['log_option'] . '_archive_on_edit';
-		$options['target']     = $target;
+		$options['target']     = $ahsc_target;
 
-		post_mod_cache_cleaner( $options );
+		ahsc_post_mod_cache_cleaner( $options );
 		return;
 	}
 
@@ -203,9 +217,9 @@ global $allowed_cases,$is_json,$target;
 	 */
 	if ( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_archive_on_del'] && true === $options['is_trashed'] ) {
 		$options['log_option'] = $options['log_option'] . '_archive_on_del';
-		$options['target']     = $target;
+		$options['target']     = $ahsc_target;
 
-		post_mod_cache_cleaner( $options );
+		ahsc_post_mod_cache_cleaner( $options );
 		return;
 	}
 }
@@ -216,37 +230,37 @@ global $allowed_cases,$is_json,$target;
  * @param  array $arg .
  * @return void
  */
- function post_mod_cache_cleaner( $arg ) {
+ function ahsc_post_mod_cache_cleaner( $arg ) {
 	 $cleaner       = new \ArubaSPA\HiSpeedCache\Purger\WpPurger();
 	 $cleaner->setPurger( AHSC_PURGER );
-	$target  = $arg['target'];
+	$ahsc_target  = $arg['target'];
 
-	if ( ! \is_array( $target ) ) {
+	if ( ! \is_array( $ahsc_target ) ) {
 
 		if(class_exists('ArubaSPA\HiSpeedCache\Debug\Logger')){
 		// Logger.
 		AHSC_log(
-			'hook::transition_post_status::' . (string) $arg['log_option'] . '::' . $target,
+			'hook::transition_post_status::' . (string) $arg['log_option'] . '::' . $ahsc_target,
 			__NAMESPACE__ . '::' . (string) $arg['log_function'],
 			'debug'
 		);
 		// Logger.
 		}
-		$cleaner->purgeUrl( $target );
+		$cleaner->purgeUrl( $ahsc_target );
 	}
 
-	if ( \is_array( $target ) ) {
+	if ( \is_array( $ahsc_target ) ) {
 		// Logger.
 		if(class_exists('ArubaSPA\HiSpeedCache\Debug\Logger')) {
 			// Logger.
 			AHSC_log(
-				'hook::transition_post_status::' . (string) $arg['log_option'] . "::\n" . \implode( "::\n", $target ),
+				'hook::transition_post_status::' . (string) $arg['log_option'] . "::\n" . \implode( "::\n", $ahsc_target ),
 				__NAMESPACE__ . '::' . (string) $arg['log_function'],
 				'debug'
 			);
 			// Logger.
 		}
-		$cleaner->purgeUrls( $target );
+		$cleaner->purgeUrls( $ahsc_target );
 	}
 
 	ahsc_set_transient( 'ahsc_is_purged', \time(), MINUTE_IN_SECONDS );
@@ -258,12 +272,12 @@ global $allowed_cases,$is_json,$target;
  * @param int $post_id The taxonomies lists.
  * @return void
  */
- function get_terms_target( $post_id ) {
-	 global $target;
+ function ahsc_get_terms_target( $post_id ) {
+	 global $ahsc_target;
 
 	$post_type  = \get_post_type( $post_id );
 	$taxonomies = \get_object_taxonomies( $post_type );
-	$_target     = array();
+	$_ahsc_target     = array();
 
 	foreach ( $taxonomies as $tax ) {
 		$post_term_list = \get_the_terms( $post_id, $tax );
@@ -273,8 +287,8 @@ global $allowed_cases,$is_json,$target;
 		}
 
 		foreach ( \get_the_terms( $post_id, $tax ) as $tt ) {
-			$_target[] = \get_term_link( $tt->term_id, $tax );
+			$_ahsc_target[] = \get_term_link( $tt->term_id, $tax );
 		}
 	}
-	$target = $_target;
+	$ahsc_target = $_ahsc_target;
 }

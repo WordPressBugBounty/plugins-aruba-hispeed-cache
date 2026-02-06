@@ -1,11 +1,14 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 const AHSC_CORE = array(
 	'plugin_name' => 'aruba-hispeed-cache',
     'debug'=>WP_DEBUG
 );
 //var_dump(AHSC_CORE);
 
-$file=realpath(dirname(__FILE__)."/..")."/".AHSC_CORE['plugin_name'].".php";
+$ahsc_file=realpath(dirname(__FILE__)."/..")."/".AHSC_CORE['plugin_name'].".php";
 
 define( "AHSC_REQUIREMENTS", array(
 	'minimum_php'       => '5.6',
@@ -48,10 +51,10 @@ const AHSC_OPTIONS_LIST = array(
 define( "AHSC_CONSTANT", array(
 	'ARUBA_HISPEED_CACHE_VERSION'      => AHSC_get_version(),
 	'ARUBA_HISPEED_CACHE_PLUGIN'       => true,
-	'ARUBA_HISPEED_CACHE_FILE'         => $file,
-	'ARUBA_HISPEED_CACHE_BASEPATH'     => \plugin_dir_path( $file ),
-	'ARUBA_HISPEED_CACHE_BASEURL'      => \plugin_dir_url( $file ),
-	'ARUBA_HISPEED_CACHE_BASENAME'     => \plugin_basename( $file ),
+	'ARUBA_HISPEED_CACHE_FILE'         => $ahsc_file,
+	'ARUBA_HISPEED_CACHE_BASEPATH'     => \plugin_dir_path( $ahsc_file ),
+	'ARUBA_HISPEED_CACHE_BASEURL'      => \plugin_dir_url( $ahsc_file ),
+	'ARUBA_HISPEED_CACHE_BASENAME'     => \plugin_basename( $ahsc_file ),
 	'ARUBA_HISPEED_CACHE_OPTIONS_NAME' => 'aruba_hispeed_cache_options',
 	'HOME_URL'                         => \get_home_url( null, '/' ),
 	'ARUBA_HISPEED_CACHE_OPTIONS'      => (get_site_option( 'aruba_hispeed_cache_options' ))?get_site_option( 'aruba_hispeed_cache_options' ):AHSC_OPTIONS_LIST,

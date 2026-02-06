@@ -1,47 +1,47 @@
 <?php
-
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 if(isset(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_cache_warmer']) && AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_cache_warmer']!=="false"){
     \add_action( 'wp_ajax_ahcs_cache_warmer',  'ahsc_cache_warmer_ajax_action' , 100 );
-    \add_action( 'wp_ajax_nopriv_ahcs_cache_warmer', 'ahsc_cache_warmer_ajax_action' , 100 );
+    //\add_action( 'wp_ajax_nopriv_ahcs_cache_warmer', 'ahsc_cache_warmer_ajax_action' , 100 );
 
-	$do_purge=get_option('ahsc_do_cache_warmer',false);
+	$ahsc_do_purge=get_option('ahsc_do_cache_warmer',false);
 	//$do_purge = ahsc_has_transient( 'ahsc_do_cache_warmer' );
     //var_dump($do_purge);
-     if($do_purge){
+     if($ahsc_do_purge){
         \add_action( 'init', 'ahsc_do_cache_warmer');
 	     //add_action( 'wp', 'ahsc_cache_warmer_ajax_action');
      }
 }
 function ahsc_do_cache_warmer(){
-	$do_purge=get_option('ahsc_do_cache_warmer',false);
-    if(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_cache_warmer'] && $do_purge){
+	$ahsc_do_purge=get_option('ahsc_do_cache_warmer',false);
+    if(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_cache_warmer'] && $ahsc_do_purge){
         \add_action('admin_footer','ahsc_cache_warmer_runner' );
         \add_action('wp_footer', 'ahsc_cache_warmer_runner');
     }
 }
 
 function ahsc_cache_warmer_runner() {
-	$do_purge=get_option('ahsc_do_cache_warmer',false);
+	$ahsc_do_purge=get_option('ahsc_do_cache_warmer',false);
     $ajax_uri = \admin_url( 'admin-ajax.php' );
     $action   = 'ahcs_cache_warmer';
     $nonce    = \wp_create_nonce( 'ahsc-cache-warmer' );
 
-    $js_runner = <<<EOF
+    $js_runner ='
 <script>
 	( function() {
 		const data = new FormData();
-		data.append("action", "$action");
-		data.append("ahsc_cw_nonce", "$nonce" );
+		data.append("action", "'.$action.'");
+		data.append("ahsc_cw_nonce", "'.$nonce.'" );
 
-		fetch( "$ajax_uri", {method: "POST",
+		fetch( "'.$ajax_uri.'", {method: "POST",
 			credentials: "same-origin",
 			body: data}
-		).then( r => r.json() ).then( rr => console.log('Cache Rigenerata') );
+		).then( r => r.json() ).then( rr => console.log("Cache Rigenerata") );
 	}());
-</script>
-EOF;
-	if($do_purge){
+</script>';
+	if($ahsc_do_purge){
       print($js_runner);//@phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 	// ahsc_delete_transient('ahsc_do_cache_warmer');
@@ -55,8 +55,8 @@ EOF;
  * @SuppressWarnings(PHPMD.ElseExpression)
  */
 function ahsc_cache_warmer_ajax_action() {
-	$do_purge=get_option('ahsc_do_cache_warmer',false);
-	if($do_purge) {
+	$ahsc_do_purge=get_option('ahsc_do_cache_warmer',false);
+	if($ahsc_do_purge) {
 		$do_warmer = array();
 
 		if ( isset( $_POST['ahsc_cw_nonce'] ) && ! \wp_verify_nonce( \sanitize_text_field( \wp_unslash( $_POST['ahsc_cw_nonce'] ) ), 'ahsc-cache-warmer' ) ) {
@@ -132,6 +132,7 @@ function ahsc_cache_warmer_ajax_action() {
 		}
 		$do_warmer = array_unique( $do_warmer );
 */
+		//@phpcs:disable
 		foreach ( $do_warmer as $warmer_item ) {
 			$ch = curl_init();
 			curl_setopt( $ch, CURLOPT_URL, $warmer_item );
@@ -141,8 +142,6 @@ function ahsc_cache_warmer_ajax_action() {
 			curl_setopt( $ch, CURLOPT_VERBOSE, false );
 			curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, false );
 			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
-
-			//curl_setopt( $ch, CURLOPT_HTTPHEADER, array( "User-Agent: arubacache" ) );
 			curl_setopt( $ch, CURLOPT_USERAGENT,  "arubacache" );
 			curl_setopt( $ch, CURLOPT_HTTPHEADER, array( "accept-encoding: gzip, deflate, br, zstd" ) );
 			try {
@@ -158,4 +157,6 @@ function ahsc_cache_warmer_ajax_action() {
 	}else{
 		wp_die( wp_json_encode( array( 'esit' => true, 'items' => 'no cache to warming' ) ) );
 	}
+	update_option( 'ahsc_do_cache_warmer', false );
+	//@phpcs:enable
 }

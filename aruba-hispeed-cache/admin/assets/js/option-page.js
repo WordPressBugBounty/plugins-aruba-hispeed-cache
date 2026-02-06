@@ -18,7 +18,7 @@
 			this.manageCronEnable();
 			//this.manageCron();
 			this.manageXMLRpc();
-			this.manageDebugstatus();
+			//this.manageDebugstatus();
 
 			this.manageDBOptimization();
 
@@ -63,7 +63,7 @@
 					data.append("action", "ahcs_clear_cache");
 					data.append("ahsc_nonce", this.configs.ahsc_nonce);
 					data.append("ahsc_to_purge", this.configs.ahsc_topurge);
-console.log(" cancella cache -> "+this.configs.ahsc_ajax_url);
+					console.log(" cancella cache -> "+this.configs.ahsc_ajax_url);
 
 					const request = await fetch(this.configs.ahsc_ajax_url, {
 						method: "POST",
@@ -112,6 +112,7 @@ console.log(" cancella cache -> "+this.configs.ahsc_ajax_url);
 
 						const data = new FormData();
 						data.append("action", "ahsc_reset_options");
+						data.append("ahsc_nonce", this.configs.ahsc_nonce);
 
 						const request = await fetch(this.configs.ahsc_ajax_url, {
 							method: "POST",
@@ -134,108 +135,79 @@ console.log(" cancella cache -> "+this.configs.ahsc_ajax_url);
 
 		}
 
+		managePurge() {
 
-managePurge(){
-
-		if (!jQuery("#ahsc_enable_purge").is(':checked')) {
-			let field = document.querySelectorAll('#automatic-options,.ahsc_cache_warmer');
-			for (let j = 0; j < field.length; j++) {
-				field[j].classList.toggle("hidden");
-			}
-		}
-	jQuery("#ahsc_enable_purge").on('click',function(event){
-		event.preventDefault();
-		//console.log("status: "+jQuery(this).is(':checked'));
-		//console.log(jQuery('span.ahsc_enable_purge_loader'));
-		var $ck=jQuery(this);
-		jQuery('.ahsc_enable_purge_loader').css("display", "block");
-		var $val=jQuery(this).is(':checked');
-		jQuery.ajax({
-			type : "post",
-			dataType : "json",
-			url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-			data : {action: "ahsc_enable_purge",status:$val},
-			success: function(response) {
-				//console.log("status : "+ response.result)
-				$ck.prop( "checked", $val );
-				jQuery('.ahsc_enable_purge_loader').css("display", "none");
-				let field = document.querySelectorAll(
-					'#automatic-options,.ahsc_cache_warmer'
-				);
+			if (!jQuery("#ahsc_enable_purge").is(':checked')) {
+				let field = document.querySelectorAll('#automatic-options,.ahsc_cache_warmer');
 				for (let j = 0; j < field.length; j++) {
-					//console.log(field[j]);
 					field[j].classList.toggle("hidden");
 				}
 			}
-		});
-	});
+			jQuery("#ahsc_enable_purge").on('click', function(event) {
 
-	jQuery("#ahsc_purge_homepage_on_edit").on('click',function(event) {
-		event.preventDefault();
-		//console.log("status: " + jQuery(this).is(':checked'));
-		var $ck=jQuery(this);
-		jQuery('.ahsc_enable_purge_loader').css("display", "block");
-		var $val=jQuery(this).is(':checked');
-		jQuery.ajax({
-			type : "post",
-			dataType : "json",
-			url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-			data : {action: "ahsc_purge_homepage_on_edit",status:$val},
-			success: function(response) {
-				//console.log("status : "+ response.result)
-				$ck.prop( "checked", $val );
-				jQuery('.ahsc_enable_purge_loader').css("display", "none");
-			}
-		});
+				event.preventDefault();
+				jQuery('.ahsc_enable_purge_loader').css("display", "block");
+				let $ck = jQuery(this);
+				let isChecked = $ck.is(':checked');
+				$ck.prop("checked", isChecked);
 
-	});
+				if (!isChecked) {
+					// turn off the switches HTML-wise
+					// (AJAX calls are not needed as the master switch will take care of it backend-wise)
+					jQuery("#ahsc_purge_homepage_on_edit").prop('checked', false);
+					jQuery("#ahsc_purge_page_on_new_comment").prop('checked', false);
+					jQuery("#ahsc_purge_archive_on_edit").prop('checked', false);
+				}
 
-	jQuery("#ahsc_purge_page_on_new_comment").on('click',function(event) {
-		event.preventDefault();
-		//console.log("status: " + jQuery(this).is(':checked'));
-		var $ck=jQuery(this);
-		jQuery('.ahsc_enable_purge_loader').css("display", "block");
-		var $val=jQuery(this).is(':checked');
-		jQuery.ajax({
-			type : "post",
-			dataType : "json",
-			url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-			data : {action: "ahsc_purge_page_on_new_comment",status:$val},
-			success: function(response) {
-				//console.log("status : "+ response.result)
-				$ck.prop( "checked", $val );
-				jQuery('.ahsc_enable_purge_loader').css("display", "none");
-			}
-		});
+				jQuery.ajax({
+					type: "post",
+					dataType: "json",
+					url: AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
+					data: {
+						action: "ahsc_enable_purge",
+						status: isChecked,
+						ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce,
+					},
+					success: function(response) {
+						if (response.result === true) {
+							$ck.prop("checked", isChecked);
+							jQuery('.ahsc_enable_purge_loader').css("display", "none");
+							jQuery('#automatic-options,.ahsc_cache_warmer').toggleClass("hidden");
+						}
+					}
+				});
+			});
 
-	});
+			jQuery("#ahsc_purge_homepage_on_edit, #ahsc_purge_page_on_new_comment, #ahsc_purge_archive_on_edit").on('click', function(event) {
+				event.preventDefault();
+				let $ck = jQuery(this);
+				let elementId = $ck.attr('id');
 
-	jQuery("#ahsc_purge_archive_on_edit").on('click',function(event) {
-		event.preventDefault();
-		//console.log("status: " + jQuery(this).is(':checked'));
-		var $ck=jQuery(this);
-		jQuery('.ahsc_enable_purge_loader').css("display", "block");
-		var $val=jQuery(this).is(':checked');
-		jQuery.ajax({
-			type : "post",
-			dataType : "json",
-			url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-			data : {action: "ahsc_purge_archive_on_edit",status:$val},
-			success: function(response) {
-				//console.log("status : "+ response.result)
-				$ck.prop( "checked", $val );
-				jQuery('.ahsc_enable_purge_loader').css("display", "none");
-			}
-		});
+				jQuery('.ahsc_enable_purge_loader').css("display", "block");
+				let isChecked = $ck.is(':checked');
+				jQuery.ajax({
+					type : "post",
+					dataType : "json",
+					url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
+					data : {
+						action: elementId,
+						status: isChecked,
+						ahsc_nonce: AHSC_OPTIONS_CONFIGS.ahsc_nonce,
+					},
+					success: function(response) {
+						$ck.prop( "checked", isChecked );
+						jQuery('.ahsc_enable_purge_loader').css("display", "none");
+					}
+				});
 
-	});
-}
+			});
+		}
 
 manageCacheWarmer(){
 			//ahsc_cache_warmer
 	jQuery("#ahsc_cache_warmer").on('click',function(event) {
 		event.preventDefault();
-		console.log("status: " + jQuery(this).is(':checked'));
+		//console.log("status: " + jQuery(this).is(':checked'));
 		var $ck=jQuery(this);
 		jQuery('.ahsc_cache_warmer_loader').css("display", "block");
 		var $val=jQuery(this).is(':checked');
@@ -243,7 +215,7 @@ manageCacheWarmer(){
 			type : "post",
 			dataType : "json",
 			url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-			data : {action: "ahsc_cache_warmer",status:$val},
+			data : {action: "ahsc_cache_warmer",status:$val,ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 			success: function(response) {
 				//console.log("status : "+ response.result)
 				$ck.prop( "checked", $val );
@@ -267,7 +239,7 @@ manageStaticCache(){
 			type : "post",
 			dataType : "json",
 			url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-			data : {action: "ahsc_static_cache",status:$val},
+			data : {action: "ahsc_static_cache",status:$val,ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 			success: function(response) {
 				//console.log("status : "+ response.result)
 				$ck.prop( "checked", $val );
@@ -292,7 +264,7 @@ manageStaticCache(){
 						cache: false,
 						dataType : "json",
 						url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-						data : {action: "ahsc_check_apc_file"},
+						data : {action: "ahsc_check_apc_file",ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 						success: function(response) {
 							//console.log("check result : "+response.result );
 							if(response.result === false) {
@@ -312,7 +284,7 @@ manageStaticCache(){
 									dataType : "json",
 									cache: false,
 									url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-									data : {action: "ahsc_create_apc_file"},
+									data : {action: "ahsc_create_apc_file",ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 									success: function(response) {
 										$ck.prop( "checked", true );
 										jQuery.ajax({
@@ -320,7 +292,7 @@ manageStaticCache(){
 											dataType: "json",
 											cache: false,
 											url: AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-											data: {action: "ahsc_update_apc_Settings"},
+											data: {action: "ahsc_update_apc_Settings",ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 											success: function(response) {
 												//console.log("aggiorno status  " );
 												jQuery('.ahsc_apc_loader').css("display", "none");
@@ -339,7 +311,7 @@ manageStaticCache(){
 						cache: false,
 						dataType : "json",
 						url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-						data : {action: "ahsc_delete_apc_file"},
+						data : {action: "ahsc_delete_apc_file",ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 						success: function(response) {
 							//console.log("cancello file : "+ response.result)
 							$ck.prop( "checked", false );
@@ -362,7 +334,7 @@ manageStaticCache(){
 					type : "post",
 					dataType : "json",
 					url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-					data : {action: "ahsc_lazy_load",status:$val},
+					data : {action: "ahsc_lazy_load",status:$val,ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 					success: function(response) {
 						//console.log("status : "+ response.result)
 						$ck.prop( "checked", $val );
@@ -384,7 +356,7 @@ manageStaticCache(){
 					type : "post",
 					dataType : "json",
 					url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-					data : {action: "ahsc_html_optimizer",status:$val},
+					data : {action: "ahsc_html_optimizer",status:$val,ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 					success: function(response) {
 						//console.log("status : "+ response.result)
 						$ck.prop( "checked", $val );
@@ -414,7 +386,7 @@ manageStaticCache(){
 					type : "post",
 					dataType : "json",
 					url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-					data : {action: "ahsc_dns_preconnect",status:$val},
+					data : {action: "ahsc_dns_preconnect",status:$val,ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 					success: function(response) {
 						//console.log("status : "+ response.result)
 						$ck.prop( "checked", $val );
@@ -443,7 +415,7 @@ manageStaticCache(){
 						type : "post",
 						dataType : "json",
 						url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-						data : {action: "ahsc_dns_preconnect_domain_list",list:contents},
+						data : {action: "ahsc_dns_preconnect_domain_list",list:contents,ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 						success: function(response) {
 							jQuery('.ahsc_dns_preconnect_loader').css("display", "none");
 						}
@@ -473,7 +445,7 @@ manageStaticCache(){
 					type : "post",
 					dataType : "json",
 					url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-					data : {action: "ahsc_enable_cron",status:$val},
+					data : {action: "ahsc_enable_cron",status:$val,ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 					success: function(response) {
 						//console.log("status : "+ response.result)
 						$ck.prop( "checked", $val );
@@ -502,7 +474,7 @@ manageStaticCache(){
 						type : "post",
 						dataType : "json",
 						url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-						data : {action: "ahsc_cron_time",time:$val},
+						data : {action: "ahsc_cron_time",time:$val,ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 						success: function(response) {
 							jQuery("a.ahsc_cron_time").removeClass('active');
 							$bt.addClass('active');
@@ -526,7 +498,7 @@ manageStaticCache(){
 					type : "post",
 					dataType : "json",
 					url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-					data : {action: "ahsc_xmlrpc_status",status:$val},
+					data : {action: "ahsc_xmlrpc_status",status:$val,ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 					success: function(response) {
 						//console.log("status : "+ response.result)
 						$ck.prop( "checked", $val );
@@ -537,7 +509,7 @@ manageStaticCache(){
 		}
 
 
-		manageDebugstatus(){
+		/*manageDebugstatus(){
 			//ahsc_xmlrpc_status
 			jQuery("#ahsc_debug_status").on('click',function(event) {
 				event.preventDefault();
@@ -549,7 +521,7 @@ manageStaticCache(){
 					type : "post",
 					dataType : "json",
 					url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-					data : {action: "ahsc_debug_status",status:$val},
+					data : {action: "ahsc_debug_status",status:$val,ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 					success: function(response) {
 						//console.log(response)
 						$ck.prop( "checked", $val );
@@ -557,7 +529,7 @@ manageStaticCache(){
 					}
 				});
 			});
-		}
+		}*/
 
 
 		manageDBOptimization(){
@@ -571,7 +543,7 @@ manageStaticCache(){
 					type : "post",
 					dataType : "json",
 					url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-					data : {action: "ahsc_dboptimization",dbstatus:true},
+					data : {action: "ahsc_dboptimization",dbstatus:true,ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 					success: function(response) {
 						//console.log(response)
 						jQuery("#ahsc-db-status-indicator").removeClass('yellow');
@@ -583,6 +555,7 @@ manageStaticCache(){
 					}
 				});
 			});
+
 			jQuery("#ahsc-db-optimize-default").on('click',function(event) {
 				event.preventDefault();
 				//console.log("status: " + jQuery(this).is(':checked'));
@@ -593,7 +566,7 @@ manageStaticCache(){
 					type : "post",
 					dataType : "json",
 					url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-					data : {action: "ahsc_dboptimization",dbstatus:false},
+					data : {action: "ahsc_dboptimization",dbstatus:false,ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
 					success: function(response) {
 						jQuery("#ahsc-db-status-indicator").removeClass('green');
 						jQuery("#ahsc-db-status-indicator").addClass('yellow');

@@ -1,6 +1,5 @@
 <?php
-//$sections=$this->fields['sections']['general']['general']['ahsc_enable_purge'];
-//var_export($this->option);
+if ( ! defined( 'ABSPATH' ) ) exit;
 ?>
 
 <table class="form-table ahsc-table-ahsc_enable_purge ahsc_enable_purge">

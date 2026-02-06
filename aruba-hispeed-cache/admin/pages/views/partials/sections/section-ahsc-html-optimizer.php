@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+?>
 <table class="form-table ahsc-table-ahsc_html_optimizer ahsc_html_optimizer">
 	<tbody>
 	<tr class="ahsc_html_optimizer">

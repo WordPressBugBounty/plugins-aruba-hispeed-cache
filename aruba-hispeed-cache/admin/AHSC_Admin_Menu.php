@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 include "pages/AHSC_Settings.php";
 /** Add menu setting page for plugin*/
 add_action('admin_menu', 'AHSC_Admin_Menu');// menù admin

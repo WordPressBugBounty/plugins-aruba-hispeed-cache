@@ -1,5 +1,7 @@
 <?php
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 if ( ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() || defined('DOING_AJAX') && DOING_AJAX) ||
      (defined('REST_REQUEST') && REST_REQUEST) || true === wp_is_json_request() ||
      (isset( $_SERVER['REQUEST_URI'] ) && strpos( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ), trailingslashit( rest_get_url_prefix() ) ) !== false)  ) {

@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+?>
 <table class="form-table ahsc-table-ahsc_cache_warmer ahsc_cache_warmer">
 	<tbody>
 	<tr class="ahsc_cache_warmer">

@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 //die(var_dump(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']));
 if(is_array(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']) && array_key_exists('ahsc_static_cache',AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS'])){
     if(isset(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_static_cache'])){

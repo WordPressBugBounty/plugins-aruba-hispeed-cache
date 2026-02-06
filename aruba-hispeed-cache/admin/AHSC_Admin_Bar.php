@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 \add_action( 'admin_bar_menu', 'AHSC_add_admin_bar_menu_links' , 100 );
 
 //die(var_export(__( 'Purge Cache','aruba-hispeed-cache' ),true));

@@ -1,5 +1,7 @@
 <?php
-
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 /**
  * Transforms a wp-config.php file.
  */
@@ -42,11 +44,11 @@ class HASC_WPCT {
 		$basename = basename( $wp_config_path );
 
 		if ( ! file_exists( $wp_config_path ) ) {
-			throw new Exception( "{$basename} does not exist." );
+			throw new Exception( esc_attr("{$basename} does not exist.") );
 		}
 
-		if ( ! $read_only && ! is_writable( $wp_config_path ) ) {
-			throw new Exception( "{$basename} is not writable." );
+		if ( ! $read_only && ! wp_is_writable( $wp_config_path ) ) {
+			throw new Exception( esc_attr("{$basename} is not writable.") );
 		}
 
 		$this->wp_config_path = $wp_config_path;
@@ -74,7 +76,7 @@ class HASC_WPCT {
 		$this->wp_configs    = $this->parse_wp_config( $this->wp_config_src );
 
 		if ( ! isset( $this->wp_configs[ $type ] ) ) {
-			throw new Exception( "Config type '{$type}' does not exist." );
+			throw new Exception( esc_attr("Config type '{$type}' does not exist.") );
 		}
 
 		return isset( $this->wp_configs[ $type ][ $name ] );
@@ -102,7 +104,7 @@ class HASC_WPCT {
 		$this->wp_configs    = $this->parse_wp_config( $this->wp_config_src );
 
 		if ( ! isset( $this->wp_configs[ $type ] ) ) {
-			throw new Exception( "Config type '{$type}' does not exist." );
+			throw new Exception( esc_attr("Config type '{$type}' does not exist.") );
 		}
 
 		return $this->wp_configs[ $type ][ $name ]['value'];
@@ -247,7 +249,7 @@ class HASC_WPCT {
 			throw new Exception( 'Raw value for empty string not supported.' );
 		}
 
-		return ( $raw ) ? $value : var_export( $value, true );
+		return ( $raw ) ? $value : var_export( $value, true ); //@phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
 	}
 
 	/**
@@ -267,7 +269,7 @@ class HASC_WPCT {
 		} elseif ( 'variable' === $type ) {
 			$placeholder = '$%s = %s;';
 		} else {
-			throw new Exception( "Unable to normalize config type '{$type}'." );
+			throw new Exception( esc_attr("Unable to normalize config type '{$type}'.") );
 		}
 
 		return sprintf( $placeholder, $name, $value );

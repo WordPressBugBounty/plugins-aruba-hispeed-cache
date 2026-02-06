@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 \add_action( 'activated_plugin',  'ahsc_purge_on_plugin_actions' , 200, 1 );
 \add_action( 'deactivate_plugin', 'ahsc_purge_on_plugin_actions' , 200, 1 );
 \add_action( 'delete_plugin',  'ahsc_purge_on_plugin_actions' , 200, 1 );

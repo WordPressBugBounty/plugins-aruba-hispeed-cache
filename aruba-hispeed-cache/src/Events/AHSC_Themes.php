@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 \add_action( 'switch_theme', 'ahsc_purge_on_switch_theme' , 200, 3 );
 
 /**

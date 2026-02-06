@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+?>
 <table class="form-table ahsc-table-ahsc_dboptimization ahsc_dboptimization">
 	<tbody>
 	<tr class="ahsc_dboptimization">
@@ -12,12 +15,12 @@
 			</div>
 			<legend style="display:inline-block">
 				<?php
-				echo wp_kses( __( 'This process improves data retrieval speed, making your site faster and more responsive for both visitors and you in the admin area. Enter the optimization date and it can be relaunched.', 'aruba-hispeed-cache' ), array( 'strong' => array(), 'br' => array() ) )
+				echo wp_kses( __( 'This process improves data retrieval speed, making your site faster and more responsive for both visitors and you in the admin area.', 'aruba-hispeed-cache' ), array( 'strong' => array(), 'br' => array() ) )
 				?>
 			</legend>
 			<fieldset >
 				<legend class="screen-reader-text">
-					<span><?php echo wp_kses( __( 'This process improves data retrieval speed, making your site faster and more responsive for both visitors and you in the admin area. Enter the optimization date and it can be relaunched.', 'aruba-hispeed-cache' ), array( 'strong' => array(), 'br' => array() ) )?></span>
+					<span><?php echo wp_kses( __( 'This process improves data retrieval speed, making your site faster and more responsive for both visitors and you in the admin area.', 'aruba-hispeed-cache' ), array( 'strong' => array(), 'br' => array() ) )?></span>
 				</legend>
 
 				<label style="display: inline-block;position:relative;cursor: default !important;" >
@@ -33,7 +36,7 @@
                         <span id="ahsc-db-status-indicator" class="dot <?php echo   ($ahsc_current_dbopt_status)?"green": "yellow" ?>"></span>
                         <span id="ahsc-db-status-label" class="status-label" style="display: inline-block;height: 34px;vertical-align: middle;">
                             <?php
-                            if(AHSC_DBOPT_Check()){
+                            if($ahsc_current_dbopt_status){
 	                            //"checked"
 	                            echo  wp_kses( __( 'Optimized', 'aruba-hispeed-cache' ), array( 'strong' => array() ) );
                             }else{

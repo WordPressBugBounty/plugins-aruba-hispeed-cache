@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+?>
 <table class="form-table ahsc-table-ahsc_xmlrpc_status ahsc_xmlrpc_status">
 	<tbody>
 	<tr class="ahsc_xmlrpc_status">
@@ -26,6 +29,7 @@
                         ?>
                     </span>
 					<?php
+
 					$this->option[ 'ahsc_xmlrpc_status' ]= (isset($this->option[ 'ahsc_xmlrpc_status' ]))?$this->option[ 'ahsc_xmlrpc_status' ]:AHSC_OPTIONS_LIST_DEFAULT['ahsc_xmlrpc_status']['default'];
 					?>
 					<label class="switch" style="float:right">
@@ -34,7 +38,7 @@
 							value="1"
 							name="ahsc_xmlrpc_status"
 							id="ahsc_xmlrpc_status"
-							<?php echo esc_html( ($this->option[ 'ahsc_xmlrpc_status' ])?"checked":""); ?>
+							<?php echo esc_html( (filter_var($this->option[ 'ahsc_xmlrpc_status' ], FILTER_VALIDATE_BOOLEAN))?"checked":""); ?>
 						/>
 						<span class="slider round"></span>
 					</label>

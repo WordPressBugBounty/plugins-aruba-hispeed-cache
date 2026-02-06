@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+?>
 <table class="form-table ahsc-table-ahsc_service_status ahsc_service_status">
 	<tbody>
 	<tr class="ahsc_service_status">
@@ -19,12 +22,12 @@
                     <?php
                     global $check_parameters;
                     ?>
-                    <label class="<?php echo $check_parameters['esit'];?>">
+                    <label class="<?php echo esc_attr($check_parameters['esit']);?>">
                     <?php
 
-                    $localize_link = AHSC_LOCALIZE_LINK; // For php 5.6 compatibility.
-                    $notice = null;
-                    $lng=strtolower(substr( get_bloginfo ( 'language' ), 0, 2 ));
+                    $ahsc_localize_link = AHSC_LOCALIZE_LINK; // For php 5.6 compatibility.
+                    //$notice = null;
+                    $ahsc_lng=strtolower(substr( get_bloginfo ( 'language' ), 0, 2 ));
                       switch($check_parameters['esit']){
 	                      case AVAILABLE:
 		                     echo  \sprintf(
@@ -41,8 +44,8 @@
 					                      ),
 				                      )
 			                      ),
-			                      esc_html( $localize_link['link_aruba_pca'][$lng] ),
-			                      esc_html( $localize_link['link_guide'][$lng] ));
+			                      esc_html( $ahsc_localize_link['link_aruba_pca'][$ahsc_lng] ),
+			                      esc_html( $ahsc_localize_link['link_guide'][$ahsc_lng] ));
 		                      break;
 	                      case UNAVAILABLE:
 		                     echo  \sprintf(
@@ -58,7 +61,7 @@
 					                      ),
 				                      )
 			                      ),
-			                      esc_html( $localize_link['link_assistance'][$lng] )
+			                      esc_html( $ahsc_localize_link['link_assistance'][$ahsc_lng] )
 		                      );
 		                      break;
 	                      case NOARUBASERVER:
@@ -75,7 +78,7 @@
 					                      ),
 				                      )
 			                      ),
-			                      esc_html( $localize_link[ 'link_hosting_truck' ][$lng] )
+			                      esc_html( $ahsc_localize_link[ 'link_hosting_truck' ][$ahsc_lng] )
 		                      );
                               break;
                               default:
@@ -93,7 +96,7 @@
 				                              ),
 			                              )
 		                              ),
-		                              esc_html( $localize_link['link_guide'][$lng] ));
+		                              esc_html( $ahsc_localize_link['link_guide'][$ahsc_lng] ));
 
                       }
                     ?>

@@ -23,12 +23,12 @@ if ( ! \defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 if ( ! is_multisite() ) {
 
 	require_once( ABSPATH . 'wp-admin/includes/file.php' );
-	$htaccess = get_home_path() . '.htaccess';
-	insert_with_markers( $htaccess, 'AHSC_RULES', array(' ') );
+	$ahsc_htaccess = get_home_path() . '.htaccess';
+	insert_with_markers( $ahsc_htaccess, 'AHSC_RULES', array(' ') );
 
-	$file = WP_CONTENT_DIR . '/object-cache.php';
-	if ( file_exists( $file ) ) {
+	$ahsc_file = WP_CONTENT_DIR . '/object-cache.php';
+	if ( file_exists( $ahsc_file ) ) {
 		// phpcs:ignore
-		@unlink( $file );
+		@unlink( $ahsc_file );
 	}
 }
