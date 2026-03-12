@@ -1,24 +1,23 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 if ( isset( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_html_optimizer'] ) &&
      AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_html_optimizer'] ) {
 	add_action('wp_loaded', 'ahsc_output_buffer_start');
-	add_action('shutdown', 'ahsc_output_buffer_end');
 }
-function ahsc_output_buffer_start() {
-	ob_start("ahsc_output_callback");
-}
-function ahsc_output_buffer_end() {
-	ob_get_clean();
-}
-function ahsc_output_callback($buffer) {
-	if(!is_admin() && !(defined('DOING_AJAX') && DOING_AJAX)) {
 
-		$buffer = preg_replace( '@\/\*(.*?)\*\/@s', ' ', $buffer); //remove  comment
-		$buffer = preg_replace( '@((^|\t|\s|\r)\/{2,}.+?(\n|$))@s', ' ', $buffer); //remove  comment
-		$buffer = preg_replace("/\s+|\n+|\r/", ' ', $buffer); // remove space and return
-	}
-	return $buffer;
+function ahsc_output_buffer_start() {
+	ob_start("ahsc_minify_html_fast");
+
+}
+
+function ahsc_minify_html_fast($html) {
+	$html = trim(preg_replace_callback(
+		'#<(script|style|pre|textarea)\b[^>]*>.*?</\1>(*SKIP)(*F)|\s{2,}|>\s+|\s+<#is',
+		fn($m) => preg_match('/^>\s+$/', $m[0]) ? '>' :
+			(preg_match('/^\s+</', $m[0]) ? '<' : ' '),
+		$html
+	));
+
+	return trim($html);
 }

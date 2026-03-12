@@ -2,11 +2,15 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
 if ( isset( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_lazy_load'] ) &&
       AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_lazy_load'] ) {
 	add_action( 'plugins_loaded', 'ahsc_wp_lazy_loading_initialize_filters', 1 );
+	add_action( 'template_redirect', 'ahsc_control_lazyload_param');
 }
+
 function ahsc_wp_lazy_loading_initialize_filters() {
+	//
 	foreach ( array( 'the_content', 'the_excerpt', 'widget_text_content','do_shortcode_tag','render_block','post_thumbnail_html') as $filter ) {
 		add_filter( $filter, 'ahsc_wp_filter_content_tags' );
 		//add_filter( $filter, 'ahsc_add_image_dimensions' );
@@ -42,7 +46,7 @@ function ahsc_wp_filter_content_tags( $content, $context = null ) {
 	if ( null === $context ) {
 		$context = current_filter();
 	}
-	$add_loading_attr = ahsc_wp_lazy_loading_enabled( 'img', $context );
+	//$add_loading_attr = ahsc_wp_lazy_loading_enabled( 'img', $context );
 
 	if ( false === strpos( $content, '<img' ) ) {
 		return $content;
@@ -53,6 +57,7 @@ function ahsc_wp_filter_content_tags( $content, $context = null ) {
 	}
 
 	$images = array();
+
 	foreach ( $matches[0] as $image ) {
 		if ( preg_match( '/wp-image-([0-9]+)/i', $image, $class_id ) ) {
 			$attachment_id = absint( $class_id[1] );
@@ -68,18 +73,20 @@ function ahsc_wp_filter_content_tags( $content, $context = null ) {
 			$images[ $image ] = 0;
 		}
 	}
-//var_dump($images);
+
 	$attachment_ids = array_unique( array_filter( array_values( $images ) ) );
 	if ( count( $attachment_ids ) > 1 ) {
 		_prime_post_caches( $attachment_ids, false, true );
 	}
 
+
 	foreach ( $images as $image => $attachment_id ) {
 		$filtered_image = $image;
+
 		if ( $attachment_id >= 0 && false === strpos( $filtered_image, ' srcset=' ) ) {
 			$filtered_image = ahsc_wp_img_tag_add_srcset_and_sizes_attr( $filtered_image, $context, $attachment_id );
 		}
-		if ( $add_loading_attr && false === strpos( $filtered_image, ' loading=' ) ) {
+		if (  false === strpos( $filtered_image, ' loading=' ) ) {
 			$filtered_image = ahsc_wp_img_tag_add_loading_attr( $filtered_image, $context );
 		}
 
@@ -144,4 +151,32 @@ function ahsc_add_image_dimensions( $content ) {
 	}
 
 	return $content;
+}
+function ahsc_control_lazyload_param($buffer){
+	ob_start(function ($buffer) {
+		preg_match_all('#<img\b[^>]*>#i', $buffer, $allImgs);
+		$total = count($allImgs[0]) - 1;
+		$limit = intval($total / 3);
+		$control = min(9, $limit);
+		$count = 0;
+		return preg_replace_callback(
+			'#<img\b[^>]*>#i',
+			function ($matches) use (&$count, $control) {
+
+				if ($count >= $control) {
+					return $matches[0];
+				}
+				$img = preg_replace('/\sloading=("|\').*?\1/i', '', $matches[0]);
+				$img = preg_replace('/\sdecoding=("|\').*?\1/i', '', $img);
+
+				if (!preg_match('/\sfetchpriority=/i', $img)) {
+					$img = preg_replace('/<img/i', '<img fetchpriority="high"', $img, 1);
+				}
+
+				$count++;
+				return $img;
+			},
+			$buffer
+		);
+	});
 }

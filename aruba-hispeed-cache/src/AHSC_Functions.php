@@ -388,3 +388,20 @@ add_filter('site_status_tests', function (array $test_type) {
 
 	return $test_type;
 }, 10, 1);
+
+if ( ! \function_exists('ahsc_check_debug_status' ) ) {
+
+	function ahsc_check_debug_status(){
+		$ahsc_debug_status=false;
+		$wpc_transformer = new HASC_WPCT(  ABSPATH . 'wp-config.php' );
+		if ( $wpc_transformer->exists( 'constant', 'WP_DEBUG' ) ||  $wpc_transformer->exists( 'constant', 'WP_DEBUG_LOG' ) ) {
+			$ahsc_db= filter_var($wpc_transformer->get_value('constant','WP_DEBUG'), FILTER_VALIDATE_BOOLEAN);
+			$ahsc_dbl= filter_var($wpc_transformer->get_value('constant','WP_DEBUG_LOG'), FILTER_VALIDATE_BOOLEAN);
+		  if($ahsc_db||$ahsc_dbl ){
+			$ahsc_debug_status=true;
+		  }
+		}
+		return $ahsc_debug_status;
+	}
+
+}

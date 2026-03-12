@@ -14,12 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * @wordpress-plugin
  * Plugin Name:       Aruba HiSpeed Cache
- * Version:           3.0.7
+ * Version:           3.0.8
  * Plugin URI:        https://hosting.aruba.it/wordpress.aspx
  *
  * @phpcs:ignore Generic.Files.LineLength.TooLong
  * Description:       Aruba HiSpeed Cache interfaces directly with the Aruba HiSpeed Cache service of the Aruba hosting platform and automates its management.
- * Author:            Aruba.it
+ * Author:            arubait
  * Author URI:        https://www.aruba.it/
  * Text Domain:       aruba-hispeed-cache
  * Domain Path:       /languages
@@ -348,6 +348,43 @@ if(is_multisite()){
 }else{
 	add_action( 'admin_notices',  'AHSC_check_hispeed_cache_notices'  );
 }
+
+if(ahsc_check_debug_status()){
+	add_action( 'admin_enqueue_scripts',  'ahsc_enqueue_debug_status_js'  );
+	add_action( 'admin_notices',  'AHSC_debug_status_notices'  );
+}
+
+function AHSC_debug_status_notices(){
+	wp_admin_notice(
+		 '<p id="ahsc_debug_status_message">'.__('<b>Debug mode is active.</b> To improve the responsiveness of your site, we suggest you disable it. This will remove any log files.','aruba-hispeed-cache' ).'</p>'.'<a class="button-secondary" id="ahsc_debug_disable" href="#">'.__('Disable Debugging','aruba-hispeed-cache').'</a>',
+		array(
+			'type'        => 'warning',
+			'dismissible' => false,
+		)
+	);
+}
+
+function ahsc_enqueue_debug_status_js() {
+	wp_register_script(
+		'ahcs-debug-status',
+		AHSC_CONSTANT['ARUBA_HISPEED_CACHE_BASEURL'] . '/assets/js/debug_status.js',
+		array(),
+		AHSC_get_version(),
+		array(
+			'strategy'  => 'defer',
+			'in_footer'=> true
+		)
+	);
+
+	wp_enqueue_script( 'ahcs-debug-status' );
+	wp_localize_script( 'ahcs-debug-status', 'AHSC_DEBUG_OPTIONS_CONFIGS',
+		array(
+			'ahsc_ajax_url' => \admin_url( 'admin-ajax.php' ),
+			'ahsc_nonce'    => \wp_create_nonce( 'ahsc-disable-debug' ),
+			'asc_result_message'=>__('debug mode has been disabled','aruba-hispeed-cache')
+			)
+	);
+}
 /**
  * Render della notifica in base alla logica presente in ahsc_get_check_notice.
  *
@@ -359,6 +396,28 @@ if(is_multisite()){
 		echo $check; //@phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 }
+add_action("wp_ajax_ahsc_disable_debug", "ahsc_disable_debug");
+
+ function ahsc_disable_debug(){
+	 if(is_user_logged_in() && current_user_can( 'manage_options' ) && isset($_POST['ahsc_nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash( $_POST['ahsc_nonce'])), 'ahsc-disable-debug' )  ) {
+
+		 $ahsc_response   = array();
+		 $wpc_transformer = new HASC_WPCT( ABSPATH . 'wp-config.php' );
+		 $ahsc_response['disabled_wp_debug']=$wpc_transformer->remove('constant', 'WP_DEBUG');
+		 $ahsc_response['disabled_wp_debug_log']=$wpc_transformer->remove('constant', 'WP_DEBUG_LOG');
+		 $ahsc_response['disabled_wp_debug_display']=$wpc_transformer->remove('constant', 'WP_DEBUG_DISPLAY');
+		 $ahsc_result = glob( WP_CONTENT_DIR . '/*.log' );
+		 if ( count( $ahsc_result ) ) {
+			 // log files exist
+			 foreach ( $ahsc_result as $ahsc_file ) {
+				 $ahsc_response['removed_wp_debug_log_file']=unlink( $ahsc_file );//@phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+			 }
+		 }
+		 echo wp_json_encode( $ahsc_response );
+		 die();
+	 }
+ }
+
 
 
 add_action("wp_ajax_ahsc_enable_purge", "ahsc_ajax_enable_purge");

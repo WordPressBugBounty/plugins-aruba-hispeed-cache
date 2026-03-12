@@ -3,7 +3,7 @@
 Contributors: arubait, arubadev, arubasupport
 Tags: Aruba, cache, performance, pagespeed, optimize
 Tested up to: 6.9
-Stable tag: 3.0.7
+Stable tag: 3.0.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -21,7 +21,7 @@ When the service is active, the plugin lets you clear the cache automatically (a
 
 HiSpeed Cache keeps dynamic content in the servers' memory after the first time it loads, making it available for subsequent requests much faster, significantly speeding up website browsing. The plugin simply clears the cache every time a custom page, article or content item is edited.
 
-For more details and to find out whether the HiSpeed Cache service is active on your website [please refer to our guide](https://guide.hosting.aruba.it/hosting/wordpress-e-altri-cms/wordpress-plugin-aruba-hispeed-cache.aspx?viewmode=0#eng).
+For more details and to find out whether the HiSpeed Cache service is active on your website [please refer to our guide](https://guide.aruba.it/en/hosting-e-domini/hosting/utilizzo-wordpress/velocita-prestazioni-sito-wordpress/wordpress-utilizzare-aruba-hispeed-cache).
 
 == Installation ==
 
@@ -67,6 +67,15 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 2. General Settings Enabled
 
 == Changelog ==
+
+= 3.0.8 =
+* Various fixes
+
+= 3.0.7 =
+* Various fixes
+
+= 3.0.6 =
+* Various fixes.
 
 = 3.0.5 =
 * Various fixes.
@@ -235,5 +244,5 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 
 == Upgrade Notice ==
 
-= 3.0.5 =
+= 3.0.7 =
 * Various fixes.
