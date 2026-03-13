@@ -3,7 +3,7 @@
 Contributors: arubait, arubadev, arubasupport
 Tags: Aruba, cache, performance, pagespeed, optimize
 Tested up to: 6.9
-Stable tag: 3.0.9
+Stable tag: 3.0.10
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -67,6 +67,9 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 2. General Settings Enabled
 
 == Changelog ==
+
+= 3.0.10 =
+* Various fixes
 
 = 3.0.9 =
 * Various fixes
@@ -247,5 +250,5 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 
 == Upgrade Notice ==
 
-= 3.0.9 =
+= 3.0.10 =
 * Various fixes
