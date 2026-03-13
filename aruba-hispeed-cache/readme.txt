@@ -3,7 +3,7 @@
 Contributors: arubait, arubadev, arubasupport
 Tags: Aruba, cache, performance, pagespeed, optimize
 Tested up to: 6.9
-Stable tag: 3.0.8
+Stable tag: 3.0.9
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -17,9 +17,9 @@ Aruba HiSpeed Cache interfaces directly with an Aruba hosting platform's HiSpeed
 
 The HiSpeed Cache service significantly reduces the TTFB (first Byte transfer time) and webpage loading times.
 
-When the service is active, the plugin lets you clear the cache automatically (and/or manually) every time a page or post is edited, without having to access the control panel for the website by clicking on the link provided.
+When the service is active, using the plugin allows you to automatically (and/or manually) clear the cache whenever a page or post is modified, without needing to access the website’s control panel by clicking the dedicated link.
 
-HiSpeed Cache keeps dynamic content in the servers' memory after the first time it loads, making it available for subsequent requests much faster, significantly speeding up website browsing. The plugin simply clears the cache every time a custom page, article or content item is edited.
+Thanks to AI, HiSpeed Cache analyzes traffic on your pages to automatically preload the most requested content, improving your users’ browsing experience. In addition, it stores dynamic content in the server memory after the first load, making it available for subsequent requests in a significantly shorter time, thus making website navigation much faster. The plugin simply clears the cache whenever a page, post, or custom content type is modified.
 
 For more details and to find out whether the HiSpeed Cache service is active on your website [please refer to our guide](https://guide.aruba.it/en/hosting-e-domini/hosting/utilizzo-wordpress/velocita-prestazioni-sito-wordpress/wordpress-utilizzare-aruba-hispeed-cache).
 
@@ -68,6 +68,9 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 
 == Changelog ==
 
+= 3.0.9 =
+* Various fixes
+
 = 3.0.8 =
 * Various fixes
 
@@ -75,16 +78,16 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 * Various fixes
 
 = 3.0.6 =
-* Various fixes.
+* Various fixes
 
 = 3.0.5 =
-* Various fixes.
+* Various fixes
 
 = 3.0.4 =
-* Various fixes.
+* Various fixes
 
 = 3.0.3 =
-* Various fixes.
+* Various fixes
 
 = 3.0.2 =
 * CDN Support.
@@ -244,5 +247,5 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 
 == Upgrade Notice ==
 
-= 3.0.7 =
-* Various fixes.
+= 3.0.9 =
+* Various fixes

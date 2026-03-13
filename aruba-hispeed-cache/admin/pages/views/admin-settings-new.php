@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     echo esc_html($ahsc_plugin_version);?></span>
 			</h1>
             <div style="position:relative;display:block;margin:0px auto; width:52%; padding:20px 0 20px 0;">
-                <?php echo wp_kses( __( 'Aruba HiSpeed Cache is the plugin that allows you to increase the page loading speed, optimizing cache management and improving the performance of your site, in order to offer a better browsing experience for your users.', 'aruba-hispeed-cache' ), array( 'strong' => array() ) )  ?>
+                <?php echo wp_kses( __( 'Aruba HiSpeed Cache is the plugin that allows you to increase page loading speed by optimizing cache management with the support of artificial intelligence and improving your website performance, to offer a better browsing experience to your users.', 'aruba-hispeed-cache' ), array( 'strong' => array() ) )  ?>
             </div>
             <div class="ahsc-actions-wrapper">
                 <table class="button-table ahst-table" style="text-align: inherit!important">

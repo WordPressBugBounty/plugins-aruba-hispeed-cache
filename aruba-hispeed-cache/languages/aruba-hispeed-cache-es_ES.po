@@ -3,10 +3,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Aruba HiSpeed Cache 0.0.1\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/aruba-hispeed-"
-"cache\n"
-"POT-Creation-Date: 2022-03-02T16:31:41+01:00\n"
-"PO-Revision-Date: 2026-03-09 09:57+0000\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/aruba-hispeed-cache\n"
+"POT-Creation-Date: 2026-03-13 07:23+0100\n"
+"PO-Revision-Date: 2026-03-13 07:25+0100\n"
 "Last-Translator: \n"
 "Language-Team: Spanish (Spain)\n"
 "Language: es_ES\n"
@@ -14,177 +13,124 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Loco https://localise.biz/\n"
+"X-Generator: Poedit 3.7\n"
 "X-Domain: aruba-hispeed-cache\n"
-"X-Loco-Version: 2.8.1; wp-6.8.3; php-8.4.16"
+"X-Loco-Version: 2.8.1; wp-6.8.3; php-8.4.16\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_n;_x;_ex;_nx;esc_attr__;esc_attr_e;esc_attr_x;esc_html__;esc_html_e;esc_html_x;_n_noop;_nx_noop;translate_nooped_plural\n"
+"X-Poedit-SearchPath-0: .\n"
 
-#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:28
-msgid " Status:"
-msgstr "Estado:"
+#: admin/AHSC_Admin_Bar.php:32 admin/AHSC_Admin_Bar.php:102
+msgid "Purge page cache"
+msgstr "Borrar caché de la página"
 
-#: aruba-hispeed-cache.php:359
-msgid ""
-"<b>Debug mode is active.</b> To improve the responsiveness of your site, we "
-"suggest you disable it. This will remove any log files."
-msgstr ""
-" <b>El modo debug está activado.</b> Para mejorar la velocidad de respuesta "
-"de tu sitio web, te recomendamos desactivarlo. Esta acción supondrá la \n"
-"eliminación de los archivos .log existentes"
+#: admin/AHSC_Admin_Bar.php:37 admin/AHSC_Admin_Bar.php:105
+msgid "Purge Cache"
+msgstr "Borrar caché"
 
-#: src/AHSC_Apc.php:14
-msgid ""
-"<strong>Another plugin use object cache.</strong> Deactivate the plugin or "
-"functionality and retry."
-msgstr ""
-"<strong>Otro complemento utiliza caché de objetos.</strong> Desactive el "
-"complemento o la funcionalidad y vuelva a intentarlo"
+#: admin/AHSC_Admin_Bar.php:60 admin/AHSC_Admin_Bar.php:62
+msgid "Purge Expired Transient"
+msgstr "Purga caducada Transient"
 
-#. %s: the hosting truck url.
-#: src/AHSC_Check.php:323
-#: admin/pages/views/partials/sections/section-ahsc-service-status.php:71
-#, php-format
-msgid ""
-"<strong>The Aruba HiSpeed Cache plugin cannot be used because your WordPress "
-"website is not hosted on an Aruba hosting platform.</strong> Buy an <a "
-"href=\"%s\" rel=\"nofollow\" target=\"_blank\">Aruba Hosting service</a> and "
-"migrate your website to use the plugin."
-msgstr ""
-"<strong>El complemento Aruba HiSpeed ​​Cache no se puede utilizar porque su "
-"sitio web de WordPress no está alojado en una plataforma de alojamiento de "
-"Aruba.</strong> Compre un <a href=\"%s\" rel=\"nofollow\" target=\"_blank\">"
-"Aruba Servicio de hosting</a> y migra tu sitio web para utilizar el "
-"complemento."
-
-#. %2$s: the guide url.
-#: admin/pages/views/partials/sections/section-ahsc-service-status.php:89
-#, php-format
-msgid ""
-"<strong>The HiSpeed Cache service is enabled.</strong>  For further details "
-"<a href=\"%1$s\" rel=\"nofollow\" target=\"_blank\">see our guide</a>."
-msgstr ""
-"<strong>El servicio HiSpeed ​​Cache está habilitado.</strong> Para obtener "
-"más detalles, <a href=\"%1$s\" rel=\"nofollow\" target=\"_blank\">consulte "
-"nuestra guía</a>."
-
-#. %2$s: the guide url.
-#: src/AHSC_Check.php:284
-#: admin/pages/views/partials/sections/section-ahsc-service-status.php:37
-#, php-format
-msgid ""
-"<strong>The HiSpeed Cache service is not enabled.</strong> To activate it, "
-"go to your domain <a href=\"%1$s\" rel=\"nofollow\" target=\"_blank\">"
-"control panel</a> (verifying the status may take up to 15 minutes). For "
-"further details <a href=\"%2$s\" rel=\"nofollow\" target=\"_blank\">see our "
-"guide</a>."
-msgstr ""
-"<strong>El servicio HiSpeed ​​Cache no está habilitado.</strong> Para "
-"activarlo, vaya al <a href=\"%1$s\" rel=\"nofollow\" target=\"_blank\">panel "
-"de control</a> (verificar el estado puede tardar hasta 15 minutos). Para "
-"obtener más detalles <a href=\"%2$s\" rel=\"nofollow\" target=\"_blank\">"
-"consulte nuestra guía</a>."
-
-#. %s: the assistance url.
-#: src/AHSC_Check.php:304
-#: admin/pages/views/partials/sections/section-ahsc-service-status.php:54
-#, php-format
-msgid ""
-"<strong>The HiSpeed Cache service with which the plugin interfaces is not "
-"available on the server that hosts your website.</strong> To use HiSpeed "
-"Cache and the plugin, please contact <a href=\"%s\" rel=\"nofollow\" "
-"target=\"_blank\">support</a>."
-msgstr ""
-"<strong>El servicio HiSpeed ​​Cache con el que interactúa el complemento no "
-"está disponible en el servidor que aloja su sitio web.</strong> Para "
-"utilizar HiSpeed ​​Cache y el complemento, comuníquese con <a href=\"%s\" "
-"rel=\"nofollow\" target=\"_blank\">soporte</a>."
-
-#: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:74
-msgid ""
-"A <strong>comment</strong> is entered, approved, declined, published or "
-"deleted in any part of the website"
-msgstr ""
-"Un <strong>comentario</strong> se ingresa, se aprueba, se rechaza, se "
-"publica o se elimina en cualquier parte del sitio web."
-
-#: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:93
-msgid ""
-"A <strong>term</strong> or <strong>menu</strong> is edited, added or deleted"
-msgstr ""
-"Se edita, agrega o elimina un <strong>término</strong> o <strong>"
-"menú</strong>"
-
-#: admin/pages/views/partials/sections/section-ahsc-cdn-status.php:61
-msgid "ACCESS THE PANEL"
-msgstr "ACCEDER AL PANEL"
-
-#: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:55
-msgid ""
-"An <strong>article</strong>, <strong>page</strong>, or <strong>personalized "
-"content</strong> is added, edited or deleted"
-msgstr ""
-"Se agrega, edita o elimina un <strong>artículo</strong>, una <strong>"
-"página</strong> o un <strong>contenido personalizado</strong>"
-
-#: aruba-hispeed-cache.php:164 aruba-hispeed-cache.php:174
-#: aruba-hispeed-cache.php:182 aruba-hispeed-cache.php:192
-msgid "An error occurred. Please try again later or contact support."
-msgstr ""
-"Ocurrió un error. Inténtelo de nuevo más tarde o comuníquese con el soporte."
-
-#: admin/pages/views/admin-settings-new.php:50
-#| msgid "Apc"
-msgid "APCu"
-msgstr "Apc"
-
-#. Name of the plugin
 #: admin/AHSC_Admin_Menu.php:13 admin/AHSC_Admin_Menu.php:14
 #: admin/pages/views/admin-settings-new.php:12
 msgid "Aruba HiSpeed Cache"
 msgstr "Aruba HiSpeed Cache"
 
-#. Description of the plugin
-msgid ""
-"Aruba HiSpeed Cache interfaces directly with the Aruba HiSpeed Cache service "
-"of the Aruba hosting platform and automates its management."
+#: admin/assets/js/editor.js:31
+msgid "Cancella Cache"
 msgstr ""
-"Aruba HiSpeed ​​Cache interactúa directamente con el servicio Aruba HiSpeed "
-"​​Cache de la plataforma de hosting de Aruba y automatiza su gestión."
 
-#: admin/pages/views/admin-settings-new.php:19
-msgid ""
-"Aruba HiSpeed Cache is the plugin that allows you to increase the page "
-"loading speed, optimizing cache management and improving the performance of "
-"your site, in order to offer a better browsing experience for your users."
+#: admin/assets/js/editor.js:50
+msgid "Cancellazione in corso"
 msgstr ""
-"Aruba HiSpeed Cache es el plugin que te permite aumentar la velocidad de "
-"carga de las páginas, optimizando la gestión de la caché con la ayuda de la "
-"inteligencia artificial y mejorando el rendimiento de tu sitio web, para "
-"ofrecer una mejor experiencia de navegación a tus usuarios."
 
-#. Author of the plugin
-#| msgid "Aruba.it"
-msgid "arubait"
-msgstr "Aruba.it"
-
-#: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:15
-msgid "Automatically clear cache"
-msgstr "Borrar caché automáticamente"
-
-#: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:49
-msgid "Automatically clear whole cache when:"
-msgstr "Borrar automáticamente todo el caché cuando:"
+#: admin/pages/AHSC_Page.php:37
+msgid "You are about to purge the entire cache. Do you want to continue?"
+msgstr "Estás a punto de purgar toda la caché. ¿Quieres continuar?"
 
 #: admin/pages/AHSC_Page.php:38
 msgid ""
-"By confirming this action, all the plugin's original settings will be "
-"restored. Are you sure you want to proceed?"
+"By confirming this action, all the plugin's original settings will be restored. "
+"Are you sure you want to proceed?"
 msgstr ""
 "Al confirmar esta acción, se restaurará la configuración original del "
 "complemento. ¿Seguro que desea continuar?"
 
+#: admin/pages/AHSC_Page.php:39
+#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:41
+msgid "Optimized"
+msgstr "Optimizado"
+
+#: admin/pages/AHSC_Page.php:40
+msgid "Not optimized"
+msgstr "No optimizado"
+
+#: admin/pages/AHSC_Settings.php:12
+msgid "Sorry, you need to be an administrator to use HiSpeed Cache."
+msgstr ""
+"Lo sentimos mucho, tienes que ser administrador para usar Aruba HiSpeed Cache."
+
+#: admin/pages/views/admin-settings-new.php:19
+msgid ""
+"Aruba HiSpeed Cache is the plugin that allows you to increase page loading speed "
+"by optimizing cache management with the support of artificial intelligence and "
+"improving your website performance, to offer a better browsing experience to "
+"your users."
+msgstr ""
+"Aruba HiSpeed Cache es el plugin que te permite aumentar la velocidad de carga "
+"de las páginas, optimizando la gestión de la caché con la ayuda de la "
+"inteligencia artificial y mejorando el rendimiento de tu sitio web, para ofrecer "
+"una mejor experiencia de navegación a tus usuarios."
+
+#: admin/pages/views/admin-settings-new.php:28
+msgid "Purge entire cache"
+msgstr "Purgar todo el caché"
+
+#: admin/pages/views/admin-settings-new.php:31
+msgid "Reset default value"
+msgstr "Restablecer el valor predeterminado"
+
 #: admin/pages/views/admin-settings-new.php:39
 msgid "Cache"
 msgstr "Cache"
+
+#: admin/pages/views/admin-settings-new.php:40
+msgid "Performance"
+msgstr "El rendimiento"
+
+#: admin/pages/views/admin-settings-new.php:41
+#: admin/pages/views/partials/sections/section-ahsc-cdn-status.php:14
+msgid "CDN"
+msgstr "CDN"
+
+#: admin/pages/views/admin-settings-new.php:43
+msgid "Debug"
+msgstr "Debug"
+
+#: admin/pages/views/admin-settings-new.php:50
+msgid "APCu"
+msgstr "Apc"
+
+#: admin/pages/views/partials/sections/section-ahsc-apc.php:14
+msgid "Object cache"
+msgstr "Object cache"
+
+#: admin/pages/views/partials/sections/section-ahsc-apc.php:19
+#: admin/pages/views/partials/sections/section-ahsc-apc.php:24
+msgid ""
+"Reduces the number of queries made to the database and the related execution "
+"times for processing the queries necessary to display the pages, improving site "
+"loading performance via APCu."
+msgstr ""
+"Reduce el número de consultas realizadas a la base de datos y los tiempos de "
+"ejecución relacionados para procesar las consultas necesarias para mostrar las "
+"páginas, mejorando el rendimiento de carga del sitio vía APCu."
+
+#: admin/pages/views/partials/sections/section-ahsc-apc.php:30
+msgid "Enable object cache"
+msgstr "Habilitar caché de objetos"
 
 #: admin/pages/views/partials/sections/section-ahsc-cache-warmer.php:14
 msgid "Cache preload"
@@ -193,65 +139,110 @@ msgstr "Precarga de caché"
 #: admin/pages/views/partials/sections/section-ahsc-cache-warmer.php:19
 #: admin/pages/views/partials/sections/section-ahsc-cache-warmer.php:24
 msgid ""
-"Cache preload is the process by which web pages are preloaded into the cache "
-"so that they can be displayed faster.The homepage and the most recent ten "
-"items will be automatically preloaded."
+"Cache preload is the process by which web pages are preloaded into the cache so "
+"that they can be displayed faster.The homepage and the most recent ten items "
+"will be automatically preloaded."
 msgstr ""
-"La precarga de caché es el proceso mediante el cual las páginas web se "
-"precargan en la caché para que puedan mostrarse más rápido. La página de "
-"inicio y los diez elementos más recientes se precargarán automáticamente."
+"La precarga de caché es el proceso mediante el cual las páginas web se precargan "
+"en la caché para que puedan mostrarse más rápido. La página de inicio y los diez "
+"elementos más recientes se precargarán automáticamente."
 
-#: aruba-hispeed-cache.php:169
-msgid "Cache purged."
-msgstr "Caché purgado."
+#: admin/pages/views/partials/sections/section-ahsc-cache-warmer.php:30
+msgid "Enable cache preload"
+msgstr "Habilitar la precarga de caché"
 
-#: admin/pages/views/partials/sections/section-ahsc-service-status.php:9
-msgid "Cache Status "
-msgstr "Estado de caché"
-
-#: admin/pages/views/admin-settings-new.php:41
-#: admin/pages/views/partials/sections/section-ahsc-cdn-status.php:14
-msgid "CDN"
-msgstr "CDN"
-
-#: admin/pages/views/partials/sections/section-ahsc-service-status.php:13
-#: admin/pages/views/partials/sections/section-ahsc-service-status.php:18
-msgid "check if the cache service is enabled and active in the domain"
+#: admin/pages/views/partials/sections/section-ahsc-cdn-status.php:17
+#: admin/pages/views/partials/sections/section-ahsc-cdn-status.php:21
+msgid ""
+"The <strong>Content Delivery Network</strong> (CDN) reduces website loading "
+"times by distributing content across a network of remote servers. You can manage "
+"the CDN through the Aruba control panel."
 msgstr ""
-"comprobar si el servicio de caché está habilitado y activo en el dominio"
+"La Red de Entrega de Contenido (CDN) reduce los tiempos de carga de los sitios "
+"web al distribuir el contenido a través de una red de servidores remotos. Puede "
+"administrar la CDN a través del panel de control de Aruba."
 
-#: src/AHSC_Functions.php:107
-msgid "Customer support"
-msgstr "Atención al cliente"
+#: admin/pages/views/partials/sections/section-ahsc-cdn-status.php:28
+msgid "Status:"
+msgstr "Estado:"
 
-#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:14
-msgid "Database table optimization"
-msgstr "Optimización de la tabla de base de datos"
-
-#: admin/pages/views/admin-settings-new.php:43
-msgid "Debug"
-msgstr "Debug"
-
-#: aruba-hispeed-cache.php:384
-msgid "debug mode has been disabled"
-msgstr "El modo de debug ha sido deshabilitado"
-
-#: aruba-hispeed-cache.php:359
-msgid "Disable Debugging"
-msgstr "Deshabilitar la debug"
-
-#: admin/pages/views/partials/sections/section-ahsc-xmlrpc-status.php:28
-msgid "Disable XML-RPC"
-msgstr "Deshabilitar XML-RPC"
+#: admin/pages/views/partials/sections/section-ahsc-cdn-status.php:42
+msgid "Enabled"
+msgstr "Activado"
 
 #: admin/pages/views/partials/sections/section-ahsc-cdn-status.php:46
 msgid "Disabled"
 msgstr "Desactivado"
 
+#: admin/pages/views/partials/sections/section-ahsc-cdn-status.php:50
+msgid "No active"
+msgstr "No activo"
+
+#: admin/pages/views/partials/sections/section-ahsc-cdn-status.php:61
+msgid "ACCESS THE PANEL"
+msgstr "ACCEDER AL PANEL"
+
+#: admin/pages/views/partials/sections/section-ahsc-cron-status.php:9
+#: admin/pages/views/partials/sections/section-ahsc-cron-status.php:23
+msgid "Manage WP-Cron schedule"
+msgstr "Administrar la programación de WP-Cron"
+
+#: admin/pages/views/partials/sections/section-ahsc-cron-status.php:13
+#: admin/pages/views/partials/sections/section-ahsc-cron-status.php:17
+msgid ""
+"It allows you to schedule the automatic execution of some tasks, in specific "
+"time intervals. By setting the execution frequency, all operations, such as "
+"editing or publishing posts and pages, will be performed in the chosen interval, "
+"possibly replacing the day and time scheduled on WordPress."
+msgstr ""
+"Permite programar la ejecución automática de ciertas tareas en intervalos de "
+"tiempo específicos. Al establecer la frecuencia de ejecución, todas las "
+"operaciones, como editar o publicar entradas y páginas, se realizarán en el "
+"intervalo seleccionado, pudiendo reemplazar el día y la hora programados en "
+"WordPress."
+
+#: admin/pages/views/partials/sections/section-ahsc-cron-status.php:41
+msgid "Frequency of execution"
+msgstr "Frecuencia de ejecución"
+
+#: admin/pages/views/partials/sections/section-ahsc-cron-status.php:54
+msgid "Set the time interval after which the activity should be repeated"
+msgstr ""
+"Establezca el intervalo de tiempo después del cual se debe repetir la actividad"
+
+#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:14
+msgid "Database table optimization"
+msgstr "Optimización de la tabla de base de datos"
+
+#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:18
+#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:23
+msgid ""
+"This process improves data retrieval speed, making your site faster and more "
+"responsive for both visitors and you in the admin area."
+msgstr ""
+"Este proceso mejora la velocidad de recuperación de datos, haciendo que su sitio "
+"sea más rápido y responda mejor tanto para los visitantes como para usted en el "
+"área de administración."
+
+#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:28
+msgid " Status:"
+msgstr " Estado:"
+
+#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:43
+msgid "Not Optimized"
+msgstr "No optimizado"
+
+#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:50
+msgid "Optimize"
+msgstr "Optimizar"
+
+#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:52
+msgid "Restore default"
+msgstr "Restaurar valor predeterminado"
+
 #: admin/pages/views/partials/sections/section-ahsc-dns-preconnect.php:14
-#| msgid "DNS Prefetch and Preconnect:"
 msgid "DNS Prefetch and Preconnect"
-msgstr "DNS Prefetch and Preconnect:"
+msgstr "DNS Prefetch and Preconnect"
 
 #: admin/pages/views/partials/sections/section-ahsc-dns-preconnect.php:18
 #: admin/pages/views/partials/sections/section-ahsc-dns-preconnect.php:22
@@ -260,188 +251,91 @@ msgid ""
 "connection to external resources, like CSS, fonts, js from some third-party "
 "domain."
 msgstr ""
-"DNS Prefetch and Preconnect se utilizan para reducir el tiempo necesario "
-"para establecer una conexión con recursos externos, como CSS, fuentes, js de "
-"algún dominio de terceros."
+"DNS Prefetch and Preconnect se utilizan para reducir el tiempo necesario para "
+"establecer una conexión con recursos externos, como CSS, fuentes, js de algún "
+"dominio de terceros."
+
+#: admin/pages/views/partials/sections/section-ahsc-dns-preconnect.php:29
+msgid "Enable DNS Prefetch and Preconnect for external domain resources"
+msgstr "DNS Prefetch and Preconnect para recursos de dominio externo"
 
 #: admin/pages/views/partials/sections/section-ahsc-dns-preconnect.php:48
 msgid "DNS Prefetch and Preconnect domain list."
 msgstr "DNS Prefetch and Preconnect lista de dominios."
 
-#: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:21
-#: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:27
-msgid "Enable automatic cache clearing "
-msgstr "Habilitar el borrado automático de caché"
+#: admin/pages/views/partials/sections/section-ahsc-dns-preconnect.php:66
+msgid ""
+"Insert one external domain per line, for example \"https://dominioesterno.it\""
+msgstr ""
+"Inserte un dominio externo por línea, por ejemplo \"https://dominioesterno.it\""
 
-#: admin/pages/views/partials/sections/section-ahsc-cache-warmer.php:30
-msgid "Enable cache preload"
-msgstr "Habilitar la precarga de caché"
+#: admin/pages/views/partials/sections/section-ahsc-enable-cron.php:14
+msgid "WP-Cron"
+msgstr "WP-Cron"
 
-#: admin/pages/views/partials/sections/section-ahsc-dns-preconnect.php:29
-#| msgid "DNS Prefetch and Preconnect for external domain resources"
-msgid "Enable DNS Prefetch and Preconnect for external domain resources"
-msgstr "DNS Prefetch and Preconnect para recursos de dominio externo"
-
-#: admin/pages/views/partials/sections/section-ahsc-html-optimizer.php:29
-msgid "Enable HTML code optimization"
-msgstr "Habilitar la optimización del código HTML"
-
-#: admin/pages/views/partials/sections/section-ahsc-apc.php:30
-msgid "Enable object cache"
-msgstr "Habilitar caché de objetos"
-
-#: admin/pages/views/partials/sections/section-ahsc-lazy-load.php:29
-msgid "Enable optimization of image loading"
-msgstr "Habilitar la optimización de la carga de imágenes."
+#: admin/pages/views/partials/sections/section-ahsc-enable-cron.php:18
+#: admin/pages/views/partials/sections/section-ahsc-enable-cron.php:22
+msgid ""
+"Schedule automatic tasks and jobs, at specific times.By setting up a frequency "
+"of jobs and tasks, like changing or publishing articles and pages, they will run "
+"at the required time, replacing any existing date and time scheduled on "
+"WordPress."
+msgstr ""
+"Programe tareas y trabajos automáticos en horarios específicos. Al configurar "
+"una frecuencia de trabajos y tareas, como cambiar o publicar artículos y "
+"páginas, se ejecutarán en el momento requerido, reemplazando cualquier fecha y "
+"hora existente programada en WordPress."
 
 #: admin/pages/views/partials/sections/section-ahsc-enable-cron.php:29
 msgid "Enable Wp-Cron"
 msgstr "Habilitar Wp-Cron"
 
-#: admin/pages/views/partials/sections/section-ahsc-cdn-status.php:42
-msgid "Enabled"
-msgstr "Activado"
-
-#: admin/pages/views/partials/sections/section-ahsc-xmlrpc-status.php:18
-#: admin/pages/views/partials/sections/section-ahsc-xmlrpc-status.php:22
-msgid ""
-"Enhance the protection of your website from cyber attacks by disabling the "
-"XML-RPC function that allows data transfer."
-msgstr ""
-"Mejore la protección de su sitio web contra ataques cibernéticos "
-"desactivando la función XML-RPC que permite la transferencia de datos."
-
-#: aruba-hispeed-cache.php:187
-msgid "Expired transient purged."
-msgstr "Transient caducado purgado."
-
-#: admin/pages/views/partials/sections/section-ahsc-cron-status.php:41
-msgid "Frequency of execution"
-msgstr "Frecuencia de ejecución"
-
 #: admin/pages/views/partials/sections/section-ahsc-enable-cron.php:47
 msgid "Frequency of jobs"
 msgstr "Frecuencia de trabajos"
 
-#. URI of the plugin
-msgid "https://hosting.aruba.it/wordpress.aspx"
-msgstr "https://hosting.aruba.it/wordpress.aspx"
+#: admin/pages/views/partials/sections/section-ahsc-enable-cron.php:60
+msgid "Setup the time after which the job needs to be repeated."
+msgstr "Configure el tiempo después del cual debe repetirse el trabajo."
 
-#. Author URI of the plugin
-msgid "https://www.aruba.it/"
-msgstr "https://www.aruba.it/"
+#: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:15
+msgid "Automatically clear cache"
+msgstr "Borrar caché automáticamente"
 
-#: admin/pages/views/partials/sections/section-ahsc-lazy-load.php:18
-#: admin/pages/views/partials/sections/section-ahsc-lazy-load.php:22
+#: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:21
+#: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:27
+msgid "Enable automatic cache clearing "
+msgstr "Habilitar el borrado automático de caché "
+
+#: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:49
+msgid "Automatically clear whole cache when:"
+msgstr "Borrar automáticamente todo el caché cuando:"
+
+#: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:55
 msgid ""
-"Improve page loading times using Lazy Load (asynchronous loading) of images."
+"An <strong>article</strong>, <strong>page</strong>, or <strong>personalized "
+"content</strong> is added, edited or deleted"
 msgstr ""
-"Mejore los tiempos de carga de páginas utilizando Lazy Load (carga "
-"asincrónica) de imágenes."
+"Se agrega, edita o elimina un <strong>artículo</strong>, una <strong>página</"
+"strong> o un <strong>contenido personalizado</strong>"
 
-#: admin/pages/views/partials/sections/section-ahsc-dns-preconnect.php:66
+#: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:74
 msgid ""
-"Insert one external domain per line, for example \"https://dominioesterno."
-"it\""
+"A <strong>comment</strong> is entered, approved, declined, published or deleted "
+"in any part of the website"
 msgstr ""
-"Inserte un dominio externo por línea, por ejemplo \"https://dominioesterno."
-"it\""
+"Un <strong>comentario</strong> se ingresa, se aprueba, se rechaza, se publica o "
+"se elimina en cualquier parte del sitio web"
 
-#: admin/pages/views/partials/sections/section-ahsc-cron-status.php:13
-#: admin/pages/views/partials/sections/section-ahsc-cron-status.php:17
+#: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:93
 msgid ""
-"It allows you to schedule the automatic execution of some tasks, in specific "
-"time intervals. By setting the execution frequency, all operations, such as "
-"editing or publishing posts and pages, will be performed in the chosen "
-"interval, possibly replacing the day and time scheduled on WordPress."
+"A <strong>term</strong> or <strong>menu</strong> is edited, added or deleted"
 msgstr ""
-"Permite programar la ejecución automática de ciertas tareas en intervalos de "
-"tiempo específicos. Al establecer la frecuencia de ejecución, todas las "
-"operaciones, como editar o publicar entradas y páginas, se realizarán en el "
-"intervalo seleccionado, pudiendo reemplazar el día y la hora programados en "
-"WordPress."
-
-#: admin/pages/views/partials/sections/section-ahsc-static-cache.php:19
-#: admin/pages/views/partials/sections/section-ahsc-static-cache.php:24
-msgid ""
-"Manage the expiry of static files (JPEG, GIF, PNG, WebPL, SVG, X-Icon, CSS, "
-"JavaScript) and set the length of time you want to save them in the local "
-"cache on the browser, before they are deleted."
-msgstr ""
-"Administre la caducidad de los archivos estáticos (JPEG, GIF, PNG, WebPL, "
-"SVG, X-Icon, CSS, JavaScript) y establezca el tiempo durante el cual desea "
-"guardarlos en el caché local del navegador, antes de que se eliminen."
-
-#: admin/pages/views/partials/sections/section-ahsc-cron-status.php:9
-#: admin/pages/views/partials/sections/section-ahsc-cron-status.php:23
-msgid "Manage WP-Cron schedule"
-msgstr "Administrar la programación de WP-Cron"
-
-#: admin/pages/views/partials/sections/section-ahsc-cdn-status.php:50
-msgid "No active"
-msgstr "No activo"
-
-#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:43
-msgid "Not Optimized"
-msgstr "No optimizado"
-
-#: admin/pages/AHSC_Page.php:40
-msgid "Not optimized"
-msgstr "No optimizado"
-
-#: admin/pages/views/partials/sections/section-ahsc-apc.php:14
-msgid "Object cache"
-msgstr "Object cache"
-
-#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:50
-msgid "Optimize"
-msgstr "Optimizar"
+"Se edita, agrega o elimina un <strong>término</strong> o <strong>menú</strong>"
 
 #: admin/pages/views/partials/sections/section-ahsc-html-optimizer.php:14
 msgid "Optimize HTML code"
 msgstr "Optimizar el código HTML"
-
-#: admin/pages/views/partials/sections/section-ahsc-lazy-load.php:14
-msgid "Optimize image loading"
-msgstr "Optimizar la carga de imágenes"
-
-#: admin/pages/views/partials/sections/section-ahsc-static-cache.php:14
-msgid "Optimize the cache of static files on the browser"
-msgstr "Optimizar la caché de archivos estáticos en el navegador"
-
-#: admin/pages/views/partials/sections/section-ahsc-static-cache.php:30
-msgid "Optimize the cache on browser"
-msgstr "Optimizar la caché del navegador"
-
-#: admin/pages/AHSC_Page.php:39
-#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:41
-msgid "Optimized"
-msgstr "Optimizado"
-
-#: src/AHSC_Functions.php:221
-msgid "Original settings restored."
-msgstr "Configuración original restaurada."
-
-#: admin/pages/views/admin-settings-new.php:40
-msgid "Performance"
-msgstr "el rendimiento"
-
-#: admin/AHSC_Admin_Bar.php:37 admin/AHSC_Admin_Bar.php:105
-msgid "Purge Cache"
-msgstr "Borrar caché"
-
-#: admin/pages/views/admin-settings-new.php:28
-msgid "Purge entire cache"
-msgstr "Purgar todo el caché"
-
-#: admin/AHSC_Admin_Bar.php:60 admin/AHSC_Admin_Bar.php:62
-msgid "Purge Expired Transient"
-msgstr "Purga caducada Transient"
-
-#: admin/AHSC_Admin_Bar.php:32 admin/AHSC_Admin_Bar.php:102
-#| msgid "Purge the page cache"
-msgid "Purge page cache"
-msgstr "Borrar caché de la página"
 
 #: admin/pages/views/partials/sections/section-ahsc-html-optimizer.php:18
 #: admin/pages/views/partials/sections/section-ahsc-html-optimizer.php:22
@@ -449,108 +343,201 @@ msgid "Reduce the dimensions of the HTML page for faster loading times."
 msgstr ""
 "Reduzca las dimensiones de la página HTML para tiempos de carga más rápidos."
 
-#: admin/pages/views/partials/sections/section-ahsc-apc.php:19
-#: admin/pages/views/partials/sections/section-ahsc-apc.php:24
+#: admin/pages/views/partials/sections/section-ahsc-html-optimizer.php:29
+msgid "Enable HTML code optimization"
+msgstr "Habilitar la optimización del código HTML"
+
+#: admin/pages/views/partials/sections/section-ahsc-lazy-load.php:14
+msgid "Optimize image loading"
+msgstr "Optimizar la carga de imágenes"
+
+#: admin/pages/views/partials/sections/section-ahsc-lazy-load.php:18
+#: admin/pages/views/partials/sections/section-ahsc-lazy-load.php:22
 msgid ""
-"Reduces the number of queries made to the database and the related execution "
-"times for processing the queries necessary to display the pages, improving "
-"site loading performance via APCu."
+"Improve page loading times using Lazy Load (asynchronous loading) of images."
 msgstr ""
-"Reduce el número de consultas realizadas a la base de datos y los tiempos de "
-"ejecución relacionados para procesar las consultas necesarias para mostrar "
-"las páginas, mejorando el rendimiento de carga del sitio vía APCu."
+"Mejore los tiempos de carga de páginas utilizando Lazy Load (carga asincrónica) "
+"de imágenes."
 
-#: aruba-hispeed-cache.php:699
-msgid "Reload"
-msgstr "Recargar"
+#: admin/pages/views/partials/sections/section-ahsc-lazy-load.php:29
+msgid "Enable optimization of image loading"
+msgstr "Habilitar la optimización de la carga de imágenes"
 
-#: admin/pages/views/admin-settings-new.php:31
-msgid "Reset default value"
-msgstr "Restablecer el valor predeterminado"
+#: admin/pages/views/partials/sections/section-ahsc-service-status.php:9
+msgid "Cache Status "
+msgstr "Estado de caché "
 
-#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:52
-msgid "Restore default"
-msgstr "Restaurar valor predeterminado"
+#: admin/pages/views/partials/sections/section-ahsc-service-status.php:13
+#: admin/pages/views/partials/sections/section-ahsc-service-status.php:18
+msgid "check if the cache service is enabled and active in the domain"
+msgstr "comprobar si el servicio de caché está habilitado y activo en el dominio"
 
-#: admin/pages/views/partials/sections/section-ahsc-enable-cron.php:18
-#: admin/pages/views/partials/sections/section-ahsc-enable-cron.php:22
-msgid ""
-"Schedule automatic tasks and jobs, at specific times.By setting up a "
-"frequency of jobs and tasks, like changing or publishing articles and pages, "
-"they will run at the required time, replacing any existing date and time "
-"scheduled on WordPress."
-msgstr ""
-"Programe tareas y trabajos automáticos en horarios específicos. Al "
-"configurar una frecuencia de trabajos y tareas, como cambiar o publicar "
-"artículos y páginas, se ejecutarán en el momento requerido, reemplazando "
-"cualquier fecha y hora existente programada en WordPress."
-
-#: admin/pages/views/partials/sections/section-ahsc-cron-status.php:54
-msgid "Set the time interval after which the activity should be repeated"
-msgstr ""
-"Establezca el intervalo de tiempo después del cual se debe repetir la "
-"actividad"
-
-#: src/AHSC_Functions.php:101
-msgid "Settings"
-msgstr "Configuración"
-
-#: admin/pages/views/partials/sections/section-ahsc-enable-cron.php:60
-msgid "Setup the time after which the job needs to be repeated."
-msgstr "Configure el tiempo después del cual debe repetirse el trabajo."
-
-#. %s: the min php version required.
-#: src/AHSC_Version.php:43
+#: admin/pages/views/partials/sections/section-ahsc-service-status.php:37
+#: src/AHSC_Check.php:284
 #, php-format
-msgid "Sorry, Aruba HiSpeed Cache requires PHP %s or higher."
-msgstr "Lo sentimos, Aruba HiSpeed ​​Cache requiere PHP %s o superior."
+msgid ""
+"<strong>The HiSpeed Cache service is not enabled.</strong> To activate it, go to "
+"your domain <a href=\"%1$s\" rel=\"nofollow\" target=\"_blank\">control panel</"
+"a> (verifying the status may take up to 15 minutes). For further details <a "
+"href=\"%2$s\" rel=\"nofollow\" target=\"_blank\">see our guide</a>."
+msgstr ""
+"<strong>El servicio HiSpeed ​​Cache no está habilitado.</strong> Para activarlo, "
+"vaya al <a href=\"%1$s\" rel=\"nofollow\" target=\"_blank\">panel de control</a> "
+"(verificar el estado puede tardar hasta 15 minutos). Para obtener más detalles "
+"<a href=\"%2$s\" rel=\"nofollow\" target=\"_blank\">consulte nuestra guía</a>."
 
-#. %s: the wp min required version.
-#: src/AHSC_Version.php:15
+#: admin/pages/views/partials/sections/section-ahsc-service-status.php:54
+#: src/AHSC_Check.php:304
 #, php-format
-msgid "Sorry, Aruba HiSpeed Cache requires WordPress %s or higher."
-msgstr "Lo sentimos, Aruba HiSpeed ​​Cache requiere WordPress %s o superior."
-
-#: admin/pages/AHSC_Settings.php:12
-#| msgid "Sorry, you need to be an administrator to use Aruba HiSpeed Cache."
-msgid "Sorry, you need to be an administrator to use HiSpeed Cache."
-msgstr ""
-"Lo sentimos mucho, tienes que ser administrador para usar Aruba HiSpeed "
-"Cache."
-
-#: admin/pages/views/partials/sections/section-ahsc-cdn-status.php:28
-msgid "Status:"
-msgstr "Estado:"
-
-#: admin/pages/views/partials/sections/section-ahsc-cdn-status.php:17
-#: admin/pages/views/partials/sections/section-ahsc-cdn-status.php:21
 msgid ""
-"The <strong>Content Delivery Network</strong> (CDN) reduces website loading "
-"times by distributing content across a network of remote servers. You can "
-"manage the CDN through the Aruba control panel."
+"<strong>The HiSpeed Cache service with which the plugin interfaces is not "
+"available on the server that hosts your website.</strong> To use HiSpeed Cache "
+"and the plugin, please contact <a href=\"%s\" rel=\"nofollow\" "
+"target=\"_blank\">support</a>."
 msgstr ""
-"La Red de Entrega de Contenido (CDN) reduce los tiempos de carga de los "
-"sitios web al distribuir el contenido a través de una red de servidores "
-"remotos. Puede administrar la CDN a través del panel de control de Aruba."
+"<strong>El servicio HiSpeed ​​Cache con el que interactúa el complemento no está "
+"disponible en el servidor que aloja su sitio web.</strong> Para utilizar HiSpeed ​​"
+"Cache y el complemento, comuníquese con <a href=\"%s\" rel=\"nofollow\" "
+"target=\"_blank\">soporte</a>."
 
-#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:18
-#: admin/pages/views/partials/sections/section-ahsc-db-optimizations.php:23
+#: admin/pages/views/partials/sections/section-ahsc-service-status.php:71
+#: src/AHSC_Check.php:323
+#, php-format
 msgid ""
-"This process improves data retrieval speed, making your site faster and more "
-"responsive for both visitors and you in the admin area."
+"<strong>The Aruba HiSpeed Cache plugin cannot be used because your WordPress "
+"website is not hosted on an Aruba hosting platform.</strong> Buy an <a "
+"href=\"%s\" rel=\"nofollow\" target=\"_blank\">Aruba Hosting service</a> and "
+"migrate your website to use the plugin."
 msgstr ""
-"Este proceso mejora la velocidad de recuperación de datos, haciendo que su "
-"sitio sea más rápido y responda mejor tanto para los visitantes como para "
-"usted en el área de administración."
+"<strong>El complemento Aruba HiSpeed ​​Cache no se puede utilizar porque su sitio "
+"web de WordPress no está alojado en una plataforma de alojamiento de Aruba.</"
+"strong> Compre un <a href=\"%s\" rel=\"nofollow\" target=\"_blank\">Aruba "
+"Servicio de hosting</a> y migra tu sitio web para utilizar el complemento."
 
-#: admin/pages/views/partials/sections/section-ahsc-enable-cron.php:14
-msgid "WP-Cron"
-msgstr "WP-Cron"
+#: admin/pages/views/partials/sections/section-ahsc-service-status.php:89
+#, php-format
+msgid ""
+"<strong>The HiSpeed Cache service is enabled.</strong>  For further details <a "
+"href=\"%1$s\" rel=\"nofollow\" target=\"_blank\">see our guide</a>."
+msgstr ""
+"<strong>El servicio HiSpeed ​​Cache está habilitado.</strong> Para obtener más "
+"detalles, <a href=\"%1$s\" rel=\"nofollow\" target=\"_blank\">consulte nuestra "
+"guía</a>."
+
+#: admin/pages/views/partials/sections/section-ahsc-static-cache.php:14
+msgid "Optimize the cache of static files on the browser"
+msgstr "Optimizar la caché de archivos estáticos en el navegador"
+
+#: admin/pages/views/partials/sections/section-ahsc-static-cache.php:19
+#: admin/pages/views/partials/sections/section-ahsc-static-cache.php:24
+msgid ""
+"Manage the expiry of static files (JPEG, GIF, PNG, WebPL, SVG, X-Icon, CSS, "
+"JavaScript) and set the length of time you want to save them in the local cache "
+"on the browser, before they are deleted."
+msgstr ""
+"Administre la caducidad de los archivos estáticos (JPEG, GIF, PNG, WebPL, SVG, X-"
+"Icon, CSS, JavaScript) y establezca el tiempo durante el cual desea guardarlos "
+"en el caché local del navegador, antes de que se eliminen."
+
+#: admin/pages/views/partials/sections/section-ahsc-static-cache.php:30
+msgid "Optimize the cache on browser"
+msgstr "Optimizar la caché del navegador"
 
 #: admin/pages/views/partials/sections/section-ahsc-xmlrpc-status.php:14
 msgid "XML-RPC"
 msgstr "XML-RPC"
 
-#: admin/pages/AHSC_Page.php:37
-msgid "You are about to purge the entire cache. Do you want to continue?"
-msgstr "Estás a punto de purgar toda la caché. ¿Quieres continuar?"
+#: admin/pages/views/partials/sections/section-ahsc-xmlrpc-status.php:18
+#: admin/pages/views/partials/sections/section-ahsc-xmlrpc-status.php:22
+msgid ""
+"Enhance the protection of your website from cyber attacks by disabling the XML-"
+"RPC function that allows data transfer."
+msgstr ""
+"Mejore la protección de su sitio web contra ataques cibernéticos desactivando la "
+"función XML-RPC que permite la transferencia de datos."
+
+#: admin/pages/views/partials/sections/section-ahsc-xmlrpc-status.php:28
+msgid "Disable XML-RPC"
+msgstr "Deshabilitar XML-RPC"
+
+#: aruba-hispeed-cache.php:164 aruba-hispeed-cache.php:174
+#: aruba-hispeed-cache.php:182 aruba-hispeed-cache.php:192
+msgid "An error occurred. Please try again later or contact support."
+msgstr ""
+"Ocurrió un error. Inténtelo de nuevo más tarde o comuníquese con el soporte."
+
+#: aruba-hispeed-cache.php:169
+msgid "Cache purged."
+msgstr "Caché purgado."
+
+#: aruba-hispeed-cache.php:187
+msgid "Expired transient purged."
+msgstr "Transient caducado purgado."
+
+#: aruba-hispeed-cache.php:359
+msgid ""
+"<b>Debug mode is active.</b> To improve the responsiveness of your site, we "
+"suggest you disable it. This will remove any log files."
+msgstr ""
+" <b>El modo debug está activado.</b> Para mejorar la velocidad de respuesta de "
+"tu sitio web, te recomendamos desactivarlo. Esta acción supondrá la \n"
+"eliminación de los archivos .log existentes."
+
+#: aruba-hispeed-cache.php:359
+msgid "Disable Debugging"
+msgstr "Deshabilitar la debug"
+
+#: aruba-hispeed-cache.php:384
+msgid "debug mode has been disabled"
+msgstr "el modo de debug ha sido deshabilitado"
+
+#: aruba-hispeed-cache.php:699
+msgid "Reload"
+msgstr "Recargar"
+
+#: src/AHSC_Apc.php:14
+msgid ""
+"<strong>Another plugin use object cache.</strong> Deactivate the plugin or "
+"functionality and retry."
+msgstr ""
+"<strong>Otro complemento utiliza caché de objetos.</strong> Desactive el "
+"complemento o la funcionalidad y vuelva a intentarlo."
+
+#: src/AHSC_Functions.php:101
+msgid "Settings"
+msgstr "Configuración"
+
+#: src/AHSC_Functions.php:107
+msgid "Customer support"
+msgstr "Atención al cliente"
+
+#: src/AHSC_Functions.php:221
+msgid "Original settings restored."
+msgstr "Configuración original restaurada."
+
+#: src/AHSC_Version.php:15
+#, php-format
+msgid "Sorry, Aruba HiSpeed Cache requires WordPress %s or higher."
+msgstr "Lo sentimos, Aruba HiSpeed ​​Cache requiere WordPress %s o superior."
+
+#: src/AHSC_Version.php:43
+#, php-format
+msgid "Sorry, Aruba HiSpeed Cache requires PHP %s or higher."
+msgstr "Lo sentimos, Aruba HiSpeed ​​Cache requiere PHP %s o superior."
+
+#~ msgid ""
+#~ "Aruba HiSpeed Cache interfaces directly with the Aruba HiSpeed Cache service "
+#~ "of the Aruba hosting platform and automates its management."
+#~ msgstr ""
+#~ "Aruba HiSpeed ​​Cache interactúa directamente con el servicio Aruba HiSpeed ​​"
+#~ "Cache de la plataforma de hosting de Aruba y automatiza su gestión."
+
+#~| msgid "Aruba.it"
+#~ msgid "arubait"
+#~ msgstr "Aruba.it"
+
+#~ msgid "https://hosting.aruba.it/wordpress.aspx"
+#~ msgstr "https://hosting.aruba.it/wordpress.aspx"
+
+#~ msgid "https://www.aruba.it/"
+#~ msgstr "https://www.aruba.it/"
