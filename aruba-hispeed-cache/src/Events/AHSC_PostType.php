@@ -123,6 +123,10 @@ global $ahsc_allowed_cases,$ahsc_is_json,$ahsc_target;
 		return;
 	}
 
+	 if ( !isset($ahsc_allowed_cases) || !is_array( $ahsc_allowed_cases ) ){
+		 $ahsc_allowed_cases = array( 'publish', 'future', 'trash' );
+	 }
+
 	/**
 	 * Disable the purge action if the new status is not present in allorave casese array.
 	 */

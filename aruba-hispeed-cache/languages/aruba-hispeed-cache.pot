@@ -11,7 +11,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-09 09:57+0000\n"
+"POT-Creation-Date: 2026-03-17 11:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: Loco https://localise.biz/\n"
 "X-Domain: aruba-hispeed-cache\n"
@@ -120,9 +120,10 @@ msgstr ""
 
 #: admin/pages/views/admin-settings-new.php:19
 msgid ""
-"Aruba HiSpeed Cache is the plugin that allows you to increase the page "
-"loading speed, optimizing cache management and improving the performance of "
-"your site, in order to offer a better browsing experience for your users."
+"Aruba HiSpeed Cache is the plugin that allows you to increase page loading "
+"speed by optimizing cache management with the support of artificial "
+"intelligence and improving your website performance, to offer a better "
+"browsing experience to your users."
 msgstr ""
 
 #. Author of the plugin
@@ -265,6 +266,12 @@ msgstr ""
 msgid "Expired transient purged."
 msgstr ""
 
+#: Debug/views/partials/admin-tab-debug.php:30
+msgid ""
+"File not found. The log file is not created, or is removed automatically, if "
+"the WordPress debugging feature is not enabled."
+msgstr ""
+
 #: admin/pages/views/partials/sections/section-ahsc-cron-status.php:41
 msgid "Frequency of execution"
 msgstr ""
@@ -380,6 +387,10 @@ msgstr ""
 msgid "Purge page cache"
 msgstr ""
 
+#: Debug/views/partials/admin-tab-debug.php:15
+msgid "Purging Log Actions"
+msgstr ""
+
 #: admin/pages/views/partials/sections/section-ahsc-html-optimizer.php:18
 #: admin/pages/views/partials/sections/section-ahsc-html-optimizer.php:22
 msgid "Reduce the dimensions of the HTML page for faster loading times."
@@ -412,6 +423,10 @@ msgid ""
 "frequency of jobs and tasks, like changing or publishing articles and pages, "
 "they will run at the required time, replacing any existing date and time "
 "scheduled on WordPress."
+msgstr ""
+
+#: Debug/views/partials/admin-tab-debug.php:35
+msgid "Service check request headers."
 msgstr ""
 
 #: admin/pages/views/partials/sections/section-ahsc-cron-status.php:54

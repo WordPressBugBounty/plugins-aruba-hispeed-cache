@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * @wordpress-plugin
  * Plugin Name:       Aruba HiSpeed Cache
- * Version:           3.0.10
+ * Version:           3.0.11
  * Plugin URI:        https://hosting.aruba.it/wordpress.aspx
  *
  * @phpcs:ignore Generic.Files.LineLength.TooLong
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Text Domain:       aruba-hispeed-cache
  * Domain Path:       /languages
  * License:           GPL v3
- * Tested up to:      6.9
+ * Tested up to:      7.0
  * Requires PHP:      5.6
  * Requires at least: 5.4
  * This program is free software: you can redistribute it and/or modify

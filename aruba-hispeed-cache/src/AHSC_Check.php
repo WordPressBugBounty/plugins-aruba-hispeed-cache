@@ -336,7 +336,7 @@ if ( ! \function_exists( 'ahsc_get_check_notice' ) ) {
 		}
 
 		if ( ACTIVE !== $notice_type['esit'] ) {
-			$notice = AHSC_Notice_Render( $notice['handle'], $notice['type'],$notice['message'], true );
+			$notice = AHSC_Notice_Render( $notice['handle'], $notice['type'],$notice['message'], false );
 		}
 
 		}else{

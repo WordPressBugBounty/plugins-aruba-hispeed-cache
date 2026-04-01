@@ -5,19 +5,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 if ( isset( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_lazy_load'] ) &&
       AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_lazy_load'] ) {
-	add_action( 'plugins_loaded', 'ahsc_wp_lazy_loading_initialize_filters', 1 );
-	add_action( 'template_redirect', 'ahsc_control_lazyload_param');
+	  add_action( 'template_redirect', 'ahsc_wp_lazy_loading_initialize_filters', 10 );
+	  add_action( 'template_redirect', 'ahsc_control_lazyload_param',11);
+
 }
 
 function ahsc_wp_lazy_loading_initialize_filters() {
-	//
-	foreach ( array( 'the_content', 'the_excerpt', 'widget_text_content','do_shortcode_tag','render_block','post_thumbnail_html') as $filter ) {
-		add_filter( $filter, 'ahsc_wp_filter_content_tags' );
-		//add_filter( $filter, 'ahsc_add_image_dimensions' );
+	if(!is_admin()) {
+		if(!is_customize_preview()) {
+			foreach (
+				array(
+					'the_content',
+					'the_excerpt',
+					'widget_text_content',
+					'do_shortcode_tag',
+					'render_block',
+					'post_thumbnail_html'
+				) as $filter
+			) {
+				add_filter( $filter, 'ahsc_wp_filter_content_tags' );
+				//add_filter( $filter, 'ahsc_add_image_dimensions' );
+			}
+			add_filter( 'wp_get_attachment_image_attributes', 'ahsc_wp_lazy_loading_add_attribute_to_attachment_image' );
+			add_filter( 'get_avatar', 'ahsc_wp_lazy_loading_add_attribute_to_avatar' );
+		}
 	}
-	add_filter( 'wp_get_attachment_image_attributes', 'ahsc_wp_lazy_loading_add_attribute_to_attachment_image' );
-	add_filter( 'get_avatar', 'ahsc_wp_lazy_loading_add_attribute_to_avatar' );
-	//remove_filter( 'the_content', 'wp_make_content_images_responsive' );
 }
 
 function ahsc_wp_lazy_loading_add_attribute_to_avatar( $avatar ) {
@@ -153,30 +165,36 @@ function ahsc_add_image_dimensions( $content ) {
 	return $content;
 }
 function ahsc_control_lazyload_param($buffer){
-	ob_start(function ($buffer) {
-		preg_match_all('#<img\b[^>]*>#i', $buffer, $allImgs);
-		$total = count($allImgs[0]) - 1;
-		$limit = intval($total / 3);
-		$control = min(9, $limit);
-		$count = 0;
-		return preg_replace_callback(
-			'#<img\b[^>]*>#i',
-			function ($matches) use (&$count, $control) {
+	if(!is_admin()) {
+		if(!is_customize_preview()){
+		ob_start( function ( $buffer ) {
+			preg_match_all( '#<(script|style|noscript|template)\b[^>]>.?</\1>|<img\b[^>]*>#i', $buffer, $allImgs );
+			$total   = count( $allImgs[0] ) - 1;
+			$limit   = intval( $total / 3 );
+			$control = min( 9, $limit );
+			$count   = 0;
 
-				if ($count >= $control) {
-					return $matches[0];
-				}
-				$img = preg_replace('/\sloading=("|\').*?\1/i', '', $matches[0]);
-				$img = preg_replace('/\sdecoding=("|\').*?\1/i', '', $img);
+			return preg_replace_callback(
+				'#<(script|style|noscript|template)\b[^>]>.?</\1>|<img\b[^>]*>#i',
+				function ( $matches ) use ( &$count, $control ) {
 
-				if (!preg_match('/\sfetchpriority=/i', $img)) {
-					$img = preg_replace('/<img/i', '<img fetchpriority="high"', $img, 1);
-				}
+					if ( $count >= $control ) {
+						return $matches[0];
+					}
+					$img = preg_replace( '/\sloading=("|\').*?\1/i', '', $matches[0] );
+					$img = preg_replace( '/\sdecoding=("|\').*?\1/i', '', $img );
 
-				$count++;
-				return $img;
-			},
-			$buffer
-		);
-	});
+					if ( ! preg_match( '/\sfetchpriority=/i', $img ) ) {
+						$img = preg_replace( '/<img/i', '<img fetchpriority="high"', $img, 1 );
+					}
+
+					$count ++;
+
+					return $img;
+				},
+				$buffer
+			);
+		} );
+		}
+	}
 }

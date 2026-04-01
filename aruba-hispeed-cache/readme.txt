@@ -2,8 +2,8 @@
 
 Contributors: arubait, arubadev, arubasupport
 Tags: Aruba, cache, performance, pagespeed, optimize
-Tested up to: 6.9
-Stable tag: 3.0.10
+Tested up to: 7.0
+Stable tag: 3.0.11
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -68,6 +68,10 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 
 == Changelog ==
 
+= 3.0.11 =
+* Various fixes
+* Tested up WordPress 7.0
+
 = 3.0.10 =
 * Various fixes
 
@@ -103,7 +107,7 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 * Frontend revisioned.
 * Add object cache managment.
 * Various fixes.
-* Tested up 6.8
+* Tested up WordPress 6.8
 
 = 2.0.24 =
 * Manage WP_CRON Timeout.
@@ -123,7 +127,7 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 
 = 2.0.19 =
 * Add Optimize HTML code option
-* Tested up 6.7
+* Tested up WordPress 6.7
 * Purge expired transients option
 
 = 2.0.18 =
@@ -204,7 +208,7 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 
 = 1.2.4 =
 * Removed 'heartbeat' calls in the frontend and limited admin-side calls to every 120 seconds;
-* Set tested up WP 6.2 version;
+* Set tested up WordPress 6.2 version;
 
 = 1.2.3 =
 * Add x-aruba-cache header in site health
@@ -250,5 +254,6 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 
 == Upgrade Notice ==
 
-= 3.0.10 =
+= 3.0.11 =
 * Various fixes
+* Tested up WordPress 7.0
