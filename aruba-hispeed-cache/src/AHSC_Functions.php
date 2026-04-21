@@ -66,6 +66,11 @@ function AHSC_deactivation(  ) {
 	\delete_site_option( 'aruba_hispeed_cache_options' );
 	\delete_site_option( 'aruba_hispeed_cache_version');
 	AHSC_remove_htaccess();
+	$file   = WP_CONTENT_DIR . '/object-cache.php';
+	if ( file_exists( $file ) ) {
+		// phpcs:ignore
+		@unlink( $file );
+	}
 }
 /**
  * operation at plugin check requirement

@@ -41,7 +41,7 @@ const AHSC_OPTIONS_LIST = array(
 	'ahsc_html_optimizer'=>false,
 	'ahsc_dns_preconnect'=>false,
 	'ahsc_dns_preconnect_domains'=>'',
-	'ahsc_xmlrpc_status'=>false,
+	'ahsc_xmlrpc_status'=>true,
 	'ahsc_enable_cron'=>true,
 	'ahsc_cron_status'=>false,
 	'ahsc_cron_time'=>"300",
@@ -78,7 +78,7 @@ const AHSC_OPTIONS_LIST_DEFAULT = array(
 	'ahsc_html_optimizer'=>array('default'=>false),
 	'ahsc_dns_preconnect' => array('default'=>false),
 	'ahsc_dns_preconnect_domains'=>array('default'=>''),
-	'ahsc_xmlrpc_status'=>array('default'=>false),
+	'ahsc_xmlrpc_status'=>array('default'=>true),
 	'ahsc_enable_cron'=>array('default'=>true),
 	'ahsc_cron_status'=>array('default'=>false),
 	'ahsc_cron_time'=>array('default'=>"300")

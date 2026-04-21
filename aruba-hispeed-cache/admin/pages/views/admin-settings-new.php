@@ -38,7 +38,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<h2 class="nav-tab-wrapper ahsc-settings-nav">
 				<a class="nav-tab nav-tab-active" data-tab="#general"><?php esc_html_e( 'Cache', 'aruba-hispeed-cache' ); ?></a>
                 <a class="nav-tab " data-tab="#performance"><?php esc_html_e( 'Performance', 'aruba-hispeed-cache' ); ?></a>
+
+                <?php
+                $ahsc_headers_data=AHSC_get_headers();
+               // $ahsc_data=AHSC_check();
+
+                if (is_array($ahsc_headers_data) && array_key_exists( 'x-servername', $ahsc_headers_data ) && (str_contains( $ahsc_headers_data['x-servername'], 'aruba.it' ) || str_contains($ahsc_headers_data['x-servername'],'arubacdn')) ){
+                //if(isset($ahsc_data['cdn_status']) & !empty($ahsc_data['cdn_status'])){
+                    ?>
                 <a class="nav-tab " data-tab="#cdn"><?php esc_html_e( 'CDN', 'aruba-hispeed-cache' ); ?></a>
+                <?php } ?>
 				<?php if (WP_DEBUG  && is_dir(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_BASEPATH']."/Debug")) : ?>
 					<a class="nav-tab" data-tab="#debug"><?php esc_html_e( 'Debug', 'aruba-hispeed-cache' ); ?></a>
 				<?php
@@ -66,6 +75,11 @@ if ( ! defined( 'ABSPATH' ) ) {
             </div>
         </div>
 
+        <?php
+        if ( is_array($ahsc_headers_data) && array_key_exists( 'x-servername', $ahsc_headers_data ) && (str_contains( $ahsc_headers_data['x-servername'], 'aruba.it' ) || str_contains($ahsc_headers_data['x-servername'],'arubacdn')) ){
+	        // if(isset($ahsc_data['cdn_status']) & !empty($ahsc_data['cdn_status'])){
+        ?>
+
         <div id="cdn" class="ahsc-tab hidden ahsc-options-wrapper">
             <div style="padding-top:30px;padding-bottom:30px;">
 	            <?php
@@ -74,6 +88,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             </div>
         </div>
+        <?php
+        }
+        ?>
 		<?php if ( WP_DEBUG && is_dir(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_BASEPATH']."/Debug") ) : ?>
 
 			<div id="debug" class="ahsc-tab hidden">
