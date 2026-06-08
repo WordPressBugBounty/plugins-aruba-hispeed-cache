@@ -3,8 +3,8 @@
 Contributors: arubait, arubadev, arubasupport
 Tags: Aruba, cache, performance, pagespeed, optimize
 Tested up to: 7.0
-Stable tag: 3.0.12
-License: GPLv3
+Stable tag: 3.0.13
+License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Aruba HiSpeed Cache interfaces directly with an Aruba hosting platform's HiSpeed Cache service and automates its management.
@@ -68,12 +68,14 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 
 == Changelog ==
 
+= 3.0.13 =
+* Tested up WordPress 7.0
+
 = 3.0.12 =
 * Various fixes
 
 = 3.0.11 =
 * Various fixes
-* Tested up WordPress 7.0
 
 = 3.0.10 =
 * Various fixes
@@ -257,5 +259,5 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 
 == Upgrade Notice ==
 
-= 3.0.12 =
-* Various fixes
+= 3.0.13 =
+* Tested up WordPress 7.0

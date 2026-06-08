@@ -328,7 +328,7 @@ span.loader {
 	border-radius: 2px;
 	font-size: 14px;
 	font-weight: bold;
-	height: 40px;
+	/*height: 40px;*/
 	color:#1474BD;
 	border:solid 2px #1474BD;
 	padding-top:2px;

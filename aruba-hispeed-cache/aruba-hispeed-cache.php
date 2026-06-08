@@ -14,17 +14,17 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * @wordpress-plugin
  * Plugin Name:       Aruba HiSpeed Cache
- * Version:           3.0.12
+ * Version:           3.0.13
  * Plugin URI:        https://hosting.aruba.it/wordpress.aspx
  *
  * @phpcs:ignore Generic.Files.LineLength.TooLong
  * Description:       Aruba HiSpeed Cache interfaces directly with the Aruba HiSpeed Cache service of the Aruba hosting platform and automates its management.
- * Author:            arubait
+ * Author:            Aruba
  * Author URI:        https://www.aruba.it/
  * Text Domain:       aruba-hispeed-cache
  * Domain Path:       /languages
- * License:           GPL v3
- * Tested up to:      6.9
+ * License:           GPL v3 or later
+ * Tested up to:      7.0
  * Requires PHP:      5.6
  * Requires at least: 5.4
  * This program is free software: you can redistribute it and/or modify
