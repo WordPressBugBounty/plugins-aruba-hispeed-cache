@@ -185,7 +185,7 @@ function ahsc_control_lazyload_param($buffer){
 					$img = preg_replace( '/\sdecoding=("|\').*?\1/i', '', $img );
 
 					if ( ! preg_match( '/\sfetchpriority=/i', $img ) ) {
-						$img = preg_replace( '/<img/i', '<img fetchpriority="high"', $img, 1 );
+						$img = preg_replace( '/<img/i', '<img fetchpriority=\'high\'', $img, 1 );
 					}
 
 					$count ++;

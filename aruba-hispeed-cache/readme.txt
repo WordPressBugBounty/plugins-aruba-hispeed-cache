@@ -3,7 +3,7 @@
 Contributors: arubait, arubadev, arubasupport
 Tags: Aruba, cache, performance, pagespeed, optimize
 Tested up to: 7.0
-Stable tag: 3.0.13
+Stable tag: 3.0.14
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -67,6 +67,9 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 2. General Settings Enabled
 
 == Changelog ==
+
+= 3.0.14 =
+* Now work with Avada Live Builder
 
 = 3.0.13 =
 * Tested up WordPress 7.0
@@ -259,5 +262,5 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 
 == Upgrade Notice ==
 
-= 3.0.13 =
-* Tested up WordPress 7.0
+= 3.0.14 =
+* Now work with Avada Live Builder
