@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                         <?php echo  wp_kses( __( ' Status:', 'aruba-hispeed-cache' ), array( 'strong' => array() ) ); ?>
                     </span>
                     <?php
-                    $ahsc_current_dbopt_status=(AHSC_DBOPT_Check())?true: false;;
+                    $ahsc_current_dbopt_status=(bool) AHSC_DBOPT_Check();
 
                     ?>
 					<label class="switch" style="float:left;height: 34px;width:50%!important;cursor: default !important;">

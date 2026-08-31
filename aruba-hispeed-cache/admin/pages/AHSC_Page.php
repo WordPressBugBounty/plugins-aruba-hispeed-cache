@@ -6,7 +6,7 @@ abstract class AHSC_Page {
 	private function loadStyles() {
 		wp_register_style(
 			'aruba-hispeed-cache-style', // handle name
-			plugins_url( 'assets/css/option-page.css', dirname( __FILE__ ) ),
+			plugins_url( 'assets/css/option-page.css', __DIR__ ),
 			[],
 			AHSC_get_version()
 		);
@@ -19,7 +19,7 @@ abstract class AHSC_Page {
 
 		wp_register_script(
 			'aruba-hispeed-cache-script', // handle name
-			plugins_url( 'assets/js/option-page.js', dirname( __FILE__ ) ),
+			plugins_url( 'assets/js/option-page.js', __DIR__ ),
 			[],
 			AHSC_get_version(),
 			array(

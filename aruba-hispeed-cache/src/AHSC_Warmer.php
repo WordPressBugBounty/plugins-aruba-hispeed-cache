@@ -28,21 +28,37 @@ function ahsc_cache_warmer_runner() {
     $action   = 'ahcs_cache_warmer';
     $nonce    = \wp_create_nonce( 'ahsc-cache-warmer' );
 
-    $js_runner ='
-<script>
-	( function() {
-		const data = new FormData();
-		data.append("action", "'.$action.'");
-		data.append("ahsc_cw_nonce", "'.$nonce.'" );
+	if ( $ahsc_do_purge ) {
+		/*
+		 * The runner used to be assembled as a <script> string and printed with an
+		 * escaping exemption. wp_print_inline_script_tag() (WP 5.7+) emits the tag for
+		 * us, so nothing has to be escaped by hand, and it honours the
+		 * wp_inline_script_attributes filter — which is what lets a CSP nonce reach the
+		 * tag. The configuration travels as JSON instead of being interpolated into the
+		 * JavaScript source.
+		 */
+		$ahsc_runner_config = \wp_json_encode(
+			array(
+				'ajaxUrl' => $ajax_uri,
+				'action'  => $action,
+				'nonce'   => $nonce,
+			)
+		);
 
-		fetch( "'.$ajax_uri.'", {method: "POST",
-			credentials: "same-origin",
-			body: data}
-		).then( r => r.json() ).then( rr => console.log("Cache Rigenerata") );
-	}());
-</script>';
-	if($ahsc_do_purge){
-      print($js_runner);//@phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		$js_runner = '( function() {
+	const cfg = ' . $ahsc_runner_config . ';
+	const data = new FormData();
+	data.append( "action", cfg.action );
+	data.append( "ahsc_cw_nonce", cfg.nonce );
+
+	fetch( cfg.ajaxUrl, {
+		method: "POST",
+		credentials: "same-origin",
+		body: data
+	} ).then( r => r.json() ).then( rr => console.log( "Cache Rigenerata" ) );
+}() );';
+
+		\wp_print_inline_script_tag( $js_runner );
 	}
 	// ahsc_delete_transient('ahsc_do_cache_warmer');
 	//update_option('ahsc_do_cache_warmer',false);
@@ -55,8 +71,10 @@ function ahsc_cache_warmer_runner() {
  * @SuppressWarnings(PHPMD.ElseExpression)
  */
 function ahsc_cache_warmer_ajax_action() {
-	$ahsc_do_purge=get_option('ahsc_do_cache_warmer',false);
-	if($ahsc_do_purge) {
+
+    $ahsc_do_purge=get_option('ahsc_do_cache_warmer',false);
+
+    if($ahsc_do_purge) {
 		$do_warmer = array();
 
 		if ( isset( $_POST['ahsc_cw_nonce'] ) && ! \wp_verify_nonce( \sanitize_text_field( \wp_unslash( $_POST['ahsc_cw_nonce'] ) ), 'ahsc-cache-warmer' ) ) {
@@ -132,27 +150,54 @@ function ahsc_cache_warmer_ajax_action() {
 		}
 		$do_warmer = array_unique( $do_warmer );
 */
-		//@phpcs:disable
-		foreach ( $do_warmer as $warmer_item ) {
-			$ch = curl_init();
-			curl_setopt( $ch, CURLOPT_URL, $warmer_item );
-			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-			curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, false );
-			curl_setopt( $ch, CURLINFO_HEADER_OUT, false );
-			curl_setopt( $ch, CURLOPT_VERBOSE, false );
-			curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, false );
-			curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
-			curl_setopt( $ch, CURLOPT_USERAGENT,  "arubacache" );
-			curl_setopt( $ch, CURLOPT_HTTPHEADER, array( "accept-encoding: gzip, deflate, br, zstd" ) );
-			try {
-				curl_exec( $ch );
-			} catch ( \Exception $exceptiongeneral ) {
-				file_put_contents( 'php://stderr', $exceptiongeneral . "\n" );
-			}
-			if (PHP_VERSION_ID < 80000) {
-				curl_close( $ch );
-			}
 
+		/*
+		 * Warming used raw cURL here. The WordPress HTTP API covers the same options
+		 * one to one and, unlike a bare curl_exec(), also honours the
+		 * pre_http_request / http_request_args filters, the WP_PROXY_* constants and
+		 * WP_ACCESSIBLE_HOSTS, which some hosting setups rely on for outbound traffic.
+		 */
+		foreach ( $do_warmer as $warmer_item ) {
+			$ahsc_response = \wp_remote_get(
+				$warmer_item,
+				array(
+					/**
+					 * Filters the per-URL timeout of the cache warmer, in seconds.
+					 *
+					 * The previous cURL implementation set no timeout at all, so a single
+					 * slow page could hang the whole warming request.
+					 *
+					 * @param int    $timeout     Timeout in seconds.
+					 * @param string $warmer_item URL being warmed.
+					 */
+					'timeout'     => \apply_filters( 'ahsc_cache_warmer_timeout', 10, $warmer_item ),
+					// Was CURLOPT_FOLLOWLOCATION false.
+					'redirection' => 0,
+					/*
+					 * Kept from the cURL implementation (CURLOPT_SSL_VERIFYPEER /
+					 * CURLOPT_SSL_VERIFYHOST were both false): the warmer calls the site
+					 * itself, which may answer on an internal name or a self-signed
+					 * certificate.
+					 */
+					'sslverify'   => false,
+					'user-agent'  => 'arubacache',
+					'headers'     => array(
+						'accept-encoding' => 'gzip, deflate, br, zstd',
+					),
+				)
+			);
+
+			/*
+			 * curl_exec() returns false on failure, it never throws, so the try/catch
+			 * that used to wrap it could not fire and every network error was lost.
+			 */
+			if ( \is_wp_error( $ahsc_response ) ) {
+				AHSC_log(
+					sprintf( 'Cache warming failed for %1$s: %2$s', $warmer_item, $ahsc_response->get_error_message() ),
+					'cache-warmer',
+					'warning'
+				);
+			}
 		}
 
 		update_option( 'ahsc_do_cache_warmer', false );
@@ -160,6 +205,7 @@ function ahsc_cache_warmer_ajax_action() {
 	}else{
 		wp_die( wp_json_encode( array( 'esit' => true, 'items' => 'no cache to warming' ) ) );
 	}
-	update_option( 'ahsc_do_cache_warmer', false );
-	//@phpcs:enable
+
+	//update_option( 'ahsc_do_cache_warmer', false );
+	
 }

@@ -8,13 +8,11 @@ const AHSC_CORE = array(
 );
 //var_dump(AHSC_CORE);
 
-$ahsc_file=realpath(dirname(__FILE__)."/..")."/".AHSC_CORE['plugin_name'].".php";
+$ahsc_file=dirname(__DIR__)."/".AHSC_CORE['plugin_name'].".php";
 
 define( "AHSC_REQUIREMENTS", array(
-	'minimum_php'       => '5.6',
-	'minimum_wp'        => '5.4',
-	'is_legacy_pre_59'  => version_compare(get_bloginfo('version'), '5.8.22', '<='),
-	'is_legacy_post_61' => version_compare(get_bloginfo('version'), '6.1.0', '>=')
+	'minimum_php' => '7.4',
+	'minimum_wp'  => '6.2',
 ) );
 
 const  AHSC_CHECKER = array(
@@ -57,7 +55,7 @@ define( "AHSC_CONSTANT", array(
 	'ARUBA_HISPEED_CACHE_BASENAME'     => \plugin_basename( $ahsc_file ),
 	'ARUBA_HISPEED_CACHE_OPTIONS_NAME' => 'aruba_hispeed_cache_options',
 	'HOME_URL'                         => \get_home_url( null, '/' ),
-	'ARUBA_HISPEED_CACHE_OPTIONS'      => (get_site_option( 'aruba_hispeed_cache_options' ))?get_site_option( 'aruba_hispeed_cache_options' ):AHSC_OPTIONS_LIST,
+	'ARUBA_HISPEED_CACHE_OPTIONS'      => get_site_option( 'aruba_hispeed_cache_options' ) ?: AHSC_OPTIONS_LIST,
 ) );
 
 const AHSC_OPTIONS_LIST_DEFAULT = array(

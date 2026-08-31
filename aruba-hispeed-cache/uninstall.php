@@ -2,7 +2,7 @@
 /**
  * Manages the uninstallation process of the
  * Aruba HiSpeed Cache Plugin for more information
- * php version 5.6
+ * php version 7.4
  *
  * @category Wordpress-plugin
  * @package  Aruba-HiSpeed-Cache
@@ -28,7 +28,6 @@ if ( ! is_multisite() ) {
 
 	$ahsc_file = WP_CONTENT_DIR . '/object-cache.php';
 	if ( file_exists( $ahsc_file ) ) {
-		// phpcs:ignore
-		@unlink( $ahsc_file );
+		wp_delete_file( $ahsc_file );
 	}
 }

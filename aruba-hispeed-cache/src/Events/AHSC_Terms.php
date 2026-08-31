@@ -117,8 +117,6 @@ global $ahsc_nav_purged;
  * @param int    $tt_id    Term taxonomy ID.
  * @param string $taxonomy Taxonomy slug.
  *
- * array  $args     Arguments passed to wp_update_term() added in 6.1 wp core remove for compatibility wiht 5.6.
- *
  * @return void
  */
 function ahsc_purge_archive_on_edit( $term_id, $tt_id, $taxonomy ) {

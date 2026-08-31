@@ -51,6 +51,9 @@ function AHSC_set_parameters_to_check(
  */
 function AHSC_headers_analizer() {
 	$headers=AHSC_get_headers();
+	$is_active     = false;
+	$is_activabile = false;
+	$_status       = '';
 	/**
 	 * If the request headers are empty or the request
 	 * produced a wp_error then I set everything to true.
@@ -118,7 +121,7 @@ function AHSC_headers_analizer() {
 			default:
 				AHSC_set_parameters_to_check( false, false, false );
 
-				if ( array_key_exists( 'x-servername', $headers ) && str_contains( $headers['x-servername'], 'aruba.it' ) ) {
+				if ( array_key_exists( 'x-servername', $headers ) && false !== strpos( $headers['x-servername'], 'aruba.it' ) ) {
 					AHSC_set_parameters_to_check( true, false, true );
 				}
 				break;
@@ -188,7 +191,9 @@ function AHSC_headers_analizer() {
 		unset( $data['check_params'] );
 	}
 
-	return var_export( $data, true ); //phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
+	// Was var_export(). This is plain diagnostic output for the ?debug=1 view, so JSON
+	// serves the same purpose without reaching for a debug helper.
+	return (string) \wp_json_encode( $data, JSON_PRETTY_PRINT );
 }
 
 /**
@@ -261,13 +266,13 @@ if ( ! \function_exists( 'ahsc_get_check_notice' ) ) {
 	/**
 	 * Return null or the admin notice to render.
 	 *
-	 * @param  string $notice_type The option key to get.
+	 * @param  array $notice_type The option key to get.
 	 * @return null|string
 	 *
 	 *  @SuppressWarnings(PHPMD.StaticAccess)
 	 */
 	function ahsc_get_check_notice( $notice_type ) {
-		$localize_link = AHSC_LOCALIZE_LINK; // For php 5.6 compatibility.
+		$localize_link = AHSC_LOCALIZE_LINK;
 		$notice = null;
 		$lng=strtolower(substr( get_bloginfo ( 'language' ), 0, 2 ));
 

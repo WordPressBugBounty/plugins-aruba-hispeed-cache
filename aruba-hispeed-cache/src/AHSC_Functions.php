@@ -68,8 +68,7 @@ function AHSC_deactivation(  ) {
 	AHSC_remove_htaccess();
 	$file   = WP_CONTENT_DIR . '/object-cache.php';
 	if ( file_exists( $file ) ) {
-		// phpcs:ignore
-		@unlink( $file );
+		\wp_delete_file( $file );
 	}
 }
 /**
@@ -115,8 +114,82 @@ function AHSC_Notice_Render(  $handle,  $html_class,  $content, $return=false) {
 }
 
 /**
- * create link in plugin page
+ * Outputs an admin notice.
+ *
+ * The core equivalent, wp_admin_notice(), only exists from WordPress 6.4.0 while the
+ * plugin declares "Requires at least: 6.2", so the markup is built here instead. It
+ * reproduces byte for byte what wp_kses_post( wp_get_admin_notice() ) returns, which is
+ * covered by a regression test comparing the two outputs.
+ *
+ * The delegation to core that used to sit at the top of this function was removed on
+ * purpose. It made the notice fatal-free on 6.2/6.3, but Plugin Check's
+ * WP_Functions_Compatibility_Check is a token scan: it flagged the literal
+ * wp_admin_notice() call regardless of the function_exists() guard around it, and being a
+ * native check rather than a PHPCS sniff it cannot be silenced with an annotation.
+ * Building the markup unconditionally is the only way to keep 6.2 support and a clean
+ * report without resorting to a dynamic call that hides the reference from the scanner.
+ *
+ * Trade-off: on WordPress 6.4 and later this notice no longer passes through the
+ * wp_admin_notice action nor the wp_admin_notice_args / wp_admin_notice_markup filters.
+ *
+ * @param string $message The message for the admin notice. May contain HTML.
+ * @param array  $args    Supported keys: 'type', 'dismissible', 'id',
+ *                        'additional_classes', 'paragraph_wrap'.
+ *
  * @return void
+ */
+function ahsc_admin_notice( $message, $args = array() ) {
+	$args = wp_parse_args(
+		$args,
+		array(
+			'type'               => '',
+			'dismissible'        => false,
+			'id'                 => '',
+			'additional_classes' => array(),
+			'paragraph_wrap'     => true,
+		)
+	);
+
+	$classes = 'notice';
+
+	if ( is_string( $args['type'] ) && '' !== trim( $args['type'] ) ) {
+		$classes .= ' notice-' . trim( $args['type'] );
+	}
+
+	if ( true === $args['dismissible'] ) {
+		$classes .= ' is-dismissible';
+	}
+
+	if ( is_array( $args['additional_classes'] ) && ! empty( $args['additional_classes'] ) ) {
+		$classes .= ' ' . implode( ' ', $args['additional_classes'] );
+	}
+
+	if ( false !== $args['paragraph_wrap'] ) {
+		$message = '<p>' . $message . '</p>';
+	}
+
+	$id = is_string( $args['id'] ) ? trim( $args['id'] ) : '';
+
+	if ( '' !== $id ) {
+		printf(
+			'<div id="%1$s" class="%2$s">%3$s</div>',
+			esc_attr( $id ),
+			esc_attr( $classes ),
+			wp_kses_post( $message )
+		);
+	} else {
+		printf(
+			'<div class="%1$s">%2$s</div>',
+			esc_attr( $classes ),
+			wp_kses_post( $message )
+		);
+	}
+}
+
+/**
+ * create link in plugin page
+ * @param array $actions The plugin action links.
+ * @return array
  */
 function AHSC_plugin_action_links($actions){
 
@@ -222,7 +295,7 @@ if ( ! \function_exists( 'ahsc_reset_options' ) ) {
 	/**
 	 * Reset plugin options
 	 *
-	 * @return void
+	 * @return string The confirmation message.
 	 */
 	function ahsc_reset_options(  ) {
         $new_options = array();
@@ -237,8 +310,7 @@ if ( ! \function_exists( 'ahsc_reset_options' ) ) {
 
 			if ( isset( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_apc'] ) &&
 			     AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_apc'] ){
-					// phpcs:ignore
-					@unlink( WP_CONTENT_DIR . '/object-cache.php' );
+					\wp_delete_file( WP_CONTENT_DIR . '/object-cache.php' );
 			}
 
 		    \update_site_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $new_options );
@@ -262,7 +334,7 @@ if ( ! \function_exists( 'ahsc_has_transient' ) ) {
 		$temp=$GLOBALS['_wp_using_ext_object_cache'];
 		$GLOBALS['_wp_using_ext_object_cache'] = false;
 		$transient_value = ( \is_multisite() ) ? \get_site_transient( (string) $transient ) : \get_transient( (string) $transient );
-		$_value=( false !== $transient_value ) ? $transient_value : false;;
+		$_value=( false !== $transient_value ) ? $transient_value : false;
 		$GLOBALS['_wp_using_ext_object_cache'] = $temp;
 		return $_value;
 	}

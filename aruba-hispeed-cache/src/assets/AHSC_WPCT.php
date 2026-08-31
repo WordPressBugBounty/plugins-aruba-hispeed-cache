@@ -249,7 +249,13 @@ class HASC_WPCT {
 			throw new Exception( 'Raw value for empty string not supported.' );
 		}
 
-		return ( $raw ) ? $value : var_export( $value, true ); //@phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
+		/*
+		 * Not debug output: var_export() is used here for what it is actually for, turning
+		 * a PHP value into valid PHP source, because the result is written verbatim into
+		 * wp-config.php. wp_json_encode() would emit JSON literals and corrupt the file.
+		 */
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export -- generating PHP source for wp-config.php, not logging.
+		return ( $raw ) ? $value : var_export( $value, true );
 	}
 
 	/**

@@ -120,13 +120,63 @@ function AHSC_DBOPT_Check(){
 }
 
 //AHSC_DBOPT_Check();
-// phpcs:disable
+/*
+ * The three rules switched off across this file cannot be satisfied by an index management
+ * feature: WordPress exposes no API for DDL or for reading index metadata, altering the
+ * schema is the whole point, and a DDL statement has nothing to cache. They are disabled by
+ * name, with the reason recorded, rather than through a blanket suppression — every other
+ * rule still applies to this file.
+ */
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- index management on core tables: no WordPress API exists and nothing here is cacheable.
+
 function AHSC_check_key_exists($index_name,$table_name){
 	global $wpdb;
 	$pfx=$wpdb->prefix.substr($table_name,'3',strlen($table_name));
-	$sql="SELECT DISTINCT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE INDEX_NAME = '{$index_name}' and TABLE_NAME='{$pfx}'";
-	//$result=$wpdb->query( $wpdb->prepare("SELECT DISTINCT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS WHERE INDEX_NAME=%s and TABLE_NAME=%s", array( $index_name, $pfx)) ); //@phpcs:ignore
-	$result=$wpdb->query($sql);
+
+	/*
+	 * Three things were wrong here.
+	 *
+	 * 1. The index and table names were interpolated straight into the query text. They
+	 *    come from the $ahsc_tables constant map rather than from user input, so it was
+	 *    not exploitable, but there is no reason not to prepare it: INDEX_NAME and
+	 *    TABLE_NAME are compared as values, so %s is the correct placeholder.
+	 *
+	 * 2. The result came from $wpdb->query(), which returns false when the query fails,
+	 *    and the old "return ( $result !== 0 ) ? 1 : 0" read that false as 1, i.e. "the
+	 *    index is already there". A failing lookup therefore reported the table as
+	 *    optimized: AHSC_DBOPT_Optimize() skipped creating the index and
+	 *    AHSC_DBOPT_Check() declared everything fine. get_var() returns null on failure,
+	 *    which is distinguishable from a legitimate count of zero.
+	 *
+	 * 3. INFORMATION_SCHEMA spans every schema on the server, and the query had no
+	 *    TABLE_SCHEMA filter. On shared MySQL with several installations using the same
+	 *    table prefix, an index belonging to another database counted as ours.
+	 *    DATABASE() pins the lookup to the current connection.
+	 */
+	$found = $wpdb->get_var(
+		$wpdb->prepare(
+			'SELECT COUNT(DISTINCT INDEX_NAME) FROM INFORMATION_SCHEMA.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = %s AND INDEX_NAME = %s',
+			array( $pfx, $index_name )
+		)
+	);
+
+	if ( null === $found ) {
+		AHSC_log(
+			sprintf( 'Index lookup failed for %1$s.%2$s: %3$s', $pfx, $index_name, $wpdb->last_error ),
+			'db-optimization',
+			'warning'
+		);
+
+		/*
+		 * Report the index as missing rather than present. The optimization is then
+		 * attempted and any problem surfaces — at worst MySQL answers "Duplicate key
+		 * name", which is harmless and gets logged — whereas claiming it exists hides
+		 * the failure behind a green status.
+		 */
+		return 0;
+	}
+
+	$result = (int) $found;
 	/*echo "<pre> <p>===================================SQLCONTROLLOESISTENZA=====================================================</p>".
 	     "<p>index : $index_name table: $pfx </p>".
 	     "<p>sql : $sql</p>".
@@ -135,7 +185,6 @@ function AHSC_check_key_exists($index_name,$table_name){
 	     "<p>================================================================================================</p></pre>";*/
 	return ($result!==0)?1:0;
 }
-// phpcs:disable
 function AHSC_DBOPT_manage($status){
 	$result=array("status"=>$status);
 	if($status!=="false"){
@@ -166,31 +215,22 @@ function AHSC_DBOPT_Optimize(){
 	foreach($ahsc_tables as $table_name=>$index_settings){
 		$pfx=$wpdb->prefix.substr($table_name,'3',strlen($table_name));
 		//$sql="ALTER TABLE {$pfx} ROW_FORMAT=DYNAMIC;";
-		$wpdb->query( $wpdb->prepare("ALTER TABLE %i ROW_FORMAT=DYNAMIC;",array( $pfx) ));//@phpcs:ignore
+		$wpdb->query( $wpdb->prepare( "ALTER TABLE %i ROW_FORMAT=DYNAMIC;", array( $pfx ) ) );
 		foreach($index_settings as $index_name=>$index_param){
 
 			//$str_param=implode(",",$index_param['param']);
 
 			//$query_result[$pfx][$index_name]=array();
-			$param_count=count($index_param['param'])-1;
-			//$query_result[$pfx][$index_name]['param:count']=$param_count;
-			$str_param="";
-			$prepare_arr=array();
-
-            array_push($prepare_arr,$pfx);
-			array_push($prepare_arr,$index_name);
-			foreach($index_param['param'] as $pos=>$val){
-				array_push($prepare_arr,$val);
-			}
-
-			$param_prepare_str="";
-			for($i=0;$i<=$param_count;$i++){
-				$param_prepare_str.="%i,";
-
-			}
-			$param_prepare_str=substr($param_prepare_str,0,strlen($param_prepare_str)-1);
-			//$query_result[$pfx][$index_name]['param:str']=$param_prepare_str;
-			//$query_result[$pfx][$index_name]['param:str:val']=$str_param;
+			/*
+			 * The placeholder list used to be assembled at runtime ("%i,%i,%i") and
+			 * interpolated into the query text. That works — $wpdb->prepare() accepts the
+			 * arguments as a single array — but it makes the statement impossible to
+			 * verify statically, because neither a reader nor PHPCS can match the
+			 * placeholders against the arguments. Index definitions carry 1 to 5 columns
+			 * (wp_posts uses 5), so one literal query per arity keeps every placeholder
+			 * checkable, with a logged fallback if a wider index is ever added.
+			 */
+			$columns = array_values( $index_param["param"] );
 			$k_exs=AHSC_check_key_exists($index_name,$table_name);
 
 			/*switch ($index_param['type']) {
@@ -203,19 +243,65 @@ function AHSC_DBOPT_Optimize(){
 
 			if(!$k_exs){
 
-				switch ($index_param['type']){
-					case "UNIQUE KEY":
-						//$sql="ALTER TABLE {$pfx} ADD CONSTRAINT {$index_name} UNIQUE ({$str_param}) ";
+				$is_unique = ( 'UNIQUE KEY' === $index_param['type'] );
 
-						$wpdb->query( $wpdb->prepare("ALTER TABLE %i ADD CONSTRAINT %i UNIQUE ($param_prepare_str)",$prepare_arr));//@phpcs:ignore
+				// Cleared so the statements below can be checked as a group afterwards.
+				$wpdb->last_error = '';
+
+				switch ( count( $columns ) ) {
+					case 1:
+						if ( $is_unique ) {
+							$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD CONSTRAINT %i UNIQUE (%i)', $pfx, $index_name, $columns[0] ) );
+						} else {
+							$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD KEY %i (%i)', $pfx, $index_name, $columns[0] ) );
+						}
 						break;
-					case "KEY":
-						//$sql="ALTER TABLE {$pfx} ADD KEY {$index_name} ({$str_param})";
-
-						$wpdb->query( $wpdb->prepare("ALTER TABLE %i ADD KEY %i ($param_prepare_str)",$prepare_arr));//@phpcs:ignore
+					case 2:
+						if ( $is_unique ) {
+							$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD CONSTRAINT %i UNIQUE (%i,%i)', $pfx, $index_name, $columns[0], $columns[1] ) );
+						} else {
+							$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD KEY %i (%i,%i)', $pfx, $index_name, $columns[0], $columns[1] ) );
+						}
+						break;
+					case 3:
+						if ( $is_unique ) {
+							$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD CONSTRAINT %i UNIQUE (%i,%i,%i)', $pfx, $index_name, $columns[0], $columns[1], $columns[2] ) );
+						} else {
+							$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD KEY %i (%i,%i,%i)', $pfx, $index_name, $columns[0], $columns[1], $columns[2] ) );
+						}
+						break;
+					case 4:
+						if ( $is_unique ) {
+							$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD CONSTRAINT %i UNIQUE (%i,%i,%i,%i)', $pfx, $index_name, $columns[0], $columns[1], $columns[2], $columns[3] ) );
+						} else {
+							$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD KEY %i (%i,%i,%i,%i)', $pfx, $index_name, $columns[0], $columns[1], $columns[2], $columns[3] ) );
+						}
+						break;
+					case 5:
+						if ( $is_unique ) {
+							$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD CONSTRAINT %i UNIQUE (%i,%i,%i,%i,%i)', $pfx, $index_name, $columns[0], $columns[1], $columns[2], $columns[3], $columns[4] ) );
+						} else {
+							$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD KEY %i (%i,%i,%i,%i,%i)', $pfx, $index_name, $columns[0], $columns[1], $columns[2], $columns[3], $columns[4] ) );
+						}
+						break;
+					default:
+						// Never silently skip an index: adding a wider one to $ahsc_tables must be noticed.
+						AHSC_log(
+							sprintf( 'Unsupported index width (%1$d columns) for %2$s.%3$s: index not created.', count( $columns ), $pfx, $index_name ),
+							'db-optimization',
+							'warning'
+						);
 						break;
 				}
 
+				// A failed ALTER used to pass unnoticed: the return value was discarded.
+				if ( '' !== $wpdb->last_error ) {
+					AHSC_log(
+						sprintf( 'Could not create index %1$s on %2$s: %3$s', $index_name, $pfx, $wpdb->last_error ),
+						'db-optimization',
+						'warning'
+					);
+				}
 
 			}
 		}
@@ -244,21 +330,24 @@ function AHSC_DBOPT_Drop_chenges(){
 				case "UNIQUE KEY":
 					//$sql="ALTER TABLE {$pfx} DROP INDEX {$index_name}";
 
-					$wpdb->query( $wpdb->prepare("DROP INDEX %i ON %i;",array( $index_name,$pfx)));//@phpcs:ignore
+					$wpdb->query( $wpdb->prepare( "DROP INDEX %i ON %i;", array( $index_name, $pfx ) ) );
 
 					break;
 				case "KEY":
 					//$sql="ALTER TABLE {$pfx} DROP KEY {$index_name}";
-					$wpdb->query( $wpdb->prepare("ALTER TABLE %i DROP KEY %i;",array( $pfx,$index_name)));//@phpcs:ignore
+					$wpdb->query( $wpdb->prepare( "ALTER TABLE %i DROP KEY %i;", array( $pfx, $index_name ) ) );
 					break;
 			}
 			//$query_result[$pfx][$index_name]=array();
 			//$query_result[$pfx][$index_name]['sql'] =  $sql; //$wpdb->query( $sql );
-			//$query_result[$pfx][$index_name]['result'] = $wpdb->query( $sql );//@phpcs:ignore
+			//$query_result[$pfx][$index_name]['result'] = $wpdb->query( $sql );
 
 		}
 	}
 	//var_dump($query_result);
 	return $query_result;
 }
+
+// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
+
 //AHSC_DBOPT_Drop_chenges();

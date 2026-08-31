@@ -4,9 +4,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( isset( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_lazy_load'] ) &&
-      AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_lazy_load'] ) {
-	  add_action( 'template_redirect', 'ahsc_wp_lazy_loading_initialize_filters', 10 );
-	  add_action( 'template_redirect', 'ahsc_control_lazyload_param',11);
+     AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_lazy_load'] ) {
+	add_action( 'template_redirect', 'ahsc_wp_lazy_loading_initialize_filters', 10 );
+	add_action( 'template_redirect', 'ahsc_control_lazyload_param',11);
 
 }
 
@@ -34,7 +34,9 @@ function ahsc_wp_lazy_loading_initialize_filters() {
 
 function ahsc_wp_lazy_loading_add_attribute_to_avatar( $avatar ) {
 	if ( ahsc_wp_lazy_loading_enabled( 'img', 'get_avatar' ) && false === strpos( $avatar, ' loading=' ) ) {
-		$avatar = str_replace( '<img ', '<img decoding="async" loading="lazy" ', $avatar );
+		// Only the first occurrence: `<img ` can also appear inside an attribute
+		// value, where inserting attributes would break out of that value.
+		$avatar = preg_replace( '/<img\s/i', '<img decoding="async" loading="lazy" ', $avatar, 1 );
 	}
 
 	return $avatar;
@@ -110,14 +112,20 @@ function ahsc_wp_filter_content_tags( $content, $context = null ) {
 }
 
 function ahsc_wp_img_tag_add_loading_attr( $image, $context ) {
-    //@phpcs:ignore
+	//@phpcs:ignore
 	$value = apply_filters( 'wp_img_tag_add_loading_attr', 'lazy', $image, $context );
 
 	if ( $value ) {
 		if ( ! in_array( $value, array( 'lazy', 'eager' ), true ) ) {
 			$value = 'lazy';
 		}
-		return str_replace( '<img', '<img decoding="async" loading="' . $value . '"', $image );
+		// Insert at the start of the tag only: a literal `<img` can also occur
+		// inside an attribute value, where inserting would break out of it.
+		if ( 0 !== stripos( $image, '<img' ) ) {
+			return $image;
+		}
+
+		return substr_replace( $image, '<img decoding="async" loading="' . $value . '"', 0, 4 );
 	}
 
 	return $image;
@@ -164,37 +172,111 @@ function ahsc_add_image_dimensions( $content ) {
 
 	return $content;
 }
+/**
+ * Splits an img tag into its ordered list of attributes.
+ *
+ * Attributes must never be rewritten with plain string or non-greedy regex
+ * replacements: a `loading=` sequence sitting inside another attribute value is
+ * indistinguishable from a real attribute, so removing or inserting text at that
+ * position splices the tag and can turn harmless markup into an event handler.
+ * This walks the tag from its start, so every offset it acts on is known to be
+ * an attribute boundary, and gives up on anything it cannot read with certainty
+ * so that callers can leave such tags untouched.
+ *
+ * @param string $tag A single tag, from `<img` up to and including its `>`.
+ *
+ * @return array|false Array with the `attributes` and `self_closing` keys, or
+ *                     false when the tag cannot be parsed safely.
+ */
+function ahsc_parse_img_tag( $tag ) {
+	if ( ! preg_match( '#^<img\b#i', $tag ) ) {
+		return false;
+	}
+
+	$attributes = array();
+	$offset     = 4;
+	$length     = strlen( $tag );
+
+	while ( $offset < $length ) {
+		// Whitespace separating attributes.
+		if ( preg_match( '/\s+/A', $tag, $whitespace, 0, $offset ) ) {
+			$offset += strlen( $whitespace[0] );
+		}
+
+		// End of the tag, which is always the end of the matched string.
+		if ( preg_match( '/\/?>\z/A', $tag, $end, 0, $offset ) ) {
+			return array(
+				'attributes'   => $attributes,
+				'self_closing' => ( '/>' === $end[0] ),
+			);
+		}
+
+		// An attribute name, followed by an optional quoted or unquoted value.
+		if ( ! preg_match( '/([^\s\/>="\']+)(?:\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]*))?/A', $tag, $attribute, 0, $offset ) ) {
+			return false;
+		}
+
+		$attributes[] = array(
+			'name'   => strtolower( $attribute[1] ),
+			'source' => $attribute[0],
+		);
+		$offset += strlen( $attribute[0] );
+	}
+
+	return false;
+}
+
 function ahsc_control_lazyload_param($buffer){
 	if(!is_admin()) {
 		if(!is_customize_preview()){
-		ob_start( function ( $buffer ) {
-			preg_match_all( '#<(script|style|noscript|template)\b[^>]>.?</\1>|<img\b[^>]*>#i', $buffer, $allImgs );
-			$total   = count( $allImgs[0] ) - 1;
-			$limit   = intval( $total / 3 );
-			$control = min( 9, $limit );
-			$count   = 0;
+			ob_start( function ( $buffer ) {
+				preg_match_all( '#<(script|style|noscript|template)\b[^>]*>.*?</\1>|<img\b[^>]*>#is', $buffer, $allImgs );
+				$total   = count( $allImgs[0] ) - 1;
+				$limit   = intval( $total / 3 );
+				$control = min( 9, $limit );
+				$count   = 0;
 
-			return preg_replace_callback(
-				'#<(script|style|noscript|template)\b[^>]>.?</\1>|<img\b[^>]*>#i',
-				function ( $matches ) use ( &$count, $control ) {
+				return preg_replace_callback(
+					'#<(script|style|noscript|template)\b[^>]*>.*?</\1>|<img\b[^>]*>#is',
+					function ( $matches ) use ( &$count, $control ) {
 
-					if ( $count >= $control ) {
-						return $matches[0];
-					}
-					$img = preg_replace( '/\sloading=("|\').*?\1/i', '', $matches[0] );
-					$img = preg_replace( '/\sdecoding=("|\').*?\1/i', '', $img );
+						if ( $count >= $control ) {
+							return $matches[0];
+						}
 
-					if ( ! preg_match( '/\sfetchpriority=/i', $img ) ) {
-						$img = preg_replace( '/<img/i', '<img fetchpriority=\'high\'', $img, 1 );
-					}
+						$parsed = ahsc_parse_img_tag( $matches[0] );
 
-					$count ++;
+						// Skipped elements and anything unparsable are left alone.
+						if ( false === $parsed ) {
+							return $matches[0];
+						}
 
-					return $img;
-				},
-				$buffer
-			);
-		} );
+						$attributes        = array();
+						$has_fetchpriority = false;
+
+						foreach ( $parsed['attributes'] as $attribute ) {
+							if ( 'loading' === $attribute['name'] || 'decoding' === $attribute['name'] ) {
+								continue;
+							}
+							if ( 'fetchpriority' === $attribute['name'] ) {
+								$has_fetchpriority = true;
+							}
+							// Re-emitted verbatim, so no quoting decisions are made here.
+							$attributes[] = $attribute['source'];
+						}
+
+						if ( ! $has_fetchpriority ) {
+							array_unshift( $attributes, 'fetchpriority=\'high\'' );
+						}
+
+						$count ++;
+
+						return '<img' . ( $attributes ? ' ' . implode( ' ', $attributes ) : '' ) .
+						       ( $parsed['self_closing'] ? ' /' : '' ) . '>';
+					},
+					$buffer
+				);
+			} );
 		}
 	}
 }

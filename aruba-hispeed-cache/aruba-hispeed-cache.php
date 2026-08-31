@@ -2,7 +2,7 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * Aruba HiSpeed Cache
- * php version 5.6
+ * php version 7.4
  *
  * @category Wordpress-plugin
  *
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * @wordpress-plugin
  * Plugin Name:       Aruba HiSpeed Cache
- * Version:           3.0.14
+ * Version:           3.0.15
  * Plugin URI:        https://hosting.aruba.it/wordpress.aspx
  *
  * @phpcs:ignore Generic.Files.LineLength.TooLong
@@ -24,9 +24,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * Text Domain:       aruba-hispeed-cache
  * Domain Path:       /languages
  * License:           GPL v3 or later
- * Tested up to:      7.0
- * Requires PHP:      5.6
- * Requires at least: 5.4
+ * Tested up to:      7.1
+ * Requires PHP:      7.4
+ * Requires at least: 6.2
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
@@ -59,7 +59,7 @@ include_once "src/AHSC_Config.php";
 /** Debug Manager*/
 
 if(AHSC_CORE['debug']) {
-	if ( file_exists( dirname( __FILE__ ) . DIRECTORY_SEPARATOR . "Debug/Enable.php" ) ) {
+	if ( file_exists( __DIR__ . DIRECTORY_SEPARATOR . "Debug/Enable.php" ) ) {
 		include_once "Debug/Enable.php";
 	}
 }
@@ -127,9 +127,7 @@ if ( \is_multisite() ) {
 	add_filter( 'plugin_action_links_' .AHSC_CONSTANT['ARUBA_HISPEED_CACHE_BASENAME'],'AHSC_plugin_action_links'  );
 }
 
-if ( AHSC_REQUIREMENTS['is_legacy_post_61'] ) {
-	add_filter( 'site_status_page_cache_supported_cache_headers','ahsc_add_supported_cache_headers', 100, 1 );
-}
+add_filter( 'site_status_page_cache_supported_cache_headers', 'ahsc_add_supported_cache_headers', 100, 1 );
 
 
 /**
@@ -140,7 +138,7 @@ if ( AHSC_REQUIREMENTS['is_legacy_post_61'] ) {
  function ahsc_add_supported_cache_headers( $cache_headers ) {
 	// Add new header to the existing list.
 	$cache_headers['x-aruba-cache'] = static function ( $header_value ) {
-		return str_contains( strtolower( $header_value ), 'hit' );
+		return false !== strpos( strtolower( $header_value ), 'hit' );
 	};
 	return $cache_headers;
 }
@@ -200,10 +198,13 @@ add_action('init','AHSC_script_nit');
 function AHSC_script_nit() {
 	if ( current_user_can( 'manage_options' ) ) {
         if ( is_admin_bar_showing() ) {
-            add_action( 'wp_after_admin_bar_render',  'ahsc_adminbar_inline_style' , 100 );
+            // Moved off wp_after_admin_bar_render onto the enqueue hooks, so the rules can
+            // go through wp_add_inline_style() instead of being printed by hand.
+            add_action( 'wp_enqueue_scripts',  'ahsc_adminbar_inline_style' );
             add_action( 'wp_enqueue_scripts',  'ahsc_enqueue_toolbar_js'  );
             add_action( 'wp_enqueue_scripts',  'AHSC_localize_toolbar_js'  );
             if(is_admin()){
+                add_action( 'admin_enqueue_scripts',  'ahsc_adminbar_inline_style' );
                 add_action( 'admin_enqueue_scripts',  'ahsc_enqueue_toolbar_js'  );
                 add_action( 'admin_enqueue_scripts', 'AHSC_localize_toolbar_js'  );
             }
@@ -256,14 +257,18 @@ function ahsc_adminbar_inline_style() {
 				z-index: 9998;
 			}";
 
-	printf(
-		'<style type="text/css">
-				%1$s
-				%2$s
-				</style>',
-		$icon, //@phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		$loader //@phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-	);
+	/*
+	 * These rules used to be printed by hand right after the admin bar markup, with an
+	 * escaping exemption on both variables. There is no correct escaper for CSS anyway:
+	 * esc_html() would turn the quotes in content: '\f17e' and url('data:...') into
+	 * entities and break the rules. Registering a src-less handle and attaching the CSS
+	 * with wp_add_inline_style() is the pattern core provides for inline-only styles —
+	 * WordPress emits the <style> tag itself, so nothing needs escaping here, and the
+	 * rules now land in <head> instead of after the admin bar.
+	 */
+	wp_register_style( 'ahsc-adminbar', false, array(), AHSC_CONSTANT['ARUBA_HISPEED_CACHE_VERSION'] );
+	wp_enqueue_style( 'ahsc-adminbar' );
+	wp_add_inline_style( 'ahsc-adminbar', $icon . $loader );
 }
 
 /**
@@ -306,7 +311,14 @@ if(is_user_logged_in() && current_user_can( 'manage_options' ) && isset( $_POST[
 	$cleaner->setPurger( AHSC_PURGER );
 
 	if ( isset( $_POST['ahsc_to_purge'] ) ) {
-		$to_purge = urldecode( wp_unslash( $_POST['ahsc_to_purge'] ) ); // @phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		/*
+		 * The value is either the literal "all" or a percent-encoded URL, so the
+		 * sanitizer has to run before urldecode() and must leave the octets alone:
+		 * sanitize_text_field() strips every %XX sequence and would shred the URL,
+		 * while wp_strip_all_tags() only removes markup. The URL branch below still
+		 * goes through esc_url_raw().
+		 */
+		$to_purge = urldecode( wp_strip_all_tags( wp_unslash( $_POST['ahsc_to_purge'] ) ) );
 
 		if ( 'all' === $to_purge ) {
 			$cleaner->purgeAll();
@@ -355,7 +367,7 @@ if(ahsc_check_debug_status()){
 }
 
 function AHSC_debug_status_notices(){
-	wp_admin_notice(
+	ahsc_admin_notice(
 		 '<p id="ahsc_debug_status_message">'.__('<b>Debug mode is active.</b> To improve the responsiveness of your site, we suggest you disable it. This will remove any log files.','aruba-hispeed-cache' ).'</p>'.'<a class="button-secondary" id="ahsc_debug_disable" href="#">'.__('Disable Debugging','aruba-hispeed-cache').'</a>',
 		array(
 			'type'        => 'warning',
@@ -393,7 +405,9 @@ function ahsc_enqueue_debug_status_js() {
  function AHSC_check_hispeed_cache_notices() {
 	$check = ahsc_get_check_notice( ahsc_has_notice() );
 	if ( ! \is_null( $check ) ) {
-		echo $check; //@phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		// AHSC_Notice_Render() builds a notice div whose body is already wp_kses_post()ed;
+		// applying it to the wrapper too costs nothing and removes the exemption.
+		echo wp_kses_post( $check );
 	}
 }
 add_action("wp_ajax_ahsc_disable_debug", "ahsc_disable_debug");
@@ -410,7 +424,10 @@ add_action("wp_ajax_ahsc_disable_debug", "ahsc_disable_debug");
 		 if ( count( $ahsc_result ) ) {
 			 // log files exist
 			 foreach ( $ahsc_result as $ahsc_file ) {
-				 $ahsc_response['removed_wp_debug_log_file']=unlink( $ahsc_file );//@phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+				 // wp_delete_file() returns nothing, so the outcome is read back from the
+				 // filesystem. As before, only the last iteration is reported.
+				 \wp_delete_file( $ahsc_file );
+				 $ahsc_response['removed_wp_debug_log_file'] = ! file_exists( $ahsc_file );
 			 }
 		 }
 		 echo wp_json_encode( $ahsc_response );
@@ -427,7 +444,7 @@ function ahsc_ajax_enable_purge(){
 		$result=array();
 
 		$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
-		$c_opt['ahsc_enable_purge']= (isset($_REQUEST['status']) && $_REQUEST['status']==="true") ? true : false;
+		$c_opt['ahsc_enable_purge']= isset($_REQUEST['status']) && $_REQUEST['status']==="true";
 		if ($c_opt['ahsc_enable_purge'] === false) {
 			$c_opt['ahsc_purge_homepage_on_edit'] = false;
 			$c_opt['ahsc_purge_page_on_new_comment'] = false;
@@ -448,7 +465,7 @@ function ahsc_ajax_purge_homepage_on_edit(){
 		$result = array();
 
 		$c_opt                                = get_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] );
-		$c_opt['ahsc_purge_homepage_on_edit'] = (isset($_REQUEST['status']) && $_REQUEST['status'] === "true" ) ? true : false;
+		$c_opt['ahsc_purge_homepage_on_edit'] = isset($_REQUEST['status']) && $_REQUEST['status'] === "true";
 		$_res                                 = update_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt );
 		$result['result']                     = $_res;
 		echo wp_json_encode( $result );
@@ -465,7 +482,7 @@ function ahsc_ajax_purge_page_on_new_comment(){
 		$result = array();
 
 		$c_opt                                   = get_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] );
-		$c_opt['ahsc_purge_page_on_new_comment'] = (isset($_REQUEST['status']) && $_REQUEST['status'] === "true" ) ? true : false;
+		$c_opt['ahsc_purge_page_on_new_comment'] = isset($_REQUEST['status']) && $_REQUEST['status'] === "true";
 		$_res                                    = update_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt );
 		$result['result']                        = $_res;
 		echo wp_json_encode( $result );
@@ -481,7 +498,7 @@ function ahsc_ajax_purge_archive_on_edit(){
 		$result = array();
 
 		$c_opt                               = get_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] );
-		$c_opt['ahsc_purge_archive_on_edit'] = ( isset($_REQUEST['status']) && $_REQUEST['status'] === "true" ) ? true : false;
+		$c_opt['ahsc_purge_archive_on_edit'] = isset($_REQUEST['status']) && $_REQUEST['status'] === "true";
 		$_res                                = update_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt );
 		$result['result']                    = $_res;
 		echo  wp_json_encode( $result );
@@ -498,7 +515,7 @@ function ahsc_ajax_cache_warmer(){
 		$result = array();
 
 		$c_opt                      = get_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] );
-		$c_opt['ahsc_cache_warmer'] = ( isset($_REQUEST['status']) && $_REQUEST['status'] === "true" ) ? true : false;
+		$c_opt['ahsc_cache_warmer'] = isset($_REQUEST['status']) && $_REQUEST['status'] === "true";
 		$_res                       = update_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt );
 		$result['result']           = $_res;
 		echo wp_json_encode( $result );
@@ -515,7 +532,7 @@ function ahsc_ajax_static_cache(){
 		$result = array();
 
 		$c_opt                      = get_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] );
-		$c_opt['ahsc_static_cache'] = ( isset($_REQUEST['status']) && $_REQUEST['status'] === "true" ) ? true : false;
+		$c_opt['ahsc_static_cache'] = isset($_REQUEST['status']) && $_REQUEST['status'] === "true";
 		$_res                       = update_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt );
 		$result['result']           = $_res;
 		echo  wp_json_encode( $result );
@@ -530,7 +547,7 @@ function ahsc_ajax_lazy_load(){
 
 		$result=array();
 	$c_opt=get_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
-	$c_opt['ahsc_lazy_load']=(isset($_REQUEST['status']) && $_REQUEST['status']==="true")?true:false;
+	$c_opt['ahsc_lazy_load']=isset($_REQUEST['status']) && $_REQUEST['status']==="true";
 	$_res=update_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt);
 	$result['result']= $_res;
 	echo  wp_json_encode($result);
@@ -545,7 +562,7 @@ function ahsc_ajax_html_optimizer(){
 
 		$result                       = array();
 		$c_opt                        = get_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] );
-		$c_opt['ahsc_html_optimizer'] = (isset($_REQUEST['status']) && $_REQUEST['status'] === "true" ) ? true : false;
+		$c_opt['ahsc_html_optimizer'] = isset($_REQUEST['status']) && $_REQUEST['status'] === "true";
 		$_res                         = update_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt );
 		$result['result']             = $_res;
 		echo wp_json_encode( $result );
@@ -560,7 +577,7 @@ function ahsc_ajax_dns_preconnect(){
 
 		$result                       = array();
 		$c_opt                        = get_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] );
-		$c_opt['ahsc_dns_preconnect'] = (isset($_REQUEST['status']) && $_REQUEST['status'] === "true" ) ? true : false;
+		$c_opt['ahsc_dns_preconnect'] = isset($_REQUEST['status']) && $_REQUEST['status'] === "true";
 		$_res                         = update_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt );
 		$result['result']             = $_res;
 		echo wp_json_encode( $result );
@@ -575,8 +592,11 @@ function ahsc_ajax_dns_preconnect_domain_list(){
 
 		$result                   = array();
 		$c_opt                    = get_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] );
+		$trans_domain_list        = array();
 		if(isset($_REQUEST['list'] )){
-		  $trans_domain_list_string = preg_replace( "/<div>(.*?)<\/div>/", "$1;", trim( $_REQUEST['list'] ) );//@phpcs:ignore
+		  // wp_kses_post() rather than sanitize_text_field(): the <div> wrappers must
+		  // survive, because the regex below is what turns them into separators.
+		  $trans_domain_list_string = preg_replace( "/<div>(.*?)<\/div>/", "$1;", trim( wp_kses_post( wp_unslash( $_REQUEST['list'] ) ) ) );
 		  $trans_domain_list_string = wp_strip_all_tags( $trans_domain_list_string );
 		  $trans_domain_list        = array_filter( explode( ";", trim( $trans_domain_list_string ) ), fn( $value ) => ! is_null( $value ) && $value !== '' );
 		}
@@ -587,11 +607,11 @@ function ahsc_ajax_dns_preconnect_domain_list(){
 				if (isset($_SERVER['SERVER_NAME']) && strpos( $string, sanitize_text_field(wp_unslash($_SERVER['SERVER_NAME'])) ) !== false ) {
 					unset( $trans_domain_list[ $index ] );
 				}
-				if ( ! isset( $check['path'] ) ) {
+				if ( ! isset( $_check['path'] ) ) {
 					$string .= '/';
 					$_check = wp_parse_url( $string );
 				}
-				if ( is_null( $_check['scheme'] ) ) {
+				if ( ! isset( $_check['scheme'] ) ) {
 					$string = "https://" . $string;
 				} elseif ( $_check['scheme'] === "http" ) {
 					$string = preg_replace( "/^http:/i", "https:", $string );
@@ -616,7 +636,7 @@ function ahsc_ajax_enable_cron(){
 		$result                    = array();
 		$wpc_transformer           = new HASC_WPCT( ABSPATH . 'wp-config.php' );
 		$c_opt                     = get_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] );
-		$c_opt['ahsc_enable_cron'] = (isset($_REQUEST['status']) && $_REQUEST['status'] === "true" ) ? true : false;
+		$c_opt['ahsc_enable_cron'] = isset($_REQUEST['status']) && $_REQUEST['status'] === "true";
 		$_res                      = update_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt );
 		$result['result']          = $_res;
 
@@ -642,8 +662,8 @@ function ahsc_ajax_cron_status() {
 
 		$result                    = array();
 		$c_opt                     = get_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] );
-		$c_opt['ahsc_cron_status'] = ( isset($_REQUEST['status']) && $_REQUEST['status'] === "true" ) ? true : false;
-		$c_opt['ahsc_cron_time']   = ( isset( $c_opt['ahsc_cron_time'] ) ? $c_opt['ahsc_cron_time'] : AHSC_OPTIONS_LIST_DEFAULT['ahsc_cron_time']['default'] );
+		$c_opt['ahsc_cron_status'] = isset($_REQUEST['status']) && $_REQUEST['status'] === "true";
+		$c_opt['ahsc_cron_time']   = $c_opt['ahsc_cron_time'] ?? AHSC_OPTIONS_LIST_DEFAULT['ahsc_cron_time']['default'];
 		$_res                      = update_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt );
 		$result['result']          = $_res;
 		echo wp_json_encode( $result );

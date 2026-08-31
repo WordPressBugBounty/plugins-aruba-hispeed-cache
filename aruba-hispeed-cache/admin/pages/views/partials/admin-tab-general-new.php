@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 /**
  * A telmplate frame
- * php version 5.6
+ * php version 7.4
  *
  * @category Wordpress-plugin
  * @package  Aruba-HiSpeed-Cache
@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @link     none
  */
 
-// phpcs:disable
 /*if(isset($this->fields['sections']['general']['apc'])){
   unset($this->fields['sections']['general']['apc']);
 }*/

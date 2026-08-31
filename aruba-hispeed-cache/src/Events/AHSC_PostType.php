@@ -7,9 +7,16 @@ $ahsc_allowed_cases = array( 'publish', 'future', 'trash' );
 $ahsc_target=array();
 $ahsc_is_json=(defined('REST_REQUEST') && REST_REQUEST) || true === wp_is_json_request() ||
          (isset( $_SERVER['REQUEST_URI'] ) && strpos( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ), trailingslashit( rest_get_url_prefix() ) ) !== false)  ;
-// phpcs:disable
+/*
+ * Read-only routing check on WooCommerce's own AJAX parameter: it only decides whether the
+ * purge hooks get registered, nothing is written and no form is processed, so there is no
+ * nonce to verify — WooCommerce owns that request, not this plugin.
+ */
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- routing check only, see comment above.
+$ahsc_wc_ajax = isset( $_REQUEST['wc-ajax'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['wc-ajax'] ) ) : '';
+
 if( ( ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() ) || defined( 'DOING_AJAX' ) ) &&
-( isset( $_REQUEST['wc-ajax'] )  && 'checkout' !== $_REQUEST['wc-ajax']) ||
+( '' !== $ahsc_wc_ajax  && 'checkout' !== $ahsc_wc_ajax) ||
 'nav-menus.php' !== $pagenow){
 	if(is_array(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']) && AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_homepage_on_edit']   /*||
 	 AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_purge_homepage_on_del'] ||
@@ -40,7 +47,6 @@ if('nav-menus.php' !== $pagenow){
 
 	}
 }
-// phpcs:enable
 /**
  * Fires after a post type has been updated, and the term cache has been cleaned.
  *

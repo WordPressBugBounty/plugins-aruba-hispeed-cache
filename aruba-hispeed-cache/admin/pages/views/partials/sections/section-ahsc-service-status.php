@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     <label class="<?php echo esc_attr($check_parameters['esit']);?>">
                     <?php
 
-                    $ahsc_localize_link = AHSC_LOCALIZE_LINK; // For php 5.6 compatibility.
+                    $ahsc_localize_link = AHSC_LOCALIZE_LINK;
                     //$notice = null;
                     $ahsc_lng=strtolower(substr( get_bloginfo ( 'language' ), 0, 2 ));
                       switch($check_parameters['esit']){

@@ -43,7 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 $ahsc_headers_data=AHSC_get_headers();
                // $ahsc_data=AHSC_check();
 
-                if (is_array($ahsc_headers_data) && array_key_exists( 'x-servername', $ahsc_headers_data ) && (str_contains( $ahsc_headers_data['x-servername'], 'aruba.it' ) || str_contains($ahsc_headers_data['x-servername'],'arubacdn')) ){
+                if (is_array($ahsc_headers_data) && array_key_exists( 'x-servername', $ahsc_headers_data ) && (false !== strpos( $ahsc_headers_data['x-servername'], 'aruba.it' ) || false !== strpos($ahsc_headers_data['x-servername'],'arubacdn')) ){
                 //if(isset($ahsc_data['cdn_status']) & !empty($ahsc_data['cdn_status'])){
                     ?>
                 <a class="nav-tab " data-tab="#cdn"><?php esc_html_e( 'CDN', 'aruba-hispeed-cache' ); ?></a>
@@ -76,7 +76,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div>
 
         <?php
-        if ( is_array($ahsc_headers_data) && array_key_exists( 'x-servername', $ahsc_headers_data ) && (str_contains( $ahsc_headers_data['x-servername'], 'aruba.it' ) || str_contains($ahsc_headers_data['x-servername'],'arubacdn')) ){
+        if ( is_array($ahsc_headers_data) && array_key_exists( 'x-servername', $ahsc_headers_data ) && (false !== strpos( $ahsc_headers_data['x-servername'], 'aruba.it' ) || false !== strpos($ahsc_headers_data['x-servername'],'arubacdn')) ){
 	        // if(isset($ahsc_data['cdn_status']) & !empty($ahsc_data['cdn_status'])){
         ?>
 

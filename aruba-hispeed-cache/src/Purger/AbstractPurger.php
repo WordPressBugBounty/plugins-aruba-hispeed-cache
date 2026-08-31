@@ -1,7 +1,7 @@
 <?php //@phpcs:ignore WordPress.Files.FileName.NotHyphenatedLowercase
 /**
  * ArubaHiSpeedCacheWpPurger
- * php version 5.6
+ * php version 7.4
  *
  * @category Wordpress-plugin
  * @package  Aruba-HiSpeed-Cache
@@ -12,6 +12,12 @@
  */
 
 namespace ArubaSPA\HiSpeedCache\Purger;
+
+// Unqualified defined() on purpose: inside a namespace PHP still resolves it to the
+// global function, and Plugin Check only recognises this exact guard shape.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 if ( ! \class_exists( __NAMESPACE__ . 'AbstractPurger' ) ) {
 	// phpcs:disable WordPress.NamingConventions

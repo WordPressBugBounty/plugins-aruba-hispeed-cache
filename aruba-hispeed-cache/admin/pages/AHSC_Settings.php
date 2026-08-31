@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 include "AHSC_Page.php";
 class AHSC_Settings extends \AHSC\Pages\AHSC_Page {
 
@@ -34,7 +37,7 @@ class AHSC_Settings extends \AHSC\Pages\AHSC_Page {
 
 		$site_option=get_site_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] );
 
-		$this->option       = ($site_option)?$site_option: AHSC_OPTIONS_LIST;
+		$this->option       = $site_option ?: AHSC_OPTIONS_LIST;
 
 	}
 
