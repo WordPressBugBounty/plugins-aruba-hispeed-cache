@@ -50,8 +50,6 @@ if ( ! \class_exists( __NAMESPACE__ . 'WpPurger' ) ) {
 
 			\delete_expired_transients(true);
 			$this->flush_wp_object_cache();
-
-			$this->cache_warmer();
 		}
 
 		/**
@@ -76,8 +74,6 @@ if ( ! \class_exists( __NAMESPACE__ . 'WpPurger' ) ) {
 
 			\delete_expired_transients(true);
 			$this->flush_wp_object_cache();
-
-			$this->cache_warmer();
 		}
 
 		/**
@@ -99,8 +95,6 @@ if ( ! \class_exists( __NAMESPACE__ . 'WpPurger' ) ) {
 
 			\delete_expired_transients(true);
 			$this->flush_wp_object_cache();
-
-			$this->cache_warmer();
 		}
 
 		/**
@@ -164,37 +158,6 @@ if ( ! \class_exists( __NAMESPACE__ . 'WpPurger' ) ) {
 				// Logger.
 			}
 			return $wp_object_cache;
-		}
-
-		/**
-		 * This function adds a transient that will be read with each subsequent request and will trigger the cache warming action.
-		 * If the ahsc_cache_warmer option is set to true.
-		 *
-		 * @return void
-		 */
-		public function cache_warmer() {
-			//$option = $this->container->get_service( 'ahsc_get_option' );
-			$cache_warmer = AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_cache_warmer'];// (bool) $option( 'ahsc_cache_warmer' );
-
-
-			if ( $cache_warmer ) {
-				$do_warmer=get_option('ahsc_do_cache_warmer',false);
-				//$do_warmer             = ahsc_has_transient( 'ahsc_do_cache_warmer' );
-				$do_warmer_log_message = 'Transint warmer present';
-
-				if ( ! $do_warmer ) {
-					$do_warmer_log_message = 'Transint warmer non presente presente lo imposto : ';
-					update_option('ahsc_do_cache_warmer',true);
-					//$_r=ahsc_set_transient( 'ahsc_do_cache_warmer', \time(), MINUTE_IN_SECONDS );
-					//$do_warmer_log_message.=(string)$_r;
-				}
-				global $logger;
-				if(class_exists('\ArubaSPA\HiSpeedCache\Debug\Logger') ) {
-					// Logger.
-					AHSC_log( $do_warmer_log_message, 'Cache Warmer' );
-					// Logger.
-				}
-			}
 		}
 
 	}

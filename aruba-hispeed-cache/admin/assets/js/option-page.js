@@ -9,7 +9,6 @@
 			this.tabManger();
 
 			this.managePurge();
-			this.manageCacheWarmer();
 			this.manageStaticCache();
 			this.manageApc();
 			this.manageLazyLoad();
@@ -138,7 +137,7 @@
 		managePurge() {
 
 			if (!jQuery("#ahsc_enable_purge").is(':checked')) {
-				let field = document.querySelectorAll('#automatic-options,.ahsc_cache_warmer');
+				let field = document.querySelectorAll('#automatic-options');
 				for (let j = 0; j < field.length; j++) {
 					field[j].classList.toggle("hidden");
 				}
@@ -172,7 +171,7 @@
 						if (response.result === true) {
 							$ck.prop("checked", isChecked);
 							jQuery('.ahsc_enable_purge_loader').css("display", "none");
-							jQuery('#automatic-options,.ahsc_cache_warmer').toggleClass("hidden");
+							jQuery('#automatic-options').toggleClass("hidden");
 						}
 					}
 				});
@@ -202,30 +201,6 @@
 
 			});
 		}
-
-manageCacheWarmer(){
-			//ahsc_cache_warmer
-	jQuery("#ahsc_cache_warmer").on('click',function(event) {
-		event.preventDefault();
-		//console.log("status: " + jQuery(this).is(':checked'));
-		var $ck=jQuery(this);
-		jQuery('.ahsc_cache_warmer_loader').css("display", "block");
-		var $val=jQuery(this).is(':checked');
-		jQuery.ajax({
-			type : "post",
-			dataType : "json",
-			url : AHSC_OPTIONS_CONFIGS.ahsc_ajax_url,
-			data : {action: "ahsc_cache_warmer",status:$val,ahsc_nonce:AHSC_OPTIONS_CONFIGS.ahsc_nonce},
-			success: function(response) {
-				//console.log("status : "+ response.result)
-				$ck.prop( "checked", $val );
-				jQuery('.ahsc_cache_warmer_loader').css("display", "none");
-			}
-		});
-
-	});
-
-}
 
 manageStaticCache(){
 	//ahsc_static_cache

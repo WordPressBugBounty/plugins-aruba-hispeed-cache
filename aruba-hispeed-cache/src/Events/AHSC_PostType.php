@@ -150,9 +150,6 @@ global $ahsc_allowed_cases,$ahsc_is_json,$ahsc_target;
 		if ( ! $do_purge ) {
 			$do_purge_log_message = 'Transint non presente presente lo imposto';
 			ahsc_set_transient( 'ahsc_do_purge_deferred', \time(), MINUTE_IN_SECONDS );
-
-			$cache_warmer =new \ArubaSPA\HiSpeedCache\Purger\WpPurger();
-			$cache_warmer->cache_warmer();
 		}
 		if(class_exists('ArubaSPA\HiSpeedCache\Debug\Logger')){
 		 AHSC_log( $do_purge_log_message, 'deferred', 'info' );

@@ -3,7 +3,7 @@
 Contributors: arubait, arubadev, arubasupport
 Tags: Aruba, cache, performance, pagespeed, optimize
 Tested up to: 7.1
-Stable tag: 3.0.15
+Stable tag: 3.1.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -67,6 +67,9 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 2. General Settings Enabled
 
 == Changelog ==
+
+= 3.1.0 =
+* Removed the cache preload (cache warming) feature and its setting: preloading is now handled server-side by the AI-powered Aruba HiSpeed Cache infrastructure.
 
 = 3.0.15 =
 * Fixed issue with HTML image tags.
@@ -265,5 +268,5 @@ wordpress_no_cache, comment_author, wordpress_logged_in_, yith_wcwl_products, wp
 
 == Upgrade Notice ==
 
-= 3.0.15 =
-* Fixed issue with HTML image tags.
+= 3.1.0 =
+* Removed the cache preload (cache warming) feature and its setting: preloading is now handled server-side by the AI-powered Aruba HiSpeed Cache infrastructure.

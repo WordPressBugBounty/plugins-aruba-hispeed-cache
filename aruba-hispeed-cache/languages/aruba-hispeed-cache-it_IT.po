@@ -186,22 +186,6 @@ msgstr ""
 msgid "Cache"
 msgstr "Cache"
 
-#: admin/pages/views/partials/sections/section-ahsc-cache-warmer.php:14
-msgid "Cache preload"
-msgstr "Precaricamento della cache"
-
-#: admin/pages/views/partials/sections/section-ahsc-cache-warmer.php:19
-#: admin/pages/views/partials/sections/section-ahsc-cache-warmer.php:24
-msgid ""
-"Cache preload is the process by which web pages are preloaded into the cache "
-"so that they can be displayed faster.The homepage and the most recent ten "
-"items will be automatically preloaded."
-msgstr ""
-"Il precaricamento della cache è il processo mediante il quale le pagine web "
-"vengono precaricate nella cache in modo da poter essere visualizzate più "
-"velocemente. La home page e i dieci elementi più recenti verranno "
-"precaricati automaticamente."
-
 #: aruba-hispeed-cache.php:169
 msgid "Cache purged."
 msgstr "Cache eliminata."
@@ -271,10 +255,6 @@ msgstr "Elenco domini per DNS prefetch e DNS Preconnect."
 #: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:27
 msgid "Enable automatic cache clearing "
 msgstr "Abilita la cancellazione automatica della cache"
-
-#: admin/pages/views/partials/sections/section-ahsc-cache-warmer.php:30
-msgid "Enable cache preload"
-msgstr "Abilita il precarico della cache"
 
 #: admin/pages/views/partials/sections/section-ahsc-dns-preconnect.php:29
 msgid "Enable DNS Prefetch and Preconnect for external domain resources"

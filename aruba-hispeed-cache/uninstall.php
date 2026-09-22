@@ -20,6 +20,13 @@ if ( ! \defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 
 \delete_site_option( 'aruba_hispeed_cache_options' );
 \delete_site_option( 'aruba_hispeed_cache_version');
+
+// Leftover of the cache warmer, a feature dropped in 3.1.0.
+\delete_option( 'ahsc_do_cache_warmer' );
+if ( is_multisite() ) {
+	\delete_site_option( 'ahsc_do_cache_warmer' );
+}
+
 if ( ! is_multisite() ) {
 
 	require_once( ABSPATH . 'wp-admin/includes/file.php' );

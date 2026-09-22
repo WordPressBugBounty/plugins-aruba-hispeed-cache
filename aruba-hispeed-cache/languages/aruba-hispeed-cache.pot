@@ -148,18 +148,6 @@ msgstr ""
 msgid "Cache"
 msgstr ""
 
-#: admin/pages/views/partials/sections/section-ahsc-cache-warmer.php:14
-msgid "Cache preload"
-msgstr ""
-
-#: admin/pages/views/partials/sections/section-ahsc-cache-warmer.php:19
-#: admin/pages/views/partials/sections/section-ahsc-cache-warmer.php:24
-msgid ""
-"Cache preload is the process by which web pages are preloaded into the cache "
-"so that they can be displayed faster.The homepage and the most recent ten "
-"items will be automatically preloaded."
-msgstr ""
-
 #: aruba-hispeed-cache.php:169
 msgid "Cache purged."
 msgstr ""
@@ -225,10 +213,6 @@ msgstr ""
 #: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:21
 #: admin/pages/views/partials/sections/section-ahsc-enable-purge.php:27
 msgid "Enable automatic cache clearing "
-msgstr ""
-
-#: admin/pages/views/partials/sections/section-ahsc-cache-warmer.php:30
-msgid "Enable cache preload"
 msgstr ""
 
 #: admin/pages/views/partials/sections/section-ahsc-dns-preconnect.php:29

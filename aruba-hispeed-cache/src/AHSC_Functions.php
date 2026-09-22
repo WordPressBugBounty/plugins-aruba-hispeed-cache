@@ -45,6 +45,12 @@ function AHSC_activation_operation(){
 			AHSC_OPTIONS_LIST_DEFAULT
 		);
 	}
+
+	// The cache warmer was removed in 3.1.0: drop its leftovers on installs
+	// upgrading from an earlier version.
+	unset( $options['ahsc_cache_warmer'] );
+	AHSC_remove_cache_warmer_leftovers();
+
 	\update_site_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] , $options );
 	\update_site_option( 'aruba_hispeed_cache_version', AHSC_CONSTANT['ARUBA_HISPEED_CACHE_VERSION']);
 
@@ -65,10 +71,22 @@ function AHSC_deactivation(  ) {
 
 	\delete_site_option( 'aruba_hispeed_cache_options' );
 	\delete_site_option( 'aruba_hispeed_cache_version');
+	AHSC_remove_cache_warmer_leftovers();
 	AHSC_remove_htaccess();
 	$file   = WP_CONTENT_DIR . '/object-cache.php';
 	if ( file_exists( $file ) ) {
 		\wp_delete_file( $file );
+	}
+}
+/**
+ * Remove the leftovers of the cache warmer, a feature dropped in 3.1.0.
+ *
+ * @return void
+ */
+function AHSC_remove_cache_warmer_leftovers() {
+	\delete_option( 'ahsc_do_cache_warmer' );
+	if ( \is_multisite() ) {
+		\delete_site_option( 'ahsc_do_cache_warmer' );
 	}
 }
 /**

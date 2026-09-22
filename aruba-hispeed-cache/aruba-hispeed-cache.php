@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * @wordpress-plugin
  * Plugin Name:       Aruba HiSpeed Cache
- * Version:           3.0.15
+ * Version:           3.1.0
  * Plugin URI:        https://hosting.aruba.it/wordpress.aspx
  *
  * @phpcs:ignore Generic.Files.LineLength.TooLong
@@ -92,8 +92,6 @@ include_once "src/Purger/WpPurger.php";
 /** ADMIN inclusion */
 include_once "admin/AHSC_Admin_Menu.php";
 include_once "admin/AHSC_Admin_Bar.php";
-/** Warmer Manager*/
-include_once "src/AHSC_Warmer.php";
 /** event for clearcache*/
 include_once "src/Events/AHSC_Comments.php";
 include_once "src/Events/AHSC_Deferer.php";
@@ -502,23 +500,6 @@ function ahsc_ajax_purge_archive_on_edit(){
 		$_res                                = update_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt );
 		$result['result']                    = $_res;
 		echo  wp_json_encode( $result );
-		die();
-	}
-}
-
-//ahsc_cache_warmer
-add_action("wp_ajax_ahsc_cache_warmer", "ahsc_ajax_cache_warmer");
-//add_action("wp_ajax_nopriv_ahsc_cache_warmer", "ahsc_ajax_cache_warmer");
-function ahsc_ajax_cache_warmer(){
-	if(is_user_logged_in() && current_user_can( 'manage_options' ) && isset($_POST['ahsc_nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash( $_POST['ahsc_nonce'])), 'ahsc-purge-cache' )) {
-
-		$result = array();
-
-		$c_opt                      = get_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] );
-		$c_opt['ahsc_cache_warmer'] = isset($_REQUEST['status']) && $_REQUEST['status'] === "true";
-		$_res                       = update_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt );
-		$result['result']           = $_res;
-		echo wp_json_encode( $result );
 		die();
 	}
 }
