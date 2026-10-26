@@ -24,7 +24,6 @@ function ahsc_wp_lazy_loading_initialize_filters() {
 				) as $filter
 			) {
 				add_filter( $filter, 'ahsc_wp_filter_content_tags' );
-				//add_filter( $filter, 'ahsc_add_image_dimensions' );
 			}
 			add_filter( 'wp_get_attachment_image_attributes', 'ahsc_wp_lazy_loading_add_attribute_to_attachment_image' );
 			add_filter( 'get_avatar', 'ahsc_wp_lazy_loading_add_attribute_to_avatar' );
@@ -133,36 +132,6 @@ function ahsc_wp_img_tag_add_srcset_and_sizes_attr( $image, $context, $attachmen
 	}
 
 	return $image;
-}
-
-function ahsc_add_image_dimensions( $content ) {
-
-	preg_match_all( '/<img[^>]+>/i', $content, $images);
-
-	if (count($images) < 1)
-		return $content;
-
-	foreach ($images[0] as $image) {
-		preg_match_all( '/(alt|title|src|width|class|id|height|style)=("[^"]*")/i', $image, $img );
-
-		if ( !in_array( 'src', $img[1] ) )
-			continue;
-
-		if ( !in_array( 'width', $img[1] ) || !in_array( 'height', $img[1] ) ) {
-			$src = $img[2][ array_search('src', $img[1]) ];
-			$alt = in_array( 'alt', $img[1] ) ? ' alt=' . $img[2][ array_search('alt', $img[1]) ] : '';
-			$title = in_array( 'title', $img[1] ) ? ' title=' . $img[2][ array_search('title', $img[1]) ] : '';
-			$class = in_array( 'class', $img[1] ) ? ' class=' . $img[2][ array_search('class', $img[1]) ] : '';
-			$id = in_array( 'id', $img[1] ) ? ' id=' . $img[2][ array_search('id', $img[1]) ] : '';
-			$style = in_array( 'style', $img[1] ) ? ' style=' . $img[2][ array_search('style', $img[1]) ] : '';
-			list( $width, $height, $type, $attr ) = getimagesize( str_replace( "\"", "" , $src ) );
-
-			$image_tag = sprintf( '<img src=%s%s%s%s%s%s width="%d" height="%d" />', $src, $alt, $title, $class, $id,$style, $width, $height );
-			$content = str_replace($image, $image_tag, $content);
-		}
-	}
-
-	return $content;
 }
 function ahsc_control_lazyload_param($buffer){
 	if(!is_admin()) {

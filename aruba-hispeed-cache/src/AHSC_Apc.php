@@ -30,29 +30,19 @@ add_action("wp_ajax_ahsc_create_apc_file", "ahsc_create_apc_file");
 function ahsc_create_apc_file(){
 	if(current_user_can( 'manage_options' ) && isset($_POST['ahsc_nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash( $_POST['ahsc_nonce'])), 'ahsc-purge-cache' )) {
 		$result = array();
-		$target = WP_CONTENT_DIR . '/object-cache.php';
-		$source = __DIR__ . '/APC/object-cache.php';
 
 		/*
-		 * Was copy() followed by a separate chmod( $target, 0644 ). WP_Filesystem::copy()
-		 * does both in one call — the fourth argument is the mode — and works on hosts
-		 * where PHP cannot write directly and WordPress falls back to FTP or SSH. Where
-		 * copy() used to succeed, get_filesystem_method() selects the "direct" transport,
-		 * which is a plain copy() plus chmod, so nothing changes. The third argument is
-		 * true because PHP's copy() overwrites by default and WP_Filesystem's does not.
+		 * The copy itself lives in ahsc_dropin_install(), shared with the upgrade sync, so
+		 * both paths get the same WP_Filesystem handling and the same staged-then-moved
+		 * write. It used to be an inline WP_Filesystem::copy() here.
 		 */
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		global $wp_filesystem;
+		$is_copied = ahsc_dropin_install();
 
-		$is_copied = false;
-
-		if ( WP_Filesystem() && $wp_filesystem instanceof WP_Filesystem_Base ) {
-			$is_copied = $wp_filesystem->copy( $source, $target, true, FS_CHMOD_FILE );
+		if ( $is_copied ) {
+			// Record what was just written, so the per-request check in
+			// ahsc_dropin_maybe_sync() has a baseline to compare against.
+			ahsc_dropin_record_version();
 		} else {
-			AHSC_log( 'Could not initialise WP_Filesystem, the object-cache.php drop-in was not installed.', 'apcu', 'warning' );
-		}
-
-		if ( ! $is_copied ) {
 			AHSC_log( sprintf( 'Could not install the object-cache.php drop-in into %s.', WP_CONTENT_DIR ), 'apcu', 'warning' );
 		}
 
@@ -86,13 +76,15 @@ add_action("wp_ajax_ahsc_delete_apc_file", "ahsc_delete_apc_file");
 function ahsc_delete_apc_file(){
 	if(current_user_can( 'manage_options' ) && isset($_POST['ahsc_nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash( $_POST['ahsc_nonce'])), 'ahsc-purge-cache' )) {
 		$result = array();
-		$file   = WP_CONTENT_DIR . '/object-cache.php';
 		$c_opt  = AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS'];
-		if ( file_exists( $file ) ) {
-			\wp_delete_file( $file );
-			$result['result'] = true;
 
-		}
+		/*
+		 * Reports success only when our drop-in is actually gone. A foreign drop-in is left
+		 * alone and logged rather than deleted; see ahsc_dropin_remove(). The APCu setting
+		 * is switched off either way: the admin asked for that, and leaving it on while
+		 * another plugin owns the drop-in would be a lie.
+		 */
+		$result['result'] = ahsc_dropin_remove();
 		//$c_opt=get_site_option(AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME']);
 		$c_opt['ahsc_apc'] = false;
 		update_site_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $c_opt );

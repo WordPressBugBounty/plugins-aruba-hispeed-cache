@@ -245,19 +245,17 @@ function AHSC_get_headers() {
 	if ( 'aruba-hispeed-cache/aruba-hispeed-cache.php' === $plugin ) {
 		$check         = AHSC_check();
 
-		if ( \is_multisite() ) {
-			\set_site_transient(
-				AHSC_CHECKER['transient_name'],
-				$check,
-				AHSC_CHECKER['transient_life_time']
-			);
-		}else{
-            \set_transient(
-                AHSC_CHECKER['transient_name'],
-                $check,
-                AHSC_CHECKER['transient_life_time']
-            );
-        }
+		/*
+		 * Through the helper, which already picks site transients on multisite. This used to
+		 * call set_transient() directly while ahsc_has_notice() read the value through the
+		 * helper — which at the time flipped the object cache off — so the notice was written
+		 * to one store and looked for in the other, and never appeared.
+		 */
+		ahsc_set_transient(
+			AHSC_CHECKER['transient_name'],
+			$check,
+			AHSC_CHECKER['transient_life_time']
+		);
 	}
 }
 

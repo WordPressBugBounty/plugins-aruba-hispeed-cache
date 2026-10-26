@@ -30,5 +30,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 			// Logger.
 		}
 		$cleaner->purgeAll();
+		/*
+		 * Same reasoning as the plugin hooks: core invalidates nothing of its own on a
+		 * theme switch, and template parts, theme mods and anything a theme cached are all
+		 * suspect afterwards. Kept inside this branch so the flush happens exactly where it
+		 * happened before: when the purge does.
+		 */
+		$cleaner->flush_wp_object_cache();
 	}
 }

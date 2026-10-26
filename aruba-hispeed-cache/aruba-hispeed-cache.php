@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * @wordpress-plugin
  * Plugin Name:       Aruba HiSpeed Cache
- * Version:           3.1.0
+ * Version:           3.2.0
  * Plugin URI:        https://hosting.aruba.it/wordpress.aspx
  *
  * @phpcs:ignore Generic.Files.LineLength.TooLong
@@ -43,15 +43,37 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  * @package ArubaHispeedCache
  */
 
+/**
+ * The plugin version.
+ *
+ * Mirrors the `Version:` header above and `Stable tag:` in readme.txt; all three are
+ * bumped together at release. Duplicating it here is deliberate. AHSC_get_version() used
+ * to read the value back out of this file's own header on **every** request, front end
+ * included, with get_plugin_data(): 8 KB read off disk and a regex per header field, all
+ * to produce a string that changes once per release.
+ *
+ * It also did require_once of wp-admin/includes/plugin.php, which mattered up to WordPress
+ * 6.7. From 6.8 core loads that file itself on every request, in wp-settings.php just
+ * before the plugin loop (#62244), so on current versions the saving here is the duplicate
+ * header parse, not the include — and the file being present on the front end says
+ * nothing about this plugin.
+ *
+ * AHSC_check_version_drift() in src/AHSC_Version.php catches the two getting out of sync,
+ * in debug builds only.
+ */
+const AHSC_VERSION = '3.2.0';
+
 //declare compliance with consent level API
 $plugin = plugin_basename( __FILE__ );
 add_filter( "wp_consent_api_registered_{$plugin}", '__return_true' );
 
+/**
+ * Get the plugin version.
+ *
+ * @return string
+ */
 function AHSC_get_version() {
-	require_once ABSPATH . 'wp-admin/includes/plugin.php';
-	// Prevent early translation call by setting $translate to false.
-	$plugin_data = get_plugin_data( __FILE__, false, /* $translate */ false );
-	return $plugin_data['Version'];
+	return AHSC_VERSION;
 }
 
 /** constant configuration*/
@@ -81,6 +103,8 @@ include_once "src/assets/AHSC_WPCT.php";
 include_once "src/AHSC_Functions.php";
 /** apc*/
 include_once "src/AHSC_Apc.php";
+/** object-cache.php drop-in install and version sync*/
+include_once "src/AHSC_Dropin.php";
 /** DB OPTIMIZATION*/
 include_once "src/AHSC_Dboptimization.php";
 
@@ -99,6 +123,8 @@ include_once "src/Events/AHSC_Plugins.php";
 include_once "src/Events/AHSC_PostType.php";
 include_once "src/Events/AHSC_Terms.php";
 include_once "src/Events/AHSC_Themes.php";
+/** WooCommerce stock changes, which no post hook sees */
+include_once "src/Events/AHSC_Woo.php";
 
 
 
@@ -323,6 +349,15 @@ if(is_user_logged_in() && current_user_can( 'manage_options' ) && isset( $_POST[
 		} else {
 			$cleaner->purgeUrl( \esc_url_raw( $to_purge ) );
 		}
+
+		/*
+		 * The purger no longer flushes the object cache on its own, so ask for it here.
+		 * This is the toolbar button: the admin pressed it because something looks stale,
+		 * and "Purge Cache" that leaves a stale object cache behind would not be believed.
+		 * Both branches flush — the front-end button sends the current URL rather than
+		 * "all", and it is no less a deliberate request for a clean slate.
+		 */
+		$cleaner->flush_wp_object_cache();
 		// Don't forget to stop execution afterward.
 		wp_die( wp_json_encode( AHSC_AJAX['success']) );
 	}

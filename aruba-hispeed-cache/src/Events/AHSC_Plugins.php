@@ -32,6 +32,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 		  // Logger.
 		}
 		$cleaner->purgeAll();
+		/*
+		 * One of the few events that still warrants a full object cache flush. WordPress
+		 * invalidates nothing of its own when a plugin is activated, deactivated or
+		 * deleted, yet whatever that plugin had cached — and whatever other code cached
+		 * under assumptions it changed — is now suspect. Kept inside this branch so the
+		 * flush happens exactly where it happened before: when the purge does.
+		 */
+		$cleaner->flush_wp_object_cache();
 		return;
 	}
 }

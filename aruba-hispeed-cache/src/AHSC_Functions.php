@@ -49,10 +49,10 @@ function AHSC_activation_operation(){
 	// The cache warmer was removed in 3.1.0: drop its leftovers on installs
 	// upgrading from an earlier version.
 	unset( $options['ahsc_cache_warmer'] );
-	AHSC_remove_cache_warmer_leftovers();
+	ahsc_remove_obsolete_options();
 
 	\update_site_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'] , $options );
-	\update_site_option( 'aruba_hispeed_cache_version', AHSC_CONSTANT['ARUBA_HISPEED_CACHE_VERSION']);
+	\update_site_option( AHSC_VERSION_OPTION, AHSC_VERSION );
 
 	AHSC_remove_htaccess();
 	if(array_key_exists('ahsc_static_cache',AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS'])){
@@ -70,23 +70,93 @@ function AHSC_activation_operation(){
 function AHSC_deactivation(  ) {
 
 	\delete_site_option( 'aruba_hispeed_cache_options' );
-	\delete_site_option( 'aruba_hispeed_cache_version');
-	AHSC_remove_cache_warmer_leftovers();
+	\delete_site_option( AHSC_VERSION_OPTION );
+	ahsc_remove_obsolete_options();
 	AHSC_remove_htaccess();
-	$file   = WP_CONTENT_DIR . '/object-cache.php';
-	if ( file_exists( $file ) ) {
-		\wp_delete_file( $file );
-	}
+	/*
+	 * Deletes the drop-in only when it is ours. This used to be unconditional, which
+	 * meant deactivating this plugin destroyed Redis Object Cache's or W3TC's drop-in if
+	 * one was installed.
+	 */
+	ahsc_dropin_remove();
 }
 /**
- * Remove the leftovers of the cache warmer, a feature dropped in 3.1.0.
+ * Delete options that older versions of the plugin left behind.
+ *
+ * Was AHSC_remove_cache_warmer_leftovers(), which named the one row it happened to
+ * delete rather than the job it does. Every future removal belongs in here, next to a
+ * note saying which version dropped the feature, so there is one place to look and one
+ * function for ahsc_maybe_run_upgrade() to call.
+ *
+ * Keep every deletion idempotent: this runs on activation, on deactivation and on
+ * upgrade, and may run more than once if two requests notice the same upgrade together.
  *
  * @return void
  */
-function AHSC_remove_cache_warmer_leftovers() {
+function ahsc_remove_obsolete_options() {
+	// Cache warmer, dropped in 3.1.0.
 	\delete_option( 'ahsc_do_cache_warmer' );
 	if ( \is_multisite() ) {
 		\delete_site_option( 'ahsc_do_cache_warmer' );
+	}
+}
+
+/**
+ * Site option holding the plugin version the upgrade routine last ran for.
+ *
+ * Written at activation since long before this routine existed, and until now never
+ * read by anything.
+ */
+const AHSC_VERSION_OPTION = 'aruba_hispeed_cache_version';
+
+/*
+ * Run one-off chores after a plugin update.
+ *
+ * A plugin update fires no activation hook, so anything that only runs from
+ * register_activation_hook() never happens on an upgraded site — which is why the cache
+ * warmer's leftover row survived every update since 3.1.0. This closes that gap and
+ * gives later chores somewhere to live.
+ *
+ * The fast path is one autoloaded option read and a string comparison, the same shape
+ * as ahsc_dropin_maybe_sync(). Deliberately separate from that one: the drop-in carries
+ * its own version and has to be re-copied when *it* changes, whether or not the plugin
+ * version moved. Two version numbers, two jobs.
+ */
+\add_action( 'plugins_loaded', 'ahsc_maybe_run_upgrade', 5 );
+
+if ( ! \function_exists( 'ahsc_maybe_run_upgrade' ) ) {
+
+	/**
+	 * Compare the recorded version against the running one and run upgrade chores.
+	 *
+	 * @return void
+	 */
+	function ahsc_maybe_run_upgrade() {
+		$ahsc_recorded = \get_site_option( AHSC_VERSION_OPTION, '' );
+
+		if ( AHSC_VERSION === $ahsc_recorded ) {
+			return;
+		}
+
+		/*
+		 * Record first, then work. If a chore ever fatals, the version is already stored
+		 * and the next request carries on instead of hitting the same fatal forever — a
+		 * broken chore should not take the site down with it. The cost is that such a
+		 * chore is skipped rather than retried, which is the right trade for deletions.
+		 */
+		\update_site_option( AHSC_VERSION_OPTION, AHSC_VERSION );
+
+		ahsc_remove_obsolete_options();
+
+		if ( \class_exists( '\ArubaSPA\HiSpeedCache\Debug\Logger' ) ) {
+			// Logger.
+			AHSC_log(
+				sprintf( 'Upgrade chores ran: %s to %s.', '' === $ahsc_recorded ? 'unknown' : $ahsc_recorded, AHSC_VERSION ),
+				'upgrade',
+				'info'
+			);
+			// Logger.
+		}
 	}
 }
 /**
@@ -328,7 +398,8 @@ if ( ! \function_exists( 'ahsc_reset_options' ) ) {
 
 			if ( isset( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_apc'] ) &&
 			     AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS']['ahsc_apc'] ){
-					\wp_delete_file( WP_CONTENT_DIR . '/object-cache.php' );
+					// Ownership-checked; see ahsc_dropin_remove().
+					ahsc_dropin_remove();
 			}
 
 		    \update_site_option( AHSC_CONSTANT['ARUBA_HISPEED_CACHE_OPTIONS_NAME'], $new_options );
@@ -343,62 +414,188 @@ if ( ! \function_exists( 'ahsc_reset_options' ) ) {
 if ( ! \function_exists( 'ahsc_has_transient' ) ) {
 
 	/**
-	 * It checks whether a transinet exists if yes, it returns the value otherwise it returns false.
+	 * Read one of the plugin's own transients.
 	 *
-	 * @param  string $transient .
-	 * @return mixed
+	 * These three helpers exist for one reason now: picking site transients on multisite
+	 * and ordinary ones elsewhere. Every read, write and delete of a plugin transient goes
+	 * through them, so the storage decision is made in one place.
+	 *
+	 * They used to force $GLOBALS['_wp_using_ext_object_cache'] to false around each call,
+	 * pushing the value into wp_options rather than the object cache. That was a
+	 * workaround for the drop-in's broken gate: with APCu loaded but disabled, core
+	 * believed in an external object cache that silently dropped everything, so a
+	 * transient written through the normal API did not survive the request. Item 13 fixed
+	 * the gate — an object cache core believes in is now one that works — so the flipping
+	 * is gone.
+	 *
+	 * It had to go rather than merely could: values written through the flip and deleted
+	 * through a plain delete_transient() left rows in wp_options that nothing would ever
+	 * reap — the daily sweep below is what now clears them.
+	 *
+	 * @param  string $transient Transient name.
+	 * @return mixed The stored value, or false when absent.
 	 */
 	function ahsc_has_transient( $transient ) {
-		$temp=$GLOBALS['_wp_using_ext_object_cache'];
-		$GLOBALS['_wp_using_ext_object_cache'] = false;
-		$transient_value = ( \is_multisite() ) ? \get_site_transient( (string) $transient ) : \get_transient( (string) $transient );
-		$_value=( false !== $transient_value ) ? $transient_value : false;
-		$GLOBALS['_wp_using_ext_object_cache'] = $temp;
-		return $_value;
+		$transient_value = ( \is_multisite() )
+			? \get_site_transient( (string) $transient )
+			: \get_transient( (string) $transient );
+
+		return ( false !== $transient_value ) ? $transient_value : false;
 	}
 }
 
 if ( ! \function_exists( 'ahsc_set_transient' ) ) {
 
 	/**
-	 * Undocumented function
+	 * Write one of the plugin's own transients. See ahsc_has_transient().
 	 *
-	 * @param  string  $transient .
-	 * @param  mixed   $value .
-	 * @param  integer $expiration .
+	 * @param  string  $transient  Transient name.
+	 * @param  mixed   $value      Value to store.
+	 * @param  integer $expiration Lifetime in seconds; 0 for no expiry.
 	 * @return bool
 	 */
 	function ahsc_set_transient( $transient, $value, $expiration = 0 ) {
-		$temp=$GLOBALS['_wp_using_ext_object_cache'];
-		$GLOBALS['_wp_using_ext_object_cache'] = false;
-		$_value=( \is_multisite() ) ?
-			\set_site_transient( $transient, $value, $expiration ) :
-			\set_transient( $transient, $value, $expiration );
-		$GLOBALS['_wp_using_ext_object_cache'] = $temp;
-		return $_value;
+		return ( \is_multisite() )
+			? \set_site_transient( $transient, $value, $expiration )
+			: \set_transient( $transient, $value, $expiration );
 	}
 }
 
 if ( ! \function_exists( 'ahsc_delete_transient' ) ) {
 
 	/**
-	 * Undocumented function
+	 * Delete one of the plugin's own transients. See ahsc_has_transient().
 	 *
-	 * @param  string $transient .
+	 * @param  string $transient Transient name.
 	 * @return bool
 	 */
 	function ahsc_delete_transient( $transient ) {
-		$temp=$GLOBALS['_wp_using_ext_object_cache'];
-		$GLOBALS['_wp_using_ext_object_cache'] = false;
-		if(class_exists('ArubaSPA\HiSpeedCache\Debug\Logger')) {
-			AHSC_log( 'hook::transient::delete', __NAMESPACE__ . '::' . __FUNCTION__, 'debug' );
+		if ( class_exists( 'ArubaSPA\HiSpeedCache\Debug\Logger' ) ) {
+			// Logger.
+			AHSC_log( 'hook::transient::delete::' . $transient, __NAMESPACE__ . '::' . __FUNCTION__, 'debug' );
 			// Logger.
 		}
-		$_value=( \is_multisite() ) ?
-			\delete_site_transient( $transient ) :
-			\delete_transient( $transient );
-		$GLOBALS['_wp_using_ext_object_cache'] = $temp;
-		return $_value;
+
+		return ( \is_multisite() )
+			? \delete_site_transient( $transient )
+			: \delete_transient( $transient );
+	}
+}
+
+/*
+ * Core schedules a daily `delete_expired_transients` event (wp-admin/admin.php) and hooks
+ * the function of the same name to it with no arguments. That callback opens with
+ * `if ( ! $force_db && wp_using_ext_object_cache() ) { return; }`, so on an install with
+ * the APCu drop-in it returns immediately and does nothing — and get_transient()'s lazy
+ * delete-on-read is skipped for the same reason. Nothing in WordPress would then ever
+ * remove an expired `_transient_*` row from wp_options again.
+ *
+ * Rather than register an event of our own, hang the forced cleanup on the one core has
+ * already scheduled: nothing to schedule on activation, nothing to unschedule on
+ * deactivation or uninstall, and it inherits core's cadence. Priority 20 so it runs after
+ * core's own callback has no-opped.
+ *
+ * This replaces the delete_expired_transients( true ) calls that used to run inside
+ * WpPurger::purgeUrl(), purgeUrls() and purgeAll() — two unindexed self-join DELETEs over
+ * wp_options on every post save, comment and term edit, to reclaim rows that accumulate
+ * over days. The manual "clear expired transients" admin action is unaffected.
+ */
+\add_action( 'delete_expired_transients', 'ahsc_delete_expired_transients_forced', 20 );
+
+if ( ! \function_exists( 'ahsc_delete_expired_transients_forced' ) ) {
+
+	/**
+	 * Delete expired transients from the database on core's daily cleanup event.
+	 *
+	 * Only does anything when an external object cache is in use. Without one, core's own
+	 * callback on this same event has already deleted these exact rows, and repeating the
+	 * query would be a second unindexed scan of wp_options for nothing.
+	 *
+	 * @return void
+	 */
+	function ahsc_delete_expired_transients_forced() {
+		if ( ! \wp_using_ext_object_cache() ) {
+			return;
+		}
+
+		\delete_expired_transients( true );
+
+		if ( \class_exists( '\ArubaSPA\HiSpeedCache\Debug\Logger' ) ) {
+			// Logger.
+			AHSC_log( 'ALL', 'Clear Expired Transient (scheduled)' );
+			// Logger.
+		}
+	}
+}
+
+/**
+ * Option holding the last time the fallback transient sweep ran, as a Unix timestamp.
+ *
+ * Blog-scoped on purpose rather than a site option: delete_expired_transients() works on
+ * $wpdb->options, which on multisite is the current blog's table, so every blog has to
+ * sweep its own. Autoloaded, so the check below is a cache hit rather than a query.
+ */
+const AHSC_TRANSIENT_SWEEP_OPTION = 'ahsc_transient_sweep';
+
+/** How often the fallback sweep may run. */
+const AHSC_TRANSIENT_SWEEP_INTERVAL = DAY_IN_SECONDS;
+
+/*
+ * Fallback for sites that have switched WP-Cron off.
+ *
+ * The plugin ships that switch itself: the "Enable Wp-Cron" toggle writes
+ * define( DISABLE_WP_CRON, true ) into wp-config.php. With it set the daily
+ * delete_expired_transients event never fires, and nothing else on this host runs
+ * wp-cron.php either — so the hook above is dead, and with the APCu drop-in installed
+ * get_transient() has already stopped cleaning up on read. Expired _transient_* rows would
+ * accumulate in wp_options forever, which is worse than what the plugin did before the
+ * cleanup moved off the purge path.
+ *
+ * So when cron is off, sweep on shutdown instead, at most once a day. On requests that do
+ * not sweep the guard costs one autoloaded option read.
+ *
+ * It tests the constant rather than the ahsc_enable_cron option deliberately: the host, or
+ * the site owner with an editor, can set DISABLE_WP_CRON in wp-config.php without this
+ * plugin ever knowing. What matters is whether cron can run, not who turned it off.
+ *
+ * Not covered: a site where cron is nominally enabled but silently never fires. There is
+ * no cheap way to detect that from here.
+ */
+\add_action( 'shutdown', 'ahsc_maybe_sweep_expired_transients', 100 );
+
+if ( ! \function_exists( 'ahsc_maybe_sweep_expired_transients' ) ) {
+
+	/**
+	 * Delete expired transients from the database when WP-Cron cannot do it.
+	 *
+	 * @return void
+	 */
+	function ahsc_maybe_sweep_expired_transients() {
+		if ( ! defined( 'DISABLE_WP_CRON' ) || ! DISABLE_WP_CRON ) {
+			return;
+		}
+
+		$ahsc_now  = time();
+		$ahsc_last = (int) \get_option( AHSC_TRANSIENT_SWEEP_OPTION, 0 );
+
+		if ( $ahsc_last > 0 && ( $ahsc_now - $ahsc_last ) < AHSC_TRANSIENT_SWEEP_INTERVAL ) {
+			return;
+		}
+
+		/*
+		 * Claim the slot before doing the work, so two requests arriving together do not both
+		 * run the sweep. Not airtight — there is a window between the read and the write — but
+		 * the worst case is one redundant DELETE in a day.
+		 */
+		\update_option( AHSC_TRANSIENT_SWEEP_OPTION, $ahsc_now, true );
+
+		\delete_expired_transients( true );
+
+		if ( \class_exists( '\ArubaSPA\HiSpeedCache\Debug\Logger' ) ) {
+			// Logger.
+			AHSC_log( 'ALL', 'Clear Expired Transient (cron disabled)' );
+			// Logger.
+		}
 	}
 }
 
@@ -416,12 +613,13 @@ if ( ! \function_exists( 'ahsc_has_notice' ) ) {
 		$has_notice = ahsc_has_transient( AHSC_CHECKER['transient_name'] );
 
 		if ( false !== $has_notice && true === $remove ) {
-			if ( \is_multisite() ) {
-				\delete_site_transient(AHSC_CHECKER['transient_name'] );
-				return false;
-			}
+			/*
+			 * Through the helper, like the read above. These two disagreeing is what made the
+			 * service-status notice unreachable: the value was read from one store and deleted
+			 * from the other, so the delete never removed what the read had just found.
+			 */
+			ahsc_delete_transient( AHSC_CHECKER['transient_name'] );
 
-			\delete_transient( AHSC_CHECKER['transient_name']);
 			return false;
 		}
 
